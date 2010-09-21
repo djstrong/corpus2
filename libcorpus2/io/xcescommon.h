@@ -1,0 +1,32 @@
+#ifndef LIBCORPUS2_IO_XCESCOMMON_H
+#define LIBCORPUS2_IO_XCESCOMMON_H
+
+#include <libcorpus2/token.h>
+
+namespace Corpus2 {
+
+/**
+ * Output the token's XCES XML representation, at the requested indent
+ * level. Use -1 to disable indentation.
+ */
+void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
+		const Token& t, int indent, bool output_disamb = false,
+		bool sort = false, bool whitespace_info = false);
+
+/**
+ * Output a xml-encoded version of the given string into the given ostream.
+ * The default XML entity substitutions are made: less than, greater than,
+ * ampersand, single quote and double quote.
+ */
+void encode_xml_entities_into(std::ostream& buf, const std::string& input);
+
+/**
+ * In-place XML entity encoding.
+ * The default XML entity substitutions are made: less than, greater than,
+ * ampersand, single quote and double quote.
+ */
+void encode_xml_entities(std::string &input);
+
+} /* end ns Corpus2 */
+
+#endif // LIBCORPUS2_IO_XCESCOMMON_H
