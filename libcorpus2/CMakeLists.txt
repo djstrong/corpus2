@@ -5,6 +5,11 @@ set(corpus2_ver_major "0")
 set(corpus2_ver_minor "0")
 set(corpus2_ver_patch "1")
 
+
+if(NOT LIBCORPUS2_SRC_DATA_DIR)
+	message(FATAL_ERROR "There is no data for libcorpus2")
+endif(NOT LIBCORPUS2_SRC_DATA_DIR)
+
 set(LIBCORPUS2_PATH_SEPARATOR ";")
 set(LIBCORPUS2_DATA_DIR
 	".;${CMAKE_INSTALL_PREFIX}/${LIBCORPUS2_INSTALL_DATA_DIR}")
