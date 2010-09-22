@@ -59,6 +59,22 @@ public:
 	tagset_idx_t expected_id, actual_id;
 };
 
+/**
+ * Convenience function to check if tagsets match and throw if not, with the
+ * given "where" circumstance string
+ */
+void require_matching_tagsets(const Tagset& expected, const Tagset& actual,
+		const std::string& where);
+
+/**
+ * Convenience function that calls the non-template require_matching_tagsets
+ * but can be called with something that has a tagset() method or a tagset
+ * object.
+ */
+template<class T>
+void require_matching_tagsets(const T& expected, const T& actual,
+		const std::string& where);
+
 class TagsetParser;
 
 class Token;
@@ -372,6 +388,38 @@ private:
 	/// Flags for attributes which are required for a given POS
 	std::vector< std::vector<bool> > pos_required_attributes_;
 };
+
+/* implementation */
+
+template<class T, class U> inline
+void require_matching_tagsets(const T& expected, const U& actual,
+		const std::string& where)
+{
+	require_matching_tagsets(expected.tagset(), actual.tagset(), where);
+}
+
+template<class T> inline
+void require_matching_tagsets(const T& expected, const Tagset& actual,
+		const std::string& where)
+{
+	require_matching_tagsets(expected.tagset(), actual, where);
+}
+
+template<class T> inline
+void require_matching_tagsets(const Tagset& expected, const T& actual,
+		const std::string& where)
+{
+	require_matching_tagsets(expected, actual.tagset(), where);
+}
+
+inline
+void require_matching_tagsets(const Tagset& expected, const Tagset& actual,
+		const std::string& where)
+{
+	if (actual.id() != expected.id()) {
+		throw TagsetMismatch(where, expected, actual);
+	}
+}
 
 } /* end ns Corpus2 */
 
