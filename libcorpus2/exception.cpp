@@ -12,6 +12,11 @@ namespace Corpus2 {
 	{
 	}
 
+	std::string Corpus2Error::scope() const
+	{
+		return "Corpus2";
+	}
+
 	FileNotFound::FileNotFound(const std::string& filename,
 			const std::string& paths, const std::string& where)
 		: Corpus2Error("File not found: " + filename), filename(filename),
@@ -34,5 +39,6 @@ namespace Corpus2 {
 		ss << "'" << filename << "' not found in search path " << paths;
 		return ss.str();
 	}
+
 
 } /* end ns Corpus2 */

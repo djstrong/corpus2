@@ -41,6 +41,9 @@ public:
 
 	/// verbose-info function
 	virtual std::string info() const;
+
+	/// scope information (subproject-like)
+	virtual std::string scope() const;
 };
 
 } /* end ns PwrNlp */

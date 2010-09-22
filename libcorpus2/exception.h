@@ -20,6 +20,9 @@ public:
 	Corpus2Error(const std::string &what);
 
 	~Corpus2Error() throw();
+
+	/// PwrNlpError override
+	std::string scope() const;
 };
 
 class FileNotFound : public Corpus2Error

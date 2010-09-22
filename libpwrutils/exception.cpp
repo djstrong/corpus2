@@ -32,4 +32,9 @@ std::string PwrNlpError::info() const
 	return what();
 }
 
+std::string PwrNlpError::scope() const
+{
+	return "general";
+}
+
 } /* end ns PwrNlp */

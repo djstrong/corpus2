@@ -16,9 +16,6 @@ set(LIBCORPUS2_DATA_DIR
 set(LIBCORPUS2_VERSION
 	"${corpus2_ver_major}.${corpus2_ver_minor}.${corpus2_ver_patch}")
 
-
-MESSAGE(${LIBCORPUS2_DATA_DIR})
-
 configure_file(config_d.in include/libcorpus2/config_d.h)
 configure_file(version.in include/libcorpus2/version.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
