@@ -312,7 +312,8 @@ public:
 	 *
 	 * The new lexemes are appended, duplicates are not checked.
 	 */
-	void lexemes_into_token(Token& tok, const UnicodeString& lemma, const string_range& tags) const;
+	void lexemes_into_token(Token& tok, const UnicodeString& lemma,
+			const string_range& tags) const;
 
 	/**
 	 * Convenience overload
