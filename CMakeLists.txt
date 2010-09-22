@@ -43,7 +43,7 @@ include_directories(${Corpus2Library_SOURCE_DIR})
 
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
-set(LIBCORPUS2_INSTALL_DATA_DIR share/libcorpus2)
+set(LIBCORPUS2_INSTALL_DATA_DIR share/corpus2)
 FIND_PATH(LIBCORPUS2_SRC_DATA_DIR
     test.tagset
     ${CMAKE_SOURCE_DIR}/corpus2data
