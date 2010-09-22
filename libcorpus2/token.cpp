@@ -26,7 +26,7 @@ const Lexeme& Token::get_preferred_lexeme(const Tagset& tagset) const
 	if (idx < lexemes_.size()) {
 		return lexemes_[idx];
 	} else {
-		throw Error("No lexemes but best lexeme requested");
+		throw Corpus2Error("No lexemes but best lexeme requested");
 	}
 }
 

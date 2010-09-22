@@ -12,7 +12,7 @@ namespace Corpus2 {
 /**
  * Exception class for signalling cache errors
  */
-class TagsetNotFound : public Error
+class TagsetNotFound : public Corpus2Error
 {
 public:
 	/// Constructor

@@ -11,7 +11,7 @@
 namespace Corpus2 {
 
 XcesError::XcesError(const std::string &what)
-	: Error(what)
+	: Corpus2Error(what)
 {
 }
 

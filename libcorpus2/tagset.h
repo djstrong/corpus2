@@ -21,7 +21,7 @@ namespace Corpus2 {
 /**
  * Exception class for signalling tag parse errors
  */
-class TagParseError : public Error
+class TagParseError : public Corpus2Error
 {
 public:
 	/// Constructor
@@ -38,7 +38,7 @@ public:
 };
 
 /// Exception class for signalling tagset mismatches in various situations
-class TagsetMismatch : public Error
+class TagsetMismatch : public Corpus2Error
 {
 public:
 	/// Constructor from Tagset objects

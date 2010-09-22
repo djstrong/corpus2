@@ -21,7 +21,7 @@ namespace Corpus2 {
 TagParseError::TagParseError(const std::string &what,
 		const std::string& val, const std::string& tag,
 		const std::string& tagset)
-	: Error(what), val(val), tag(tag), tagset(tagset)
+	: Corpus2Error(what), val(val), tag(tag), tagset(tagset)
 {
 }
 
@@ -43,14 +43,14 @@ std::string TagParseError::info() const
 
 TagsetMismatch::TagsetMismatch(const std::string& where,
 		const Tagset& expected, const Tagset& actual)
-	: Error("Tagset mismatch in " + where), expected_id(expected.id())
+	: Corpus2Error("Tagset mismatch in " + where), expected_id(expected.id())
 	, actual_id(actual.id())
 {
 }
 
 TagsetMismatch::TagsetMismatch(const std::string& where,
 		tagset_idx_t expected, tagset_idx_t actual)
-	: Error("Tagset mismatch in " + where), expected_id(expected)
+	: Corpus2Error("Tagset mismatch in " + where), expected_id(expected)
 	, actual_id(actual)
 {
 }
@@ -382,7 +382,7 @@ attribute_idx_t Tagset::get_value_attribute(value_idx_t id) const
 	if (!value_dict_.is_id_valid(id)) {
 		std::stringstream ss;
 		ss << "get_value_attribute fail " << (int)id;
-		throw Error(ss.str());
+		throw Corpus2Error(ss.str());
 	}
 	return value_attribute_[id];
 }

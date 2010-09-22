@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE( load_named )
 	BOOST_CHECK_NO_THROW(
 		try {
 			Corpus2::get_named_tagset("test");
-		}catch(Corpus2::Error& e) {
+		} catch (Corpus2::Corpus2Error& e) {
 			std::cerr << e.info();
 			throw;
 		}

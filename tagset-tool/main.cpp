@@ -245,7 +245,7 @@ int main(int argc, char** argv)
 #else
 			std_read_loop(f);
 #endif
-		} catch (Corpus2::Error& e) {
+		} catch (Corpus2::Corpus2Error& e) {
 			std::cerr << "Error: " << e.info() << "\n";
 			return 4;
 		}

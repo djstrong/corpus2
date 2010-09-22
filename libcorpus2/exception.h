@@ -10,19 +10,19 @@ namespace Corpus2 {
  * @c PwrNlp::Error. Call member function @c what to get a
  * human-readable message associated with the error.
  */
-class Error : public PwrNlp::Error
+class Corpus2Error : public PwrNlp::PwrNlpError
 {
 public:
 	/**
 	 * Instantiate an Error instance with the given message.
 	 * @param what The message to associate with this error.
 	 */
-	Error(const std::string &what);
+	Corpus2Error(const std::string &what);
 
-	~Error() throw();
+	~Corpus2Error() throw();
 };
 
-class FileNotFound : public Error
+class FileNotFound : public Corpus2Error
 {
 public:
 	FileNotFound(const std::string& filename, const std::string& paths,

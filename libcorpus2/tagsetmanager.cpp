@@ -9,7 +9,7 @@
 namespace Corpus2 {
 
 TagsetNotFound::TagsetNotFound(tagset_idx_t id)
-	: Error("Tagset not found")
+	: Corpus2Error("Tagset not found")
 	, id(id)
 {
 }

@@ -3,18 +3,18 @@
 #include <libcorpus2/util/settings.h>
 namespace Corpus2 {
 
-	Error::Error(const std::string &what)
-		: PwrNlp::Error(what)
+	Corpus2Error::Corpus2Error(const std::string &what)
+		: PwrNlp::PwrNlpError(what)
 	{
 	}
 
-	Error::~Error() throw()
+	Corpus2Error::~Corpus2Error() throw()
 	{
 	}
 
 	FileNotFound::FileNotFound(const std::string& filename,
 			const std::string& paths, const std::string& where)
-		: Error("File not found: " + filename), filename(filename),
+		: Corpus2Error("File not found: " + filename), filename(filename),
 		paths(paths), where(where)
 	{
 	}

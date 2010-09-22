@@ -18,16 +18,16 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace PwrNlp {
 
-Error::Error(const std::string &what)
+PwrNlpError::PwrNlpError(const std::string &what)
 	: std::runtime_error(what)
 {
 }
 
-Error::~Error() throw()
+PwrNlpError::~PwrNlpError() throw()
 {
 }
 
-std::string Error::info() const
+std::string PwrNlpError::info() const
 {
 	return what();
 }

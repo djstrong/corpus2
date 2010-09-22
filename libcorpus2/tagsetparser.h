@@ -5,12 +5,12 @@
 
 namespace Corpus2 {
 
-class TagsetParseError : public Error
+class TagsetParseError : public Corpus2Error
 {
 public:
 	TagsetParseError(const std::string& w, int line,
 			const std::string& data)
-		: Error("Tagset parse error: " + w), line(line), data(data)
+		: Corpus2Error("Tagset parse error: " + w), line(line), data(data)
 	{
 	}
 

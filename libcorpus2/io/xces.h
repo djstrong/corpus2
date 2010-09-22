@@ -6,7 +6,7 @@
 
 namespace Corpus2 {
 
-class XcesError : public Error
+class XcesError : public Corpus2Error
 {
 public:
 	/// Constructor

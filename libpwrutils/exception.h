@@ -27,17 +27,17 @@ namespace PwrNlp {
  * associated with the error. Call member function @c info to get verbose
  * information about the error in possibly multi-line form.
  */
-class Error : public std::runtime_error
+class PwrNlpError : public std::runtime_error
 {
 public:
 	/**
 	 * Instantiate an Error instance with the given message.
 	 * @param what The message to associate with this error.
 	 */
-	Error(const std::string &what);
+	PwrNlpError(const std::string &what);
 
 	/// Destructor
-	~Error() throw();
+	~PwrNlpError() throw();
 
 	/// verbose-info function
 	virtual std::string info() const;
