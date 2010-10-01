@@ -88,6 +88,14 @@ public:
 	 */
 	bool operator==(const Lexeme& other) const;
 
+	/**
+	 * Disamb-ignoring lexeme comparison
+	 */
+	struct DisamblessComparator
+	{
+		bool operator()(const Lexeme& l1, const Lexeme& l2) const;
+	};
+
 private:
 	/// The lemma -- basic form
 	//boost::flyweight<UnicodeString> lemma_;

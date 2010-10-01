@@ -28,13 +28,18 @@ bool Lexeme::operator<(const Lexeme& other) const
 			|| (lemma_ == other.lemma_
 				&& (tag_ < other.tag_
 					|| (tag_ == other.tag_
-						&& disamb_ < other.disamb_)));
+						&& disamb_ && !other.disamb_)));
 }
 
 bool Lexeme::operator==(const Lexeme& other) const
 {
 	return lemma_ == other.lemma_ && tag_ == other.tag_ &&
 			disamb_ == other.disamb_;
+}
+
+bool Lexeme::DisamblessComparator::operator()(const Lexeme& l, const Lexeme& other) const
+{
+	return l.lemma_ == other.lemma_	&& l.tag_ == other.tag_;
 }
 
 } /* end ns Corpus2 */
