@@ -5,7 +5,7 @@
 namespace Corpus2 {
 
 bool XcesWriter::registered = TokenWriter::register_writer<XcesWriter>("xces",
-		"flat,chunk,nochunk,nodisamb,sort,split,ws");
+		"flat,chunk,nochunk,nodisamb,sorttags,split,ws");
 
 XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
