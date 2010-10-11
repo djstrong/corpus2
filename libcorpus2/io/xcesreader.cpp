@@ -9,7 +9,7 @@ class XcesReaderImpl : public BasicSaxParser
 {
 public:
 	XcesReaderImpl(const Tagset& tagset, std::deque<Chunk*>& obuf,
-			bool disamb_only);
+			bool disamb_only, bool disamb_sh);
 
 	~XcesReaderImpl();
 
@@ -37,12 +37,14 @@ protected:
 	std::deque<Chunk*>& obuf_;
 
 	bool disamb_only_;
+
+	bool disamb_sh_;
 };
 
 XcesReader::XcesReader(const Tagset& tagset, std::istream& is,
-		bool disamb_only)
+		bool disamb_only, bool disamb_sh)
 	: BufferedChunkReader(tagset), is_(is)
-	, impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only))
+	, impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only, disamb_sh))
 {
 }
 
@@ -64,11 +66,11 @@ void XcesReader::ensure_more()
 }
 
 XcesReaderImpl::XcesReaderImpl(const Tagset& tagset,
-		std::deque<Chunk*>& obuf, bool disamb_only)
+		std::deque<Chunk*>& obuf, bool disamb_only, bool disamb_sh)
 	: BasicSaxParser()
 	, tagset_(tagset), state_(XS_NONE), wa_(PwrNlp::Whitespace::Newline)
 	, sbuf_(), tok_(NULL), sent_(NULL), chunk_(NULL), obuf_(obuf)
-	, disamb_only_(disamb_only)
+	, disamb_only_(disamb_only), disamb_sh_(disamb_sh)
 {
 }
 
@@ -119,9 +121,18 @@ void XcesReaderImpl::on_start_element(const Glib::ustring &name,
 	} else if (state_ == XS_TOK && name == "lex") {
 		assert(tok_ != NULL);
 		bool is_disamb = false;
-		foreach (const Attribute& a, attributes) {
-			if (a.name == "disamb" && a.value == "1") {
-				is_disamb = true;
+		if (!disamb_sh_) {
+			foreach (const Attribute& a, attributes) {
+				if (a.name == "disamb" && a.value == "1") {
+					is_disamb = true;
+				}
+			}
+		} else {
+			is_disamb = true;
+			foreach (const Attribute& a, attributes) {
+				if (a.name == "disamb_sh" && a.value == "0") {
+					is_disamb = false;
+				}
 			}
 		}
 		if (!disamb_only_ || is_disamb) {

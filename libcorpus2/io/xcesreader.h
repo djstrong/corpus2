@@ -15,7 +15,7 @@ class XcesReader : public BufferedChunkReader
 {
 public:
 	XcesReader(const Tagset& tagset, std::istream& is,
-			bool disamb_only = false);
+			bool disamb_only = false, bool disamb_sh = false);
 
 	~XcesReader();
 
