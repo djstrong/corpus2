@@ -24,6 +24,8 @@ protected:
 			XS_LEMMA, XS_TAG };
 	state_t state_;
 
+	bool chunkless_;
+
 	PwrNlp::Whitespace::Enum wa_;
 
 	Glib::ustring sbuf_;
@@ -68,7 +70,8 @@ void XcesReader::ensure_more()
 XcesReaderImpl::XcesReaderImpl(const Tagset& tagset,
 		std::deque<Chunk*>& obuf, bool disamb_only, bool disamb_sh)
 	: BasicSaxParser()
-	, tagset_(tagset), state_(XS_NONE), wa_(PwrNlp::Whitespace::Newline)
+	, tagset_(tagset), state_(XS_NONE), chunkless_(false)
+	, wa_(PwrNlp::Whitespace::Newline)
 	, sbuf_(), tok_(NULL), sent_(NULL), chunk_(NULL), obuf_(obuf)
 	, disamb_only_(disamb_only), disamb_sh_(disamb_sh)
 {
@@ -93,12 +96,17 @@ void XcesReaderImpl::on_start_element(const Glib::ustring &name,
 		}
 		if (state_ == XS_NONE) {
 			if (type == "s") {
-				throw XcesError("Top level <chunk> is type=\"s\"");
-			}
-			state_ = XS_CHUNK;
-			chunk_ = new Chunk;
-			foreach (const Attribute& a, attributes) {
-				chunk_->set_attribute(a.name, a.value);
+				//throw XcesError("Top level <chunk> is type=\"s\"");
+				state_ = XS_SENTENCE;
+				chunkless_ = true;
+				chunk_ = new Chunk;
+				sent_ = new Sentence;
+			} else {
+				chunk_ = new Chunk;
+				state_ = XS_CHUNK;
+				foreach (const Attribute& a, attributes) {
+					chunk_->set_attribute(a.name, a.value);
+				}
 			}
 		} else if (state_ == XS_CHUNK) {
 			if (type != "s") {
@@ -177,7 +185,14 @@ void XcesReaderImpl::on_end_element(const Glib::ustring &name)
 	} else if (state_ == XS_SENTENCE && name == "chunk") {
 		chunk_->append(sent_);
 		sent_ = NULL;
-		state_ = XS_CHUNK;
+		if (chunkless_) {
+			obuf_.push_back(chunk_);
+			chunk_ = NULL;
+			state_ = XS_NONE;
+			chunkless_ = false;
+		} else {
+			state_ = XS_CHUNK;
+		}
 	} else if (state_ == XS_CHUNK && name == "chunk") {
 		obuf_.push_back(chunk_);
 		chunk_ = NULL;
