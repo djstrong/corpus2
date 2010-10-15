@@ -17,7 +17,7 @@ public:
 	XcesReader(const Tagset& tagset, std::istream& is,
 			bool disamb_only = false, bool disamb_sh = false);
 
-	XcesReader(const Tagset& tagset, std::string& filename,
+	XcesReader(const Tagset& tagset, const std::string& filename,
 			bool disamb_only = false, bool disamb_sh = false);
 
 	~XcesReader();

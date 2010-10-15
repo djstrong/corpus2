@@ -53,7 +53,7 @@ XcesReader::XcesReader(const Tagset& tagset, std::istream& is,
 	this->is_ = &is;
 }
 
-XcesReader::XcesReader(const Tagset& tagset, std::string& filename, bool disamb_only, bool disamb_sh)
+XcesReader::XcesReader(const Tagset& tagset, const std::string& filename, bool disamb_only, bool disamb_sh)
 	: BufferedChunkReader(tagset),
 	impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only, disamb_sh))
 {
