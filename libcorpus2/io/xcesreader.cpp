@@ -3,6 +3,8 @@
 #include <libpwrutils/foreach.h>
 #include <libxml++/libxml++.h>
 
+#include <fstream>
+
 namespace Corpus2 {
 
 class XcesReaderImpl : public BasicSaxParser
@@ -45,9 +47,24 @@ protected:
 
 XcesReader::XcesReader(const Tagset& tagset, std::istream& is,
 		bool disamb_only, bool disamb_sh)
-	: BufferedChunkReader(tagset), is_(is)
-	, impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only, disamb_sh))
+	: BufferedChunkReader(tagset),
+	impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only, disamb_sh))
 {
+	this->is_ = &is;
+}
+
+XcesReader::XcesReader(const Tagset& tagset, std::string& filename, bool disamb_only, bool disamb_sh)
+	: BufferedChunkReader(tagset),
+	impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only, disamb_sh))
+{
+	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
+
+	if (this->is_owned_->bad()) {
+		throw new Corpus2Error("File not found!");
+	}
+	else {
+		this->is_ = is_owned_.get();
+	}
 }
 
 XcesReader::~XcesReader()

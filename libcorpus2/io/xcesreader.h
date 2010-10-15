@@ -17,16 +17,21 @@ public:
 	XcesReader(const Tagset& tagset, std::istream& is,
 			bool disamb_only = false, bool disamb_sh = false);
 
+	XcesReader(const Tagset& tagset, std::string& filename,
+			bool disamb_only = false, bool disamb_sh = false);
+
 	~XcesReader();
 
 	std::istream& is() {
-		return is_;
+		return *is_;
 	}
 
 protected:
 	void ensure_more();
 
-	std::istream& is_;
+	// std::istream& is_;
+	std::istream* is_;
+	boost::scoped_ptr<std::istream> is_owned_;
 
 	boost::scoped_ptr<XcesReaderImpl> impl_;
 };
