@@ -83,20 +83,25 @@ Tagset TagsetParser::load_ini(std::istream &is)
 
 	mask_t current_value = 1;
 	std::vector<std::string> vec;
+	idx_t current_attribute_index = 0;
 	foreach (const vmap_t::value_type v, vmap) {
+		mask_t attribute_mask = 0;
 		vec.push_back(v.first);
 		tagset.attribute_values_.resize(
 				tagset.attribute_values_.size() + 1);
 		foreach (const std::string& s, v.second) {
 			tagset.attribute_values_.back().push_back(current_value);
 			tagset.value_mask_to_attribute_index_.insert(
-					std::make_pair(current_value, vec.size() - 1));
+					std::make_pair(current_value, current_attribute_index));
 			tagset.string_to_value_mask_.insert(
 					std::make_pair(s, current_value));
 			tagset.value_mask_to_string_.insert(
 					std::make_pair(current_value, s));
+			attribute_mask |= current_value;
 			current_value <<= 1;
 		}
+		tagset.attribute_masks_.push_back(attribute_mask);
+		++current_attribute_index;
 	}
 	tagset.attribute_dict_.load_sorted_data(vec);
 
