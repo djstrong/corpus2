@@ -39,7 +39,7 @@ public:
 	bool is_id_valid(IndexT idx) const;
 
 	/// Getter for the size of this dictionary
-	size_t  size() const;
+	size_t size() const;
 
 	/**
 	 * Get the index for a given string identifier, const char* version.

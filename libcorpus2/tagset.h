@@ -210,8 +210,7 @@ public:
 	 * The values are assumed to be valid in this tagset, but are checked
 	 * for correctness with regards to the POS.
 	 */
-	Tag make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values,
-			bool allow_extra) const;
+	Tag make_tag(idx_t pos, mask_t values, bool allow_extra) const;
 
 	/**
 	 * Convenience function for creating a 'ign' (ignored) tag within this
@@ -252,38 +251,97 @@ public:
 	std::string tag_to_no_opt_string(const Tag &tag) const;
 
 	/// POS name <-> index dictionary getter
-	const SymbolDictionary<pos_idx_t>& pos_dictionary() const {
+	const SymbolDictionary<idx_t>& pos_dictionary() const {
 		return pos_dict_;
 	}
 
 	/// attribute name <-> index dictionary getter
-	const SymbolDictionary<attribute_idx_t>& attribute_dictionary() const {
+	const SymbolDictionary<idx_t>& attribute_dictionary() const {
 		return attribute_dict_;
 	}
 
-	/// value name <-> index dictionary getter
-	const SymbolDictionary<value_idx_t>& value_dictionary() const {
-		return value_dict_;
-	}
 
-	/// Getter for the value -> attribute mapping
-	attribute_idx_t get_value_attribute(value_idx_t id) const;
+	/// POS name -> index mapping
+	/// @returns -1 on invalid name
+	idx_t get_pos_index(const string_range& pos) const;
 
-	/// Getter for the attribute -> valid values mapping
-	const std::vector<value_idx_t>& get_attribute_values(
-			attribute_idx_t a) const;
+	/// POS index -> name
+	/// @returns empty string on invalid index
+	const std::string& get_pos_name(idx_t pos) const;
+
+	/// POS name -> mask mapping
+	/// @return null mask on invalid name
+	mask_t get_pos_mask(const string_range& pos) const;
+
+	/// POS index -> mask mapping
+	/// @return null mask on invalid index
+	mask_t get_pos_mask(idx_t pos) const;
+
+
+	/// Attribute name -> index mapping
+	/// @returns -1 on invalid name
+	idx_t get_attribute_index(const string_range& a) const;
+
+	/// Attribute index -> name
+	/// @returns empty string on invalid index
+	const std::string& get_attribute_name(idx_t pos) const;
+
+	/// Value mask -> attribute index mapping.
+	/// if the value mask contains values from more than one attribute,
+	/// behavior is not well defined
+	/// @return -1 on invalid mask
+	idx_t get_value_attribute(mask_t v) const;
+
+	/// Attribute index -> vector of valid value masks mapping
+	/// @return empty vector on invalid index
+	const std::vector<mask_t>& get_attribute_values(idx_t a) const;
+
+	/// Attribute index -> combined value mask
+	/// @return null mask on invalid index
+	mask_t get_attribute_mask(idx_t a) const;
+
+	/// Attribute name -> combined value mask
+	/// @return null mask on invalid name
+	mask_t get_attribute_mask(const string_range& a) const;
+
+
+	/// Value name -> mask
+	/// @returns null mask on invalid name
+	mask_t get_value_mask(const std::string& v) const;
+
+	/// Value mask -> name
+	/// @returns empty string on invalid mask
+	const std::string& get_value_name(mask_t v) const;
+
+	/// Value mask -> attribute index
+	/// @returns -1 on invalid mask
+	idx_t get_value_attribute_index(mask_t v) const;
+
 
 	/// Getter for the pos -> valid attributes (in order) mapping
-	const std::vector<attribute_idx_t>& get_pos_attributes(
-			pos_idx_t pos) const;
+	/// Valid attributes are both the required and optional attributes.
+	/// Generally the optonal ones should be after the required ones.
+	const std::vector<idx_t>& get_pos_attributes(idx_t pos) const;
 
 	/// Getter for the pos -> valid attributes flag vector
-	const std::vector<bool>& get_pos_valid_attributes(
-			pos_idx_t pos) const;
+	const std::vector<bool>& get_pos_attributes_flag(idx_t pos) const;
 
 	/// Getter for the pos -> required attributes flag vector
-	const std::vector<bool>& get_pos_required_attributes(
-			pos_idx_t pos) const;
+	const std::vector<bool>& get_pos_required_attributes(idx_t pos) const;
+
+	bool pos_requires_attribute(idx_t pos, idx_t attribute) const;
+
+	bool pos_has_attribute(idx_t pos, idx_t attribute) const;
+
+	mask_t get_pos_value_mask(idx_t pos) const;
+
+	mask_t get_pos_required_mask(idx_t pos) const;
+
+	size_t pos_count() const;
+
+	size_t attribute_count() const;
+
+	size_t value_count() const;
 
 	/**
 	 * Tagset cardinality counter -- the number of different valid tags
@@ -341,7 +399,7 @@ public:
 	}
 
 	/// get the original index of the POS in the tagset definition
-	size_t get_original_pos_index(pos_idx_t pos) const;
+	int get_original_pos_index(idx_t pos) const;
 
 private:
 	/// Temporary solution to allow splitting the parser into a separate
@@ -358,29 +416,36 @@ private:
 	static tagset_idx_t next_id_;
 
 	/// String - number dictionary for the POS names
-	SymbolDictionary<pos_idx_t> pos_dict_;
+	SymbolDictionary<idx_t> pos_dict_;
 
 	/// String - number dictionary for the attribute names
-	SymbolDictionary<attribute_idx_t> attribute_dict_;
+	SymbolDictionary<idx_t> attribute_dict_;
 
-	/// String - number dictionary for the attribute values
-	SymbolDictionary<value_idx_t> value_dict_;
+	std::map<std::string, mask_t> string_to_value_mask_;
+
+	std::map<mask_t, std::string> value_mask_to_string_;
 
 	/// The original indices of the POSes in the tagset definition
-	std::map<pos_idx_t, size_t> original_pos_indices_;
+	std::map<idx_t, int> original_pos_indices_;
 
-	/// mapping from attribute indices to valid value indices
-	std::vector< std::vector<value_idx_t> > attribute_values_;
+	/// mapping from attribute indices to valid value masks
+	std::vector< std::vector<mask_t> > attribute_values_;
 
-	/// reverse mapping, from a value index to the respective attribute
+	std::vector<mask_t> attribute_masks_;
+
+	/// reverse mapping, from a value mask to the respective attribute
 	/// index (values are assumed to be unique and not shared between
 	/// attributes)
-	std::vector<attribute_idx_t> value_attribute_;
+	std::map<mask_t, idx_t> value_mask_to_attribute_index_;
 
 	/// POS to valid attribute indices mapping
 	/// The order of the attributes is important, as it affects string
 	/// output and the behavior of the _ special character in parsing
-	std::vector< std::vector<attribute_idx_t> > pos_attributes_;
+	std::vector< std::vector<idx_t> > pos_attributes_;
+
+	std::vector<mask_t> pos_valid_value_masks_;
+
+	std::vector<mask_t> pos_required_value_masks_;
 
 	/// Flags for attributes which are valid for a given POS
 	std::vector< std::vector<bool> > pos_valid_attributes_;
