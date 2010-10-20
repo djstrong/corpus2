@@ -354,7 +354,11 @@ mask_t Tagset::get_pos_mask(const string_range& pos) const
 
 mask_t Tagset::get_pos_mask(idx_t pos) const
 {
-	return 1 << pos;
+	if (pos >= 0) {
+		return 1 << pos;
+	} else {
+		return 0;
+	}
 }
 
 idx_t Tagset::get_attribute_index(const string_range& a) const
