@@ -113,7 +113,7 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s)
 		}
 		std::cout << "\nIn POSes:";
 		for (Corpus2::idx_t p = 0; p < tagset.pos_dictionary().size(); ++p) {
-			if (tagset.get_pos_attributes(p)[atr]) {
+			if (tagset.get_pos_attributes_flag(p)[atr]) {
 				std::cout << " " << tagset.pos_dictionary().get_string(p);
 				if (!tagset.get_pos_required_attributes(p)[atr]) {
 					std::cout << "?";
@@ -131,7 +131,7 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s)
 		}
 		std::cout << "\nIn POSes:";
 		for (Corpus2::idx_t p = 0; p < tagset.pos_dictionary().size(); ++p) {
-			if (tagset.get_pos_attributes(p)[a]) {
+			if (tagset.get_pos_attributes_flag(p)[a]) {
 				std::cout << " " << tagset.pos_dictionary().get_string(p);
 				if (!tagset.get_pos_required_attributes(p)[a]) {
 					std::cout << "?";
