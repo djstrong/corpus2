@@ -6,6 +6,7 @@
 #include <libcorpus2/tagsetparser.h>
 
 #include <libpwrutils/foreach.h>
+#include <libpwrutils/util.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/strong_typedef.hpp>
@@ -335,6 +336,29 @@ std::string Tagset::tag_to_no_opt_string(const Tag &tag) const
 		}
 	}
 	return ss.str();
+}
+
+size_t Tagset::tag_size(const Tag& tag) const
+{
+	size_t s = PwrNlp::count_bits_set(tag.get_pos());
+	foreach (mask_t attribute_mask, all_attribute_masks()) {
+		mask_t values = tag.get_values_for(attribute_mask);
+		size_t x = PwrNlp::count_bits_set(values);
+		if (x > 1) {
+			s *= x;
+		}
+	}
+	return s;
+}
+
+bool Tagset::tag_is_singular(const Tag& tag) const
+{
+	if (PwrNlp::count_bits_set(tag.get_pos()) != 1) return false;
+	foreach (mask_t attribute_mask, all_attribute_masks()) {
+		mask_t values = tag.get_values_for(attribute_mask);
+		if (PwrNlp::count_bits_set(values) > 1) return false;
+	}
+	return true;
 }
 
 idx_t Tagset::get_pos_index(const string_range& pos) const

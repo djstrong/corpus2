@@ -12,7 +12,7 @@ struct F {
 			"A tag tog other a3 \n"
 			"B data thing tag-thing thang\n"
 			"C a b c \n"
-			"[POS]\n some A B [C]\n";
+			"[POS]\n some A B [C]\n same A B\n";
 		tagset.reset(new Corpus2::Tagset(tagset_string));
 	}
 	boost::shared_ptr<Corpus2::Tagset> tagset;
@@ -158,4 +158,28 @@ BOOST_FIXTURE_TEST_CASE( underscore_dots, F )
 
 	check_split(tag, r);
 }
+
+
+BOOST_FIXTURE_TEST_CASE( tag_size, F )
+{
+	Corpus2::Tag t = tagset->parse_simple_tag("some:tag:data", false);
+	Corpus2::Tag t2 = tagset->parse_simple_tag("some:tog", false);
+	Corpus2::Tag t3 = tagset->parse_simple_tag("same", false);
+	BOOST_CHECK(tagset->tag_is_singular(t));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t), 1);
+	BOOST_CHECK(tagset->tag_is_singular(t2));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t2), 1);
+	BOOST_CHECK(tagset->tag_is_singular(t3));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t3), 1);
+	t.add_values(t2.get_values());
+	BOOST_CHECK(!tagset->tag_is_singular(t));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t), 2);
+	t.add_pos(t3.get_pos());
+	BOOST_CHECK(!tagset->tag_is_singular(t));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t), 4);
+	Corpus2::Tag t4 = tagset->parse_simple_tag("same:other:thang", true);
+	t.add_values(t4.get_values() & tagset->get_attribute_mask(std::string("A")));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t), 6);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

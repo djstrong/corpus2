@@ -250,6 +250,10 @@ public:
 	 */
 	std::string tag_to_no_opt_string(const Tag &tag) const;
 
+	size_t tag_size(const Tag& tag) const;
+
+	bool tag_is_singular(const Tag& tag) const;
+
 	/// POS name <-> index dictionary getter
 	const SymbolDictionary<idx_t>& pos_dictionary() const {
 		return pos_dict_;
@@ -400,6 +404,46 @@ public:
 
 	/// get the original index of the POS in the tagset definition
 	int get_original_pos_index(idx_t pos) const;
+
+
+	struct mask_iterator
+	{
+		typedef mask_t value_type;
+		typedef std::forward_iterator_tag iterator_category;
+		typedef int difference_type;
+		typedef const mask_t *pointer;
+		typedef const mask_t &reference;
+		mask_iterator(const mask_iterator &i): i_(i.i_) {}
+		mask_iterator(const mask_t& i) : i_(i) {}
+
+		mask_iterator &operator++() { i_ <<= 1; return *this; }
+		mask_iterator operator++(int) { return mask_iterator(i_ << 1); }
+		mask_iterator &operator--() { i_ >>= 1; return *this; }
+		mask_iterator operator--(int) { return mask_iterator(i_ >> 1); }
+
+		const mask_t &operator*() const { return i_; }
+
+		bool operator==(const mask_iterator &i) const { return i_ == i.i_; }
+		bool operator!=(const mask_iterator &i) const { return i_ != i.i_; }
+
+	private:
+		mask_t i_;
+	};
+
+	boost::iterator_range<mask_iterator> all_pos_masks() const {
+		return boost::iterator_range<mask_iterator>(static_cast<mask_t>(1),
+				static_cast<mask_t>(1) << pos_count());
+	}
+
+	boost::iterator_range<mask_iterator> all_value_masks() const {
+		return boost::iterator_range<mask_iterator>(static_cast<mask_t>(1),
+				static_cast<mask_t>(1) << value_count());
+	}
+
+	const std::vector<mask_t>& all_attribute_masks() const {
+		return attribute_masks_;
+	}
+
 
 private:
 	/// Temporary solution to allow splitting the parser into a separate
