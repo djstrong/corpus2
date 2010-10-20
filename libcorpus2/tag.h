@@ -90,8 +90,7 @@ public:
 		values_ |= v;
 	}
 
-	void add_values_masked(mask_t value, mask_t mask)
-	{
+	void add_values_masked(mask_t value, mask_t mask) {
 		//values_ = (values_ & ~mask) | (value & mask);
 		//see http://graphics.stanford.edu/~seander/bithacks.html#MaskedMerge
 		values_ = values_ ^ ((values_ ^ value) & mask);
@@ -116,7 +115,7 @@ public:
 
 	Tag get_masked(const Tag& other) const {
 		Tag t(*this);
-		return t.get_masked(other);
+		return t.mask_with(other);
 	}
 
 	/// debug aid, dump the tag's internal numeric representation
