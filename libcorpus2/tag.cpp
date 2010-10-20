@@ -8,6 +8,7 @@
 
 #include <boost/functional/hash.hpp>
 #include <boost/pending/lowest_bit.hpp>
+#include <bitset>
 
 namespace Corpus2 {
 
@@ -37,9 +38,11 @@ std::string Tag::raw_dump() const
 {
 	std::ostringstream ss;
 	ss << "[";
+	std::bitset<sizeof(mask_t) * CHAR_BIT> binaryp(pos_);
+	std::bitset<sizeof(mask_t) * CHAR_BIT> binaryv(values_);
 	//ss << static_cast<int>(tagset_id_);
-	ss << "#" << (void*)(pos_);
-	ss << ":" << (void*)(values_) ;
+	ss << "#" << binaryp;
+	ss << ":" << binaryv;
 	ss << "]";
 	return ss.str();
 }
