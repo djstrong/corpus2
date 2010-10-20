@@ -92,8 +92,9 @@ public:
 
 	void add_values_masked(mask_t value, mask_t mask)
 	{
-		assert(mask & value);
-		values_ = (values_ & ~mask) | value;
+		//values_ = (values_ & ~mask) | (value & mask);
+		//see http://graphics.stanford.edu/~seander/bithacks.html#MaskedMerge
+		values_ = values_ ^ ((values_ ^ value) & mask);
 	}
 
 	Tag& combine_with(const Tag& other) {
