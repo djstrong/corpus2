@@ -180,6 +180,13 @@ BOOST_FIXTURE_TEST_CASE( tag_size, F )
 	Corpus2::Tag t4 = tagset->parse_simple_tag("same:other:thang", true);
 	t.add_values(t4.get_values() & tagset->get_attribute_mask(std::string("A")));
 	BOOST_CHECK_EQUAL(tagset->tag_size(t), 6);
+	std::vector<Corpus2::Tag> tags = tagset->split_tag(t);
+	BOOST_CHECK_EQUAL(tags.size(), 6);
+	Corpus2::Tag tt;
+	foreach (Corpus2::Tag t, tags) {
+		tt.combine_with(t);
+	}
+	BOOST_CHECK(tt == t);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

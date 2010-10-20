@@ -361,6 +361,39 @@ bool Tagset::tag_is_singular(const Tag& tag) const
 	return true;
 }
 
+std::vector<Tag> Tagset::split_tag(const Tag& tag) const
+{
+	std::vector<Tag> tags;
+	mask_t pos = tag.get_pos();
+	while (pos) {
+		idx_t pos_idx = PwrNlp::lowest_bit(pos);
+		mask_t pos_mask = static_cast<mask_t>(1) << pos_idx;
+		pos ^= pos_mask;
+		tags.push_back(Tag(pos_mask));
+	}
+
+	for (idx_t a = 0; a < attribute_count(); ++a) {
+		mask_t ma = get_attribute_mask(a);
+		mask_t v = tag.get_values_for(ma);
+		if (ma) {
+			bool dup = false;
+			size_t sz = tags.size();
+			foreach (mask_t vm, get_attribute_values(a)) {
+				if (v & vm) {
+					if (dup) {
+						std::copy(tags.begin(), tags.begin() + sz, std::back_inserter(tags));
+					}
+					dup = true;
+					for (size_t i = 0; i < sz; ++i) {
+						tags[i].add_values(vm);
+					}
+				}
+			}
+		}
+	}
+	return tags;
+}
+
 idx_t Tagset::get_pos_index(const string_range& pos) const
 {
 	return pos_dict_.get_id(pos);
@@ -379,7 +412,7 @@ mask_t Tagset::get_pos_mask(const string_range& pos) const
 mask_t Tagset::get_pos_mask(idx_t pos) const
 {
 	if (pos >= 0) {
-		return 1 << pos;
+		return static_cast<mask_t>(1) << pos;
 	} else {
 		return 0;
 	}

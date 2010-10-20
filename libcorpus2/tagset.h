@@ -254,6 +254,8 @@ public:
 
 	bool tag_is_singular(const Tag& tag) const;
 
+	std::vector<Tag> split_tag(const Tag& tag) const;
+
 	/// POS name <-> index dictionary getter
 	const SymbolDictionary<idx_t>& pos_dictionary() const {
 		return pos_dict_;
