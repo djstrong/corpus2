@@ -31,8 +31,8 @@ std::string Tag::raw_dump() const
 	std::bitset<sizeof(mask_t) * CHAR_BIT> binaryp(pos_);
 	std::bitset<sizeof(mask_t) * CHAR_BIT> binaryv(values_);
 	//ss << static_cast<int>(tagset_id_);
-	ss << "#" << binaryp;
-	ss << ":" << binaryv;
+	ss << "" << pos_;
+	ss << ":" << values_;
 	ss << "]";
 	return ss.str();
 }
