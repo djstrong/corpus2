@@ -144,6 +144,7 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 			std::vector<mask_t> values;
 			foreach (string_range& dot, dots) {
 				mask_t v = get_value_mask(boost::copy_range<std::string>(dot));
+				//TODO ensure all in one attribute, pass mask to append_
 				if (v.none()) {
 					throw TagParseError("Unknown attribute value",
 							boost::copy_range<std::string>(r), "",
@@ -159,6 +160,7 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 						"", "", id_string());
 			}
 			idx_t attr = pos_attributes_[pos_idx][fi - 1];
+			//TODO use attr mask
 			append_to_multi_tag(all_variants, attribute_values_[attr]);
 		} // else empty, do nothing
 	}
@@ -218,15 +220,29 @@ Tag Tagset::parse_simple_tag(const string_range_vector &ts,
 							id_string());
 				}
 			} else {
-				values |= val;
+				mask_t a = get_attribute_mask(get_value_attribute(val));
+				values = (values & ~a) | val;
 			}
 		}
 	}
-	return Tag(get_pos_mask(pos_idx), values);
+
+	return make_tag(pos_idx, values, allow_extra);
 }
 
 Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 {
+	mask_t required_values = get_pos_value_mask(pos_idx);
+	//std::cerr << values << "\n";
+	//std::cerr << required_values << "\n";
+	//std::cerr << (required_values & values) << "\n";
+	//std::cerr << PwrNlp::count_bits_set(required_values & values)
+	//		<< pos_required_attributes_idx_[pos_idx].size() << "\n";
+	size_t has_req = PwrNlp::count_bits_set(required_values & values);
+	if (has_req != pos_required_attributes_idx_[pos_idx].size()) {
+		throw TagParseError("Required attribute missing",
+				"",
+				get_pos_name(pos_idx), id_string());
+	}
 	mask_t valid_values = get_pos_value_mask(pos_idx);
 	mask_t invalid = values & ~valid_values;
 	if (invalid.any() && !allow_extra) {
@@ -267,7 +283,7 @@ bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 	std::vector<bool> valid = get_pos_attributes_flag(pos_idx);
 	std::vector<bool> required = get_pos_required_attributes(pos_idx);
 
-	for (idx_t i = 0; i < attribute_dict_.size(); ++i) {
+	for (idx_t i = 0; i < attribute_count(); ++i) {
 		mask_t value = t.get_values_for(get_attribute_mask(i));
 		if (value == 0) {
 			if (required[i]) {
@@ -309,7 +325,7 @@ std::string Tagset::tag_to_string(const Tag &tag) const
 		}
 	}
 	// print extra attributes
-	for (idx_t a = 0; a < attribute_dict_.size(); ++a) {
+	for (idx_t a = 0; a < attribute_count(); ++a) {
 		if (!pos_has_attribute(pos_idx, a)) {
 			mask_t value = tag.get_values_for(get_attribute_mask(a));
 			if (value.any()) {
@@ -431,7 +447,7 @@ const std::string& Tagset::get_attribute_name(idx_t a) const
 const std::vector<mask_t>& Tagset::get_attribute_values(idx_t a) const
 {
 	static std::vector<mask_t> null_vec;
-	if (a < 0 || a >= attribute_dict_.size()) {
+	if (a < 0 || a >= attribute_count()) {
 		return null_vec;
 	} else {
 		return attribute_values_[a];
@@ -440,7 +456,7 @@ const std::vector<mask_t>& Tagset::get_attribute_values(idx_t a) const
 
 mask_t Tagset::get_attribute_mask(idx_t a) const
 {
-	if (a < 0 || a >= attribute_dict_.size()) {
+	if (a < 0 || a >= attribute_count()) {
 		return 0;
 	} else {
 		return attribute_masks_[a];
@@ -531,25 +547,25 @@ bool Tagset::pos_has_attribute(idx_t pos, idx_t attribute) const
 
 mask_t Tagset::get_pos_value_mask(idx_t pos) const
 {
-	return 0; //TODO
+	return pos_valid_value_masks_[pos];
 }
 
 mask_t Tagset::get_pos_required_mask(idx_t pos) const
 {
-	return 0; //TODO
+	return pos_required_value_masks_[pos];
 }
 
-size_t Tagset::pos_count() const
+int Tagset::pos_count() const
 {
 	return pos_dict_.size();
 }
 
-size_t Tagset::attribute_count() const
+int Tagset::attribute_count() const
 {
 	return attribute_dict_.size();
 }
 
-size_t Tagset::value_count() const
+int Tagset::value_count() const
 {
 	return value_mask_to_string_.size();
 }

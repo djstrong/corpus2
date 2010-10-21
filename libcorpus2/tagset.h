@@ -343,11 +343,11 @@ public:
 
 	mask_t get_pos_required_mask(idx_t pos) const;
 
-	size_t pos_count() const;
+	int pos_count() const;
 
-	size_t attribute_count() const;
+	int attribute_count() const;
 
-	size_t value_count() const;
+	int value_count() const;
 
 	/**
 	 * Tagset cardinality counter -- the number of different valid tags
@@ -488,6 +488,8 @@ private:
 	/// The order of the attributes is important, as it affects string
 	/// output and the behavior of the _ special character in parsing
 	std::vector< std::vector<idx_t> > pos_attributes_;
+
+	std::vector< std::vector<idx_t> > pos_required_attributes_idx_;
 
 	std::vector<mask_t> pos_valid_value_masks_;
 

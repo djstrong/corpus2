@@ -143,13 +143,24 @@ Tagset TagsetParser::load_ini(std::istream &is)
 	vec.clear();
 	foreach (const pmap_t::value_type v, pmap) {
 		vec.push_back(v.first);
+		mask_t valid(0);
+		mask_t required(0);
 		tagset.pos_attributes_.push_back(v.second);
+		tagset.pos_required_attributes_idx_.resize(
+				tagset.pos_required_attributes_idx_.size() + 1);
 		tagset.pos_valid_attributes_.push_back(
 				std::vector<bool>(tagset.attribute_values_.size(), false));
 		foreach (idx_t a, v.second) {
+			valid |= tagset.get_attribute_mask(a);
+			if (reqmap[v.first][a]) {
+				required |= tagset.get_attribute_mask(a);
+				tagset.pos_required_attributes_idx_.back().push_back(a);
+			}
 			tagset.pos_valid_attributes_.back()[a] = true;
 		}
 		tagset.pos_required_attributes_.push_back(reqmap[v.first]);
+		tagset.pos_valid_value_masks_.push_back(valid);
+		tagset.pos_required_value_masks_.push_back(required);
 	}
 	tagset.pos_dict_.load_sorted_data(vec);
 	if (tagset.pos_dict_.size() == 0) {
