@@ -158,7 +158,7 @@ template <typename IndexT>
 const std::string& SymbolDictionary<IndexT>::get_string(IndexT id) const
 {
 	size_t idx = static_cast<size_t>(id);
-	if (id < data_.size()) {
+	if (idx < data_.size()) {
 		return data_[idx];
 	} else {
 		return nullstr;
