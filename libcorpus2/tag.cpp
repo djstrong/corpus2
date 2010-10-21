@@ -39,7 +39,9 @@ std::string Tag::raw_dump() const
 
 bool Tag::operator<(const Tag& other) const
 {
-	return pos_ < other.pos_ || (pos_ == other.pos_ && values_ < other.values_);
+	return pos_ < other.pos_ ||
+		(pos_ == other.pos_ &&
+		 values_ < other.values_);
 }
 
 bool Tag::operator ==(const Tag& other) const

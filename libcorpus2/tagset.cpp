@@ -144,7 +144,7 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 			std::vector<mask_t> values;
 			foreach (string_range& dot, dots) {
 				mask_t v = get_value_mask(boost::copy_range<std::string>(dot));
-				if (!v) {
+				if (v.none()) {
 					throw TagParseError("Unknown attribute value",
 							boost::copy_range<std::string>(r), "",
 							id_string());
@@ -229,8 +229,8 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 {
 	mask_t valid_values = get_pos_value_mask(pos_idx);
 	mask_t invalid = values & ~valid_values;
-	if (invalid && !allow_extra) {
-		mask_t first_invalid = boost::lowest_bit(invalid);
+	if (invalid.any() && !allow_extra) {
+		mask_t first_invalid = PwrNlp::lowest_bit(invalid);
 		throw TagParseError("Attribute not valid for this POS",
 				get_value_name(first_invalid),
 				get_pos_name(pos_idx), id_string());
@@ -242,7 +242,7 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 Tag Tagset::make_ign_tag() const
 {
 	mask_t ign_pos_mask = get_pos_mask("ign");
-	assert(ign_pos_mask);
+	assert(ign_pos_mask.any());
 	return Tag(ign_pos_mask);
 }
 
@@ -301,9 +301,9 @@ std::string Tagset::tag_to_string(const Tag &tag) const
 	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
 	foreach (const idx_t& a, attrs) {
 		mask_t value = tag.get_values_for(get_attribute_mask(a));
-		if (pos_requires_attribute(pos_idx, a) || value) {
+		if (pos_requires_attribute(pos_idx, a) || value.any()) {
 			ss << ":";
-			if (value) {
+			if (value.any()) {
 				ss << get_value_name(value);
 			}
 		}
@@ -312,7 +312,7 @@ std::string Tagset::tag_to_string(const Tag &tag) const
 	for (idx_t a = 0; a < attribute_dict_.size(); ++a) {
 		if (!pos_has_attribute(pos_idx, a)) {
 			mask_t value = tag.get_values_for(get_attribute_mask(a));
-			if (value) {
+			if (value.any()) {
 				ss << ":" << get_value_name(value);
 			}
 		}
@@ -329,7 +329,7 @@ std::string Tagset::tag_to_no_opt_string(const Tag &tag) const
 	foreach (const idx_t& a, attrs) {
 		mask_t value = tag.get_values_for(get_attribute_mask(a));
 		ss << ":";
-		if (value) {
+		if (value.any()) {
 			ss << get_value_name(value);
 		} else {
 			ss << get_attribute_name(a);
@@ -365,7 +365,7 @@ std::vector<Tag> Tagset::split_tag(const Tag& tag) const
 {
 	std::vector<Tag> tags;
 	mask_t pos = tag.get_pos();
-	while (pos) {
+	while (pos.any()) {
 		idx_t pos_idx = PwrNlp::lowest_bit(pos);
 		mask_t pos_mask = static_cast<mask_t>(1) << pos_idx;
 		pos ^= pos_mask;
@@ -375,11 +375,11 @@ std::vector<Tag> Tagset::split_tag(const Tag& tag) const
 	for (idx_t a = 0; a < attribute_count(); ++a) {
 		mask_t ma = get_attribute_mask(a);
 		mask_t v = tag.get_values_for(ma);
-		if (ma) {
+		if (ma.any()) {
 			bool dup = false;
 			size_t sz = tags.size();
 			foreach (mask_t vm, get_attribute_values(a)) {
-				if (v & vm) {
+				if ((v & vm).any()) {
 					if (dup) {
 						std::copy(tags.begin(), tags.begin() + sz, std::back_inserter(tags));
 					}

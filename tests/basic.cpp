@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE( token_dup_lexemes )
 {
 	Corpus2::Token t(UnicodeString::fromUTF8("ZZ"), PwrNlp::Whitespace::ManySpaces);
 	//Corpus2::Tagset tagset(tagsetstr1);
-	Corpus2::Tag t1(Corpus2::tagset_idx_t(0), Corpus2::idx_t(0));
+	Corpus2::Tag t1(Corpus2::mask_t(0));
 	Corpus2::Lexeme l1(UnicodeString::fromUTF8("aaa"), t1);
 	Corpus2::Lexeme l2(UnicodeString::fromUTF8("bbb"), t1);
 	BOOST_CHECK(!t.check_duplicate_lexemes());

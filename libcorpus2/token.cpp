@@ -94,7 +94,7 @@ bool Token::orth_pos_match(mask_t pos, const UnicodeString &orth) const
 	if (orth.length() > 0) {
 		if (orth.caseCompare(orth_, 0) != 0) return false;
 	}
-	if (pos) {
+	if (pos.any()) {
 		foreach (const Lexeme& lex, lexemes_) {
 			if (lex.tag().get_pos() != pos) return false;
 		}

@@ -121,12 +121,12 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s)
 			}
 		}
 		std::cout << "\n";
-	} else if (val) {
+	} else if (val.any()) {
 		Corpus2::idx_t a = tagset.get_value_attribute_index(val);
 		std::cout << s << " -> value -> attribute ";
 		std::cout << tagset.attribute_dictionary().get_string(a);
 		std::cout << " .";
-		foreach (Corpus2::idx_t v, tagset.get_attribute_values(a)) {
+		foreach (Corpus2::mask_t v, tagset.get_attribute_values(a)) {
 			std::cout << " " << tagset.get_value_name(v);
 		}
 		std::cout << "\nIn POSes:";

@@ -23,8 +23,6 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <string>
 #include <climits>
 
-#include <boost/pending/lowest_bit.hpp>
-
 namespace PwrNlp {
 
 /**
@@ -79,23 +77,7 @@ void utf8_string_to_uchar_container(const std::string& s,
 	}
 }
 
-/**
- * Count set bits in a integral type.
- * http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
- */
-template <typename T>
-int count_bits_set(T v)
-{
-	v = v - ((v >> 1) & (T)~(T)0/3);                              // temp
-	v = (v & (T)~(T)0/15*3) + ((v >> 2) & (T)~(T)0/15*3);         // temp
-	v = (v + (v >> 4)) & (T)~(T)0/255*15;                         // temp
-	return (T)(v * ((T)~(T)0/255)) >> (sizeof(T) - 1) * CHAR_BIT; // count
-}
 
-/**
- * Get index of lowest set bit in an integral type
- */
-using boost::lowest_bit;
 
 } /* end ns PwrNlp */
 

@@ -7,6 +7,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/strong_typedef.hpp>
 #include <boost/operators.hpp>
+#include <libpwrutils/bitset.h>
 
 namespace Corpus2 {
 
@@ -14,7 +15,7 @@ class Tagset;
 
 /// Typedefs for the string -> index mappings
 typedef boost::int8_t idx_t;
-typedef boost::uint64_t mask_t;
+typedef PwrNlp::bitset<64> mask_t;
 BOOST_STRONG_TYPEDEF(boost::uint32_t, tagset_idx_t);
 
 /**
