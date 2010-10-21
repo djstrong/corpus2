@@ -90,32 +90,39 @@ void tagset_info(const Corpus2::Tagset& tagset)
 	std::cerr << "\n";
 }
 
-void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s)
+void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s,
+		bool internals)
 {
 	Corpus2::idx_t pos = tagset.pos_dictionary().get_id(s);
 	Corpus2::idx_t atr = tagset.attribute_dictionary().get_id(s);
 	Corpus2::mask_t val = tagset.get_value_mask(s);
-	if (tagset.pos_dictionary().is_id_valid(pos)) {
+	if (pos >= 0) {
+		if (internals) {
+			std::cout << tagset.get_pos_mask(pos) << " (" << (int)pos << ")\n";
+		}
 		std::cout << s << " -> POS ->" ;
 		foreach (Corpus2::idx_t a, tagset.get_pos_attributes(pos)) {
 			std::string astr = tagset.attribute_dictionary().get_string(a);
-			if (tagset.get_pos_required_attributes(pos)[a]) {
+			if (tagset.pos_requires_attribute(pos, a)) {
 				std::cout << " " << astr;
 			} else {
 				std::cout << " [" << astr << "]";
 			}
 		}
 		std::cout << "\n";
-	} else if (tagset.attribute_dictionary().is_id_valid(atr)) {
+	} else if (atr > 0) {
+		if (internals) {
+			std::cout << tagset.get_attribute_mask(atr) << " (" << (int)atr << ")\n";
+		}
 		std::cout << s << " -> attribute ->";
 		foreach (Corpus2::mask_t v, tagset.get_attribute_values(atr)) {
 			std::cout << " " << tagset.get_value_name(v);
 		}
 		std::cout << "\nIn POSes:";
-		for (Corpus2::idx_t p = 0; p < tagset.pos_dictionary().size(); ++p) {
-			if (tagset.get_pos_attributes_flag(p)[atr]) {
+		for (Corpus2::idx_t p = 0; p < tagset.pos_count(); ++p) {
+			if (tagset.pos_has_attribute(p,atr)) {
 				std::cout << " " << tagset.pos_dictionary().get_string(p);
-				if (!tagset.get_pos_required_attributes(p)[atr]) {
+				if (!tagset.pos_requires_attribute(p, atr)) {
 					std::cout << "?";
 				}
 			}
@@ -123,6 +130,10 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s)
 		std::cout << "\n";
 	} else if (val.any()) {
 		Corpus2::idx_t a = tagset.get_value_attribute_index(val);
+		if (internals) {
+			std::cout << val << " (" << PwrNlp::lowest_bit(val) << ")\n";
+			std::cout << tagset.get_attribute_mask(a) << " (" << (int)a << ")\n";
+		}
 		std::cout << s << " -> value -> attribute ";
 		std::cout << tagset.attribute_dictionary().get_string(a);
 		std::cout << " .";
@@ -130,10 +141,10 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s)
 			std::cout << " " << tagset.get_value_name(v);
 		}
 		std::cout << "\nIn POSes:";
-		for (Corpus2::idx_t p = 0; p < tagset.pos_dictionary().size(); ++p) {
-			if (tagset.get_pos_attributes_flag(p)[a]) {
+		for (Corpus2::idx_t p = 0; p < tagset.pos_count(); ++p) {
+			if (tagset.pos_has_attribute(p, a)) {
 				std::cout << " " << tagset.pos_dictionary().get_string(p);
-				if (!tagset.get_pos_required_attributes(p)[a]) {
+				if (!tagset.pos_requires_attribute(p, a)) {
 					std::cout << "?";
 				}
 			}
@@ -144,7 +155,8 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s)
 	}
 }
 
-void tag_parse_cb(const Corpus2::Tagset& tagset, bool validate, bool sort, const std::string& s)
+void tag_parse_cb(const Corpus2::Tagset& tagset, bool validate, bool sort,
+		const std::string& s, bool internals)
 {
 	try {
 		Corpus2::Token t;
@@ -155,6 +167,9 @@ void tag_parse_cb(const Corpus2::Tagset& tagset, bool validate, bool sort, const
 			ss << tagset.tag_to_string(lex.tag());
 			if (validate) {
 				tagset.validate_tag(lex.tag(), false, &ss);
+			}
+			if (internals) {
+				ss << "\n" << lex.tag().raw_dump() << "";
 			}
 			out.push_back(ss.str());
 		}
@@ -171,7 +186,7 @@ void tag_parse_cb(const Corpus2::Tagset& tagset, bool validate, bool sort, const
 int main(int argc, char** argv)
 {
 	std::string tagset_load, tagset_save;
-	bool quiet = false;
+	bool quiet = false, internals = false;
 	bool parse = false, validate = false, sort = false;
 	using boost::program_options::value;
 
@@ -185,6 +200,8 @@ int main(int argc, char** argv)
 			 "Suppress startup info\n")
 			("parse,p", value(&parse)->zero_tokens(),
 			 "Parse complex tag strings mode")
+			("internals,i", value(&internals)->zero_tokens(),
+			 "Output internal representations")
 			("validate,v", value(&validate)->zero_tokens(),
 			 "Validate parsed tags")
 			("sort,s", value(&sort)->zero_tokens(),
@@ -236,13 +253,13 @@ int main(int argc, char** argv)
 					std::cerr << "(Tag parse mode)\n";
 				}
 				_prompt = "tag-parse> ";
-				f = boost::bind(&tag_parse_cb, boost::ref(tagset), validate, sort, _1);
+				f = boost::bind(&tag_parse_cb, boost::ref(tagset), validate, sort, _1, internals);
 			} else {
 				if (!quiet) {
 					std::cerr << "(Tagset query mode)\n";
 				}
 				_prompt = "tagset-query> ";
-				f = boost::bind(&tagset_query_cb, boost::ref(tagset), _1);
+				f = boost::bind(&tagset_query_cb, boost::ref(tagset), _1, internals);
 			}
 #ifdef HAVE_LIBEDIT
 			libedit_read_loop(f);
