@@ -420,6 +420,11 @@ const std::string& Tagset::get_pos_name(idx_t pos) const
 	return pos_dict_.get_string(pos);
 }
 
+const std::string& Tagset::get_pos_name(mask_t pos) const
+{
+	return pos_dict_.get_string(get_pos_index(pos));
+}
+
 mask_t Tagset::get_pos_mask(const string_range& pos) const
 {
 	return get_pos_mask(get_pos_index(pos));
@@ -431,6 +436,15 @@ mask_t Tagset::get_pos_mask(idx_t pos) const
 		return static_cast<mask_t>(1) << pos;
 	} else {
 		return 0;
+	}
+}
+
+idx_t Tagset::get_pos_index(mask_t pos) const
+{
+	if (pos.none()) {
+		return -1;
+	} else {
+		return PwrNlp::lowest_bit(pos);
 	}
 }
 

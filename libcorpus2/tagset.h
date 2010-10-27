@@ -266,7 +266,6 @@ public:
 		return attribute_dict_;
 	}
 
-
 	/// POS name -> index mapping
 	/// @returns -1 on invalid name
 	idx_t get_pos_index(const string_range& pos) const;
@@ -275,6 +274,10 @@ public:
 	/// @returns empty string on invalid index
 	const std::string& get_pos_name(idx_t pos) const;
 
+	/// POS mask -> name
+	/// @returns empty string on invalid index
+	const std::string& get_pos_name(mask_t pos) const;
+
 	/// POS name -> mask mapping
 	/// @return null mask on invalid name
 	mask_t get_pos_mask(const string_range& pos) const;
@@ -282,6 +285,10 @@ public:
 	/// POS index -> mask mapping
 	/// @return null mask on invalid index
 	mask_t get_pos_mask(idx_t pos) const;
+
+	/// POS mask -> index mapping
+	/// @return -1 on empty mask, unspecified in more tha one POS set
+	idx_t get_pos_index(mask_t pos) const;
 
 
 	/// Attribute name -> index mapping
