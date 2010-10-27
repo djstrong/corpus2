@@ -250,10 +250,40 @@ public:
 	 */
 	std::string tag_to_no_opt_string(const Tag &tag) const;
 
+	/**
+	 * Compute the number of singular tags that can be represented by the given
+	 * tag, with the following restrictions:
+	 * - the tags must be sub-tags of the given tag
+	 * - the tags must have a value for every attribute where the given tag has
+	 *   a non-zero value
+	 *
+	 * @returns 0 if the tag is null, 1 if the tag is sigular, otherwise the
+	 *          number of different singular tags conforming to the
+	 *          restrictions above that can be constructed from the given tag.
+	 */
 	size_t tag_size(const Tag& tag) const;
 
+	/**
+	 * Check if a tag actually represents only one tag.
+	 *
+	 * A tag is singular if it:
+	 *  - has exactly one POS bit set
+	 *  - has at most one bit set in each attribute.
+	 * Note that the tag might be invalid, this is not checked.
+	 */
 	bool tag_is_singular(const Tag& tag) const;
 
+	/**
+	 * Split a tag into a vector of singular tags. Validity is not checked.
+	 *
+	 * @see tag_size
+	 *
+	 * @returns a vector of tags, each of which is singular, with size equal
+	 *          to tag_size called on the tag being split. Each returned tag
+	 *          in the resulting vector is a sub-tag of the original tag, and
+	 *          all not-empty attributes of the original tag are not empty in
+	 *          the split tag as well.
+	 */
 	std::vector<Tag> split_tag(const Tag& tag) const;
 
 	/// POS name <-> index dictionary getter
@@ -338,18 +368,25 @@ public:
 	/// Getter for the pos -> required attributes flag vector
 	const std::vector<bool>& get_pos_required_attributes(idx_t pos) const;
 
+	/// @returns true if the given pos _requires_ the given attribute
 	bool pos_requires_attribute(idx_t pos, idx_t attribute) const;
 
+	/// @returns true if the given pos _allows_ the given attribute
 	bool pos_has_attribute(idx_t pos, idx_t attribute) const;
 
+	/// Getter for a mask covering all valid values for a given pos
 	mask_t get_pos_value_mask(idx_t pos) const;
 
+	/// Getter for a mask covering all required attributes of a pos
 	mask_t get_pos_required_mask(idx_t pos) const;
 
+	/// The number of POSes in this tagset
 	int pos_count() const;
 
+	/// The number of attributes in this tagset
 	int attribute_count() const;
 
+	/// The number of values in this tagset
 	int value_count() const;
 
 	/**
@@ -410,7 +447,7 @@ public:
 	/// get the original index of the POS in the tagset definition
 	int get_original_pos_index(idx_t pos) const;
 
-
+	/// Helper iterator class for the mask ranges
 	struct mask_iterator
 	{
 		typedef mask_t value_type;
@@ -435,16 +472,21 @@ public:
 		mask_t i_;
 	};
 
+	/// Range getter for all the valid POS masks, in order, compatible with
+	/// boost's foreach
+	/// It is possible to use a foreach (mask_t m, tagset.all_*_masks()) {...}
 	boost::iterator_range<mask_iterator> all_pos_masks() const {
 		return boost::iterator_range<mask_iterator>(static_cast<mask_t>(1),
 				static_cast<mask_t>(1) << pos_count());
 	}
 
+	/// Range getter for all valid value masks
 	boost::iterator_range<mask_iterator> all_value_masks() const {
 		return boost::iterator_range<mask_iterator>(static_cast<mask_t>(1),
 				static_cast<mask_t>(1) << value_count());
 	}
 
+	/// Getter attribute masks
 	const std::vector<mask_t>& all_attribute_masks() const {
 		return attribute_masks_;
 	}
@@ -470,8 +512,10 @@ private:
 	/// String - number dictionary for the attribute names
 	SymbolDictionary<idx_t> attribute_dict_;
 
+	/// Value names to masks
 	std::map<std::string, mask_t> string_to_value_mask_;
 
+	/// Value masks to names
 	std::map<mask_t, std::string> value_mask_to_string_;
 
 	/// The original indices of the POSes in the tagset definition
@@ -480,6 +524,7 @@ private:
 	/// mapping from attribute indices to valid value masks
 	std::vector< std::vector<mask_t> > attribute_values_;
 
+	/// Attribute index to combined value mask
 	std::vector<mask_t> attribute_masks_;
 
 	/// reverse mapping, from a value mask to the respective attribute
@@ -492,16 +537,19 @@ private:
 	/// output and the behavior of the _ special character in parsing
 	std::vector< std::vector<idx_t> > pos_attributes_;
 
+	/// POS to required attribute indices
 	std::vector< std::vector<idx_t> > pos_required_attributes_idx_;
 
+	/// POS to combined valid attriubute value mask
 	std::vector<mask_t> pos_valid_value_masks_;
 
+	/// POS to combined required attriubute value mask
 	std::vector<mask_t> pos_required_value_masks_;
 
-	/// Flags for attributes which are valid for a given POS
+	/// Flags for attribute indices which are valid for a given POS
 	std::vector< std::vector<bool> > pos_valid_attributes_;
 
-	/// Flags for attributes which are required for a given POS
+	/// Flags for attribute indices which are required for a given POS
 	std::vector< std::vector<bool> > pos_required_attributes_;
 };
 
