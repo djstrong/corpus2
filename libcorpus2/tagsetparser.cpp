@@ -164,7 +164,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 	}
 	tagset.pos_dict_.load_sorted_data(vec);
 	if (tagset.pos_dict_.size() == 0) {
-		throw TagsetParseError("No POS in tagset", 0, "");
+		throw TagsetParseError("No POS in tagset", line_no, "");
 	}
 	for (size_t i = 0; i < poses_plain.size(); ++i) {
 		idx_t p = tagset.pos_dictionary().get_id(poses_plain[i]);
