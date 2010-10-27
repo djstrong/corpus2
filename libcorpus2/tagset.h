@@ -99,10 +99,10 @@ public:
 	Tagset();
 
 	/**
-	 * Tagset convenience constructor, parse a string as if it were the
+	 * Tagset convenience creation function, parse a string as if it were the
 	 * contents of a tagset ini file
 	 */
-	explicit Tagset(const char*);
+	static Tagset from_data(const char*);
 
 	/**
 	 * Tag parsing -- functional version, whole tag string.

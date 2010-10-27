@@ -73,12 +73,11 @@ Tagset::Tagset()
 {
 }
 
-Tagset::Tagset(const char *s)
-	: id_(++next_id_)
+Tagset Tagset::from_data(const char *s)
 {
 	std::stringstream ss;
 	ss << s;
-	*this = TagsetParser::load_ini(ss);
+	return TagsetParser::load_ini(ss);
 }
 
 std::string Tagset::id_string() const
