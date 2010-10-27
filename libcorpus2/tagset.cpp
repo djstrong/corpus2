@@ -107,13 +107,13 @@ void Tagset::parse_tag(const string_range &s, bool allow_extra,
 namespace {
 	void append_to_multi_tag(
 			std::vector< mask_t > & current,
-			const std::vector<mask_t> & to_add)
+			const std::vector<mask_t> & to_add, mask_t to_add_attr)
 	{
 		size_t current_size = current.size();
 		for (size_t ai = 1; ai < to_add.size(); ++ai) {
 			for (size_t oi = 0; oi < current_size; ++oi) {
 				current.push_back(current[oi]);
-				current.back() |= to_add[ai];
+				current.back() = (current.back() & ~to_add_attr) | to_add[ai];
 			}
 		}
 		for (size_t i = 0; i < current_size; ++i) {
@@ -142,9 +142,19 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 			string_range_vector dots;
 			boost::algorithm::split(dots, r, boost::is_any_of("."));
 			std::vector<mask_t> values;
+			mask_t amask;
 			foreach (string_range& dot, dots) {
 				mask_t v = get_value_mask(boost::copy_range<std::string>(dot));
-				//TODO ensure all in one attribute, pass mask to append_
+				mask_t curr = get_attribute_mask(get_value_attribute(v));
+
+
+				if (amask.none()) {
+					amask = curr;
+				} else if (amask != curr) {
+					throw TagParseError("Values from two attributes split by dot",
+							boost::copy_range<std::string>(r), "",
+							id_string());
+				}
 				if (v.none()) {
 					throw TagParseError("Unknown attribute value",
 							boost::copy_range<std::string>(r), "",
@@ -152,7 +162,7 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 				}
 				values.push_back(v);
 			}
-			append_to_multi_tag(all_variants, values);
+			append_to_multi_tag(all_variants, values, amask);
 		} else if (!r.empty()) { // underscore handling
 			if (fi - 1 >= pos_attributes_[pos_idx].size()) {
 				throw TagParseError(
@@ -160,8 +170,8 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 						"", "", id_string());
 			}
 			idx_t attr = pos_attributes_[pos_idx][fi - 1];
-			//TODO use attr mask
-			append_to_multi_tag(all_variants, attribute_values_[attr]);
+			mask_t amask = get_attribute_mask(attr);
+			append_to_multi_tag(all_variants, attribute_values_[attr], amask);
 		} // else empty, do nothing
 	}
 	foreach (mask_t variant, all_variants) {
@@ -231,16 +241,16 @@ Tag Tagset::parse_simple_tag(const string_range_vector &ts,
 
 Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 {
-	mask_t required_values = get_pos_value_mask(pos_idx);
+	mask_t required_values = get_pos_required_mask(pos_idx);
 	//std::cerr << values << "\n";
 	//std::cerr << required_values << "\n";
 	//std::cerr << (required_values & values) << "\n";
 	//std::cerr << PwrNlp::count_bits_set(required_values & values)
-	//		<< pos_required_attributes_idx_[pos_idx].size() << "\n";
+	//		<< " of " << pos_required_attributes_idx_[pos_idx].size() << "\n";
 	size_t has_req = PwrNlp::count_bits_set(required_values & values);
 	if (has_req != pos_required_attributes_idx_[pos_idx].size()) {
 		throw TagParseError("Required attribute missing",
-				"",
+				tag_to_string(Tag(get_pos_mask(pos_idx), values)),
 				get_pos_name(pos_idx), id_string());
 	}
 	mask_t valid_values = get_pos_value_mask(pos_idx);
@@ -251,7 +261,7 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 				get_value_name(first_invalid),
 				get_pos_name(pos_idx), id_string());
 	}
-	// check singularity
+	// check singularity?
 	return Tag(get_pos_mask(pos_idx), values);
 }
 
@@ -265,10 +275,16 @@ Tag Tagset::make_ign_tag() const
 bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 		std::ostream* os) const
 {
-	// check singularity
 	if (t.pos_count() != 1) {
 		if (os) {
-			(*os) << " POS not singular : " << t.pos_count();
+			(*os) << " POS not singular :  " << t.pos_count();
+		}
+		return false;
+	}
+	size_t ts = tag_size(t);
+	if (ts != 1) {
+		if (os) {
+			(*os) << " Tag not singular :  " << ts;
 		}
 		return false;
 	}
@@ -288,7 +304,7 @@ bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 		if (value == 0) {
 			if (required[i]) {
 				if (os) {
-					(*os)  << " Required attribuite "
+					(*os)  << " red attribuite "
 						<< get_attribute_name(i)
 						<< " missing";
 				}
@@ -397,7 +413,9 @@ std::vector<Tag> Tagset::split_tag(const Tag& tag) const
 			foreach (mask_t vm, get_attribute_values(a)) {
 				if ((v & vm).any()) {
 					if (dup) {
-						std::copy(tags.begin(), tags.begin() + sz, std::back_inserter(tags));
+						for (size_t i = 0; i < sz; ++i) {
+							tags.push_back(tags[i]);
+						}
 					}
 					dup = true;
 					for (size_t i = 0; i < sz; ++i) {
