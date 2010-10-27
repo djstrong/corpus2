@@ -2,8 +2,8 @@
 PROJECT(corpus2)
 
 set(corpus2_ver_major "0")
-set(corpus2_ver_minor "0")
-set(corpus2_ver_patch "2")
+set(corpus2_ver_minor "1")
+set(corpus2_ver_patch "0")
 
 
 if(NOT LIBCORPUS2_SRC_DATA_DIR)

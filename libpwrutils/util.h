@@ -21,6 +21,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <iostream>
 #include <string>
+#include <climits>
 
 namespace PwrNlp {
 
@@ -75,6 +76,8 @@ void utf8_string_to_uchar_container(const std::string& s,
 		}
 	}
 }
+
+
 
 } /* end ns PwrNlp */
 

@@ -12,8 +12,9 @@ struct F {
 			"A tag tog other a3 \n"
 			"B data thing tag-thing thang\n"
 			"C a b c \n"
-			"[POS]\n some A B [C]\n";
-		tagset.reset(new Corpus2::Tagset(tagset_string));
+			"[POS]\n some A B [C]\n same A B \n P3 [A] [B]\n";
+		tagset.reset(new Corpus2::Tagset());
+		*tagset = Corpus2::Tagset::from_data(tagset_string);
 	}
 	boost::shared_ptr<Corpus2::Tagset> tagset;
 
@@ -22,10 +23,15 @@ struct F {
 		std::set<std::string> actual;
 		std::vector<Corpus2::Tag> tags;
 		Corpus2::Token t;
-		tagset->lexemes_into_token(t, UnicodeString(), s);
+		try {
+			tagset->lexemes_into_token(t, UnicodeString(), s);
+		} catch (Corpus2::TagParseError& e) {
+			throw;
+		}
+
 		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
 			const Corpus2::Tag& tag = lex.tag();
-			BOOST_WARN(tagset->validate_tag(tag, false));
+			BOOST_WARN(tagset->validate_tag(tag, false, &std::cerr));
 			actual.insert(tagset->tag_to_string(tag));
 			tags.push_back(tag);
 		}
@@ -89,9 +95,9 @@ BOOST_FIXTURE_TEST_CASE( dots_plus, F )
 
 BOOST_FIXTURE_TEST_CASE( missing, F )
 {
-	const char tag[] = "some:data";
+	const char tag[] = "P3:data";
 	std::set<std::string> r;
-	r.insert("some::data");
+	r.insert("P3:data");
 	check_split(tag, r);
 }
 
@@ -158,4 +164,35 @@ BOOST_FIXTURE_TEST_CASE( underscore_dots, F )
 
 	check_split(tag, r);
 }
+
+
+BOOST_FIXTURE_TEST_CASE( tag_size, F )
+{
+	Corpus2::Tag t = tagset->parse_simple_tag("some:tag:data", false);
+	Corpus2::Tag t2 = tagset->parse_simple_tag("some:tog:data", false);
+	Corpus2::Tag t3 = tagset->parse_simple_tag("same:tag:data", false);
+	BOOST_CHECK(tagset->tag_is_singular(t));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t), 1);
+	BOOST_CHECK(tagset->tag_is_singular(t2));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t2), 1);
+	BOOST_CHECK(tagset->tag_is_singular(t3));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t3), 1);
+	t.add_values(t2.get_values());
+	BOOST_CHECK(!tagset->tag_is_singular(t));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t), 2);
+	t.add_pos(t3.get_pos());
+	BOOST_CHECK(!tagset->tag_is_singular(t));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t), 4);
+	Corpus2::Tag t4 = tagset->parse_simple_tag("same:other:thang", true);
+	t.add_values(t4.get_values() & tagset->get_attribute_mask(std::string("A")));
+	BOOST_CHECK_EQUAL(tagset->tag_size(t), 6);
+	std::vector<Corpus2::Tag> tags = tagset->split_tag(t);
+	BOOST_CHECK_EQUAL(tags.size(), 6);
+	Corpus2::Tag tt;
+	foreach (Corpus2::Tag t, tags) {
+		tt.combine_with(t);
+	}
+	BOOST_CHECK(tt == t);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

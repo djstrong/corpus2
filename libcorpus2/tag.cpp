@@ -2,74 +2,58 @@
 #include <libcorpus2/tagsetmanager.h>
 
 #include <libpwrutils/foreach.h>
+#include <libpwrutils/util.h>
 
 #include <cstring>
 #include <sstream>
 
 #include <boost/functional/hash.hpp>
 
+#include <bitset>
+
 namespace Corpus2 {
 
-Tag::Tag()
-	: pos_id_(-1), tagset_id_(-1)
+int Tag::pos_count() const
 {
+	return PwrNlp::count_bits_set(pos_);
 }
 
-Tag::Tag(tagset_idx_t tagset_id, pos_idx_t pos)
-	: pos_id_(pos), tagset_id_(tagset_id)
+int Tag::get_pos_index() const
 {
-}
-
-Tag::Tag(tagset_idx_t tagset_id, pos_idx_t pos,
-		const std::vector<value_idx_t> &values)
-	: pos_id_(pos), values_(values), tagset_id_(tagset_id)
-{
-}
-
-bool Tag::has_valid_tagset() const
-{
-	return tagset_id_ != static_cast<tagset_idx_t>(-1)
-		&& TagsetManagerSingleton::Instance().get_cache_entry(tagset_id());
+	if (pos_ == 0) return -1;
+	return PwrNlp::lowest_bit(pos_);
 }
 
 std::string Tag::raw_dump() const
 {
 	std::ostringstream ss;
 	ss << "[";
-	ss << static_cast<int>(tagset_id_) << "#" << static_cast<int>(pos_id_);
-	foreach (value_idx_t v, values_) {
-		ss << ":" << static_cast<int>(v) ;
-	}
+	std::bitset<sizeof(mask_t) * CHAR_BIT> binaryp(pos_);
+	std::bitset<sizeof(mask_t) * CHAR_BIT> binaryv(values_);
+	//ss << static_cast<int>(tagset_id_);
+	ss << "" << pos_;
+	ss << ":" << values_;
 	ss << "]";
 	return ss.str();
 }
 
 bool Tag::operator<(const Tag& other) const
 {
-	return tagset_id_ < other.tagset_id_
-			|| (tagset_id_ == other.tagset_id_
-				&& (pos_id_ < other.pos_id_
-				|| (pos_id_ == other.pos_id_
-					&& (values_.size() < other.values_.size()
-					|| (values_.size() == other.values_.size()
-						&& memcmp(&values_[0], &other.values_[0],
-							std::min(values_.size(),
-								other.values_.size())) < 0)))));
+	return pos_ < other.pos_ ||
+		(pos_ == other.pos_ &&
+		 values_ < other.values_);
 }
 
 bool Tag::operator ==(const Tag& other) const
 {
-	return tagset_id_ == other.tagset_id_
-			&& pos_id_ == other.pos_id_
-			&& values_ == other.values_;
+	return pos_ == other.pos_ && values_ == other.values_;
 }
 
 size_t hash_value(const Tag& tag)
 {
 	std::size_t seed = 0;
-	boost::hash_combine(seed, tag.pos_id_);
-	boost::hash_combine(seed, tag.tagset_id_);
-	boost::hash_combine(seed, tag.values_);
+	boost::hash_combine(seed, tag.get_pos());
+	boost::hash_combine(seed, tag.get_values());
 	return seed;
 }
 
