@@ -129,7 +129,7 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s,
 		}
 		std::cout << "\n";
 	} else if (val.any()) {
-		Corpus2::idx_t a = tagset.get_value_attribute_index(val);
+		Corpus2::idx_t a = tagset.get_value_attribute(val);
 		if (internals) {
 			std::cout << val << " (" << PwrNlp::lowest_bit(val) << ")\n";
 			std::cout << tagset.get_attribute_mask(a) << " (" << (int)a << ")\n";

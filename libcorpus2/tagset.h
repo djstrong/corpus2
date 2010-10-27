@@ -319,10 +319,6 @@ public:
 	/// @returns empty string on invalid mask
 	const std::string& get_value_name(mask_t v) const;
 
-	/// Value mask -> attribute index
-	/// @returns -1 on invalid mask
-	idx_t get_value_attribute_index(mask_t v) const;
-
 
 	/// Getter for the pos -> valid attributes (in order) mapping
 	/// Valid attributes are both the required and optional attributes.

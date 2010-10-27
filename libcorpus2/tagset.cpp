@@ -491,19 +491,6 @@ const std::string& Tagset::get_value_name(mask_t v) const
 	}
 }
 
-idx_t Tagset::get_value_attribute_index(mask_t v) const
-{
-	std::map<mask_t, idx_t>::const_iterator ci;
-	ci = value_mask_to_attribute_index_.find(v);
-	if (ci == value_mask_to_attribute_index_.end()) {
-		return -1;
-	} else {
-		return ci->second;
-	}
-}
-
-
-
 idx_t Tagset::get_value_attribute(mask_t v) const
 {
 	std::map<mask_t, idx_t>::const_iterator ci;
