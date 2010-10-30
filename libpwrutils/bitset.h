@@ -6,6 +6,7 @@
 #include <bitset>
 #include <boost/functional/hash.hpp>
 #include <boost/pending/lowest_bit.hpp>
+#include <climits>
 
 
 namespace PwrNlp {
