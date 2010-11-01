@@ -26,19 +26,23 @@ BOOST_AUTO_TEST_CASE( empty )
 
 BOOST_AUTO_TEST_CASE( minimal )
 {
+	Corpus2::Tagset t;
 	try {
-		parse(PRE POSA);
+		t = parse(PRE POSA);
 	} catch (Corpus2::TagsetParseError& e) {
 		BOOST_FAIL(e.info());
 	}
+	BOOST_CHECK_EQUAL(t.pos_count(), 1);
 }
 BOOST_AUTO_TEST_CASE( minimal_nonewline )
 {
+	Corpus2::Tagset t;
 	try {
-		parse(PRE "[POS]\n POS1");
+		t = parse(PRE "[POS]\n POS1");
 	} catch (Corpus2::TagsetParseError& e) {
 		BOOST_FAIL(e.info());
 	}
+	BOOST_CHECK_EQUAL(t.pos_count(), 1);
 }
 
 BOOST_AUTO_TEST_CASE( dupe_val )

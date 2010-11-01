@@ -19,7 +19,7 @@ Lexeme Lexeme::create(const UnicodeString& lemma, const Tag& tag)
 
 bool Lexeme::is_null() const
 {
-	return lemma().length() == 0 || !tag().has_valid_tagset();
+	return lemma().length() == 0 || tag().is_null();
 }
 
 bool Lexeme::operator<(const Lexeme& other) const

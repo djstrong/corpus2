@@ -6,11 +6,13 @@
 #include <libcorpus2/tagsetparser.h>
 
 #include <libpwrutils/foreach.h>
+#include <libpwrutils/util.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/strong_typedef.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
+#include <boost/pending/lowest_bit.hpp>
 
 #include <sstream>
 #include <iostream>
@@ -71,12 +73,11 @@ Tagset::Tagset()
 {
 }
 
-Tagset::Tagset(const char *s)
-	: id_(++next_id_)
+Tagset Tagset::from_data(const char *s)
 {
 	std::stringstream ss;
 	ss << s;
-	*this = TagsetParser::load_ini(ss);
+	return TagsetParser::load_ini(ss);
 }
 
 std::string Tagset::id_string() const
@@ -104,18 +105,18 @@ void Tagset::parse_tag(const string_range &s, bool allow_extra,
 
 namespace {
 	void append_to_multi_tag(
-			std::vector< std::vector<value_idx_t> > & current,
-			const std::vector<value_idx_t> & to_add)
+			std::vector< mask_t > & current,
+			const std::vector<mask_t> & to_add, mask_t to_add_attr)
 	{
-		foreach (std::vector<value_idx_t>& o, current) {
-			o.push_back(to_add[0]);
-		}
 		size_t current_size = current.size();
 		for (size_t ai = 1; ai < to_add.size(); ++ai) {
 			for (size_t oi = 0; oi < current_size; ++oi) {
 				current.push_back(current[oi]);
-				current.back().back() = to_add[ai];
+				current.back() = (current.back() & ~to_add_attr) | to_add[ai];
 			}
+		}
+		for (size_t i = 0; i < current_size; ++i) {
+			current[i] |= to_add[0];
 		}
 	}
 }
@@ -126,41 +127,54 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 	if (fields.empty()) {
 		throw TagParseError("No POS", "", "", id_string());
 	}
-	pos_idx_t pos_id = pos_dict_.get_id(fields[0]);
-	if (!pos_dict_.is_id_valid(pos_id)) {
+	idx_t pos_idx = get_pos_index(fields[0]);
+	if (pos_idx < 0) {
 		throw TagParseError("Invalid POS",
 				boost::copy_range<std::string>(fields[0]), "",
 				id_string());
 	}
-	std::vector< std::vector<value_idx_t> > opts(1);
+	std::vector< mask_t > all_variants;
+	all_variants.push_back(0);
 	for (size_t fi = 1; fi < fields.size(); ++fi) {
 		const string_range& r = fields[fi];
 		if (r.size() != 1 || *r.begin() != '_') {
 			string_range_vector dots;
 			boost::algorithm::split(dots, r, boost::is_any_of("."));
-			std::vector<value_idx_t> values;
+			std::vector<mask_t> values;
+			mask_t amask;
 			foreach (string_range& dot, dots) {
-				value_idx_t v = value_dict_.get_id(dot);
-				if (!value_dict_.is_id_valid(v)) {
+				mask_t v = get_value_mask(boost::copy_range<std::string>(dot));
+				mask_t curr = get_attribute_mask(get_value_attribute(v));
+
+
+				if (amask.none()) {
+					amask = curr;
+				} else if (amask != curr) {
+					throw TagParseError("Values from two attributes split by dot",
+							boost::copy_range<std::string>(r), "",
+							id_string());
+				}
+				if (v.none()) {
 					throw TagParseError("Unknown attribute value",
 							boost::copy_range<std::string>(r), "",
 							id_string());
 				}
 				values.push_back(v);
 			}
-			append_to_multi_tag(opts, values);
+			append_to_multi_tag(all_variants, values, amask);
 		} else if (!r.empty()) { // underscore handling
-			if (fi - 1 >= pos_attributes_[pos_id].size()) {
+			if (fi - 1 >= pos_attributes_[pos_idx].size()) {
 				throw TagParseError(
 						"Underscore beyond last attribute for this POS",
 						"", "", id_string());
 			}
-			attribute_idx_t attr = pos_attributes_[pos_id][fi - 1];
-			append_to_multi_tag(opts, attribute_values_[attr]);
+			idx_t attr = pos_attributes_[pos_idx][fi - 1];
+			mask_t amask = get_attribute_mask(attr);
+			append_to_multi_tag(all_variants, attribute_values_[attr], amask);
 		} // else empty, do nothing
 	}
-	foreach (std::vector<value_idx_t>& opt, opts) {
-		sink(make_tag(pos_id, opt, allow_extra));
+	foreach (mask_t variant, all_variants) {
+		sink(make_tag(pos_idx, variant, allow_extra));
 	}
 }
 
@@ -196,108 +210,101 @@ Tag Tagset::parse_simple_tag(const string_range_vector &ts,
 		throw TagParseError("Empty POS+attribute list", "", "",
 				id_string());
 	}
-	pos_idx_t pos_id = pos_dict_.get_id(ts[0]);
-	if (!pos_dict_.is_id_valid(pos_id)) {
+	idx_t pos_idx = get_pos_index(ts[0]);
+	if (pos_idx < 0) {
 		throw TagParseError("Invalid POS",
 				boost::copy_range<std::string>(ts[0]), "", id_string());
 	}
-	const std::vector<bool>& valid_attrs_mask =
-			get_pos_valid_attributes(pos_id);
-	Tag tag(id_, pos_id);
-	std::vector<value_idx_t> vvv(attribute_dict_.size(),
-			static_cast<value_idx_t>(0));
-	tag.values().swap(vvv);
-
+	mask_t values = 0;
 	for (size_t i = 1; i < ts.size(); ++i) {
 		if (!ts[i].empty()) {
-			value_idx_t val_id = value_dict_.get_id(ts[i]);
-			if (!value_dict_.is_id_valid(val_id)) {
-				attribute_idx_t a = attribute_dict_.get_id(ts[i]);
-				if (attribute_dict_.is_id_valid(a)) {
-					tag.values()[a] = 0;
+			mask_t val = get_value_mask(boost::copy_range<std::string>(ts[i]));
+			if (val == 0) {
+				mask_t a = get_attribute_mask(ts[i]);
+				if (a != 0) {
+					values &= (~a);
 				} else {
 					throw TagParseError("Unknown attribute value",
 							boost::copy_range<std::string>(ts[i]), "",
 							id_string());
 				}
 			} else {
-				attribute_idx_t attr_id = get_value_attribute(val_id);
-				if (valid_attrs_mask[attr_id] || allow_extra) {
-					tag.values()[attr_id] = val_id;
-				}
+				mask_t a = get_attribute_mask(get_value_attribute(val));
+				values = (values & ~a) | val;
 			}
 		}
 	}
-	return tag;
+
+	return make_tag(pos_idx, values, allow_extra);
 }
 
-Tag Tagset::make_tag(pos_idx_t pos, const std::vector<value_idx_t>& values,
-		bool allow_extra) const
+Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 {
-	const std::vector<bool>& valid_attrs_mask =
-			get_pos_valid_attributes(pos);
-	Tag tag(id_, pos);
-	std::vector<value_idx_t> vvv(attribute_dict_.size(),
-			static_cast<value_idx_t>(0));
-	tag.values().swap(vvv);
-
-	for (size_t i = 0; i < values.size(); ++i) {
-		value_idx_t val_id = values[i];
-		attribute_idx_t attr_id = get_value_attribute(val_id);
-		if (valid_attrs_mask[attr_id] || allow_extra) {
-			tag.values()[attr_id] = val_id;
-		} else {
-			throw TagParseError("Attribute not valid for this POS",
-					attribute_dict_.get_string(attr_id),
-					pos_dict_.get_string(pos), id_string());
-		}
+	mask_t required_values = get_pos_required_mask(pos_idx);
+	//std::cerr << values << "\n";
+	//std::cerr << required_values << "\n";
+	//std::cerr << (required_values & values) << "\n";
+	//std::cerr << PwrNlp::count_bits_set(required_values & values)
+	//		<< " of " << pos_required_attributes_idx_[pos_idx].size() << "\n";
+	size_t has_req = PwrNlp::count_bits_set(required_values & values);
+	if (has_req != pos_required_attributes_idx_[pos_idx].size()) {
+		throw TagParseError("Required attribute missing",
+				tag_to_string(Tag(get_pos_mask(pos_idx), values)),
+				get_pos_name(pos_idx), id_string());
 	}
-	return tag;
+	mask_t valid_values = get_pos_value_mask(pos_idx);
+	mask_t invalid = values & ~valid_values;
+	if (invalid.any() && !allow_extra) {
+		mask_t first_invalid = PwrNlp::lowest_bit(invalid);
+		throw TagParseError("Attribute not valid for this POS",
+				get_value_name(first_invalid),
+				get_pos_name(pos_idx), id_string());
+	}
+	// check singularity?
+	return Tag(get_pos_mask(pos_idx), values);
 }
 
 Tag Tagset::make_ign_tag() const
 {
-	pos_idx_t ign_pos = pos_dictionary().get_id("ign");
-	assert(pos_dictionary().is_id_valid(ign_pos));
-	Tag tag(id_, ign_pos);
-	tag.values().resize(attribute_dict_.size(),
-			static_cast<value_idx_t>(0));
-	return tag;
+	mask_t ign_pos_mask = get_pos_mask("ign");
+	assert(ign_pos_mask.any());
+	return Tag(ign_pos_mask);
 }
 
 bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 		std::ostream* os) const
 {
-	if (!pos_dict_.is_id_valid(t.pos_id())) {
+	if (t.pos_count() != 1) {
 		if (os) {
-			(*os) << " POS not valid : " << (int) t.pos_id();
+			(*os) << " POS not singular :  " << t.pos_count();
 		}
 		return false;
 	}
-	std::vector<bool> valid = get_pos_valid_attributes(t.pos_id());
-	std::vector<bool> required = get_pos_required_attributes(t.pos_id());
-	if (t.values().size() < attribute_dict_.size()) {
+	size_t ts = tag_size(t);
+	if (ts != 1) {
 		if (os) {
-			(*os) << " Values size below tagset attribute count: "
-				<< t.values().size() << "<" << attribute_dict_.size();
+			(*os) << " Tag not singular :  " << ts;
 		}
 		return false;
 	}
-	if (!allow_extra && t.values().size() > attribute_dict_.size()) {
+
+	idx_t pos_idx = t.get_pos_index();
+	if (!pos_dict_.is_id_valid(pos_idx)) {
 		if (os) {
-			(*os) << " Values size above tagset attribute count"
-				<< t.values().size() << ">" << attribute_dict_.size();
+			(*os) << " POS not valid : " << (int)pos_idx;
 		}
 		return false;
 	}
-	for (attribute_idx_t i = static_cast<attribute_idx_t>(0);
-			i < t.values().size(); ++i) {
-		value_idx_t v = t.values()[i];
-		if (v == 0) {
+	std::vector<bool> valid = get_pos_attributes_flag(pos_idx);
+	std::vector<bool> required = get_pos_required_attributes(pos_idx);
+
+	for (idx_t i = 0; i < attribute_count(); ++i) {
+		mask_t value = t.get_values_for(get_attribute_mask(i));
+		if (value == 0) {
 			if (required[i]) {
 				if (os) {
-					(*os)  << " Required attribuite "
-						<< attribute_dictionary().get_string(i)
+					(*os)  << " red attribuite "
+						<< get_attribute_name(i)
 						<< " missing";
 				}
 				return false;
@@ -306,27 +313,9 @@ bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 			if (!valid[i] && !allow_extra) {
 				if (os) {
 					(*os) << " Extra attribute value: "
-						<< value_dictionary().get_string(v)
+						<< get_value_name(value)
 						<< " (attribute "
-						<< attribute_dictionary().get_string(i) << ")";
-				}
-				return false;
-			}
-			if (!value_dict_.is_id_valid(v)) {
-				if (os) {
-					(*os) << " Invalid value at attribite "
-						<< attribute_dictionary().get_string(i);
-				}
-				return false;
-			}
-			attribute_idx_t a = value_attribute_[v];
-			if (a != i) {
-				if (os) {
-					(*os) << " Value does not match attribute, got "
-						<< value_dictionary().get_string(v) << " ("
-						<< attribute_dictionary().get_string(a) << ") in"
-						<< attribute_dictionary().get_string(i)
-						<< "'s position";
+						<< get_attribute_name(i) << ")";
 				}
 				return false;
 			}
@@ -338,23 +327,25 @@ bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 std::string Tagset::tag_to_string(const Tag &tag) const
 {
 	std::ostringstream ss;
-	ss << pos_dict_.get_string(tag.pos_id());
-	const std::vector<attribute_idx_t>& attrs =
-			get_pos_attributes(tag.pos_id());
-	foreach (const attribute_idx_t& a, attrs) {
-		if (pos_required_attributes_[tag.pos_id()][a] ||
-				tag.values()[a] > 0) {
+	idx_t pos_idx = tag.get_pos_index();
+	ss << get_pos_name(pos_idx);
+	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
+	foreach (const idx_t& a, attrs) {
+		mask_t value = tag.get_values_for(get_attribute_mask(a));
+		if (pos_requires_attribute(pos_idx, a) || value.any()) {
 			ss << ":";
-			if (tag.values()[a] > 0) {
-				ss << value_dict_.get_string(tag.values()[a]);
+			if (value.any()) {
+				ss << get_value_name(value);
 			}
 		}
 	}
 	// print extra attributes
-	for (size_t i = 0; i < attribute_dict_.size(); ++i) {
-		if (tag.values()[i] > 0 &&
-				!pos_valid_attributes_[tag.pos_id()][i]) {
-			ss << ":" << value_dict_.get_string(tag.values()[i]);
+	for (idx_t a = 0; a < attribute_count(); ++a) {
+		if (!pos_has_attribute(pos_idx, a)) {
+			mask_t value = tag.get_values_for(get_attribute_mask(a));
+			if (value.any()) {
+				ss << ":" << get_value_name(value);
+			}
 		}
 	}
 	return ss.str();
@@ -363,56 +354,238 @@ std::string Tagset::tag_to_string(const Tag &tag) const
 std::string Tagset::tag_to_no_opt_string(const Tag &tag) const
 {
 	std::ostringstream ss;
-	ss << pos_dict_.get_string(tag.pos_id());
-	const std::vector<attribute_idx_t>& attrs =
-			get_pos_attributes(tag.pos_id());
-	foreach (const attribute_idx_t& a, attrs) {
+	idx_t pos_idx = tag.get_pos_index();
+	ss << get_pos_name(pos_idx);
+	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
+	foreach (const idx_t& a, attrs) {
+		mask_t value = tag.get_values_for(get_attribute_mask(a));
 		ss << ":";
-		if (tag.values()[a] > 0) {
-			ss << value_dict_.get_string(tag.values()[a]);
+		if (value.any()) {
+			ss << get_value_name(value);
 		} else {
-			ss << attribute_dict_.get_string(a);
+			ss << get_attribute_name(a);
 		}
 	}
 	return ss.str();
 }
 
-attribute_idx_t Tagset::get_value_attribute(value_idx_t id) const
+size_t Tagset::tag_size(const Tag& tag) const
 {
-	if (!value_dict_.is_id_valid(id)) {
-		std::stringstream ss;
-		ss << "get_value_attribute fail " << (int)id;
-		throw Corpus2Error(ss.str());
+	size_t s = PwrNlp::count_bits_set(tag.get_pos());
+	foreach (mask_t attribute_mask, all_attribute_masks()) {
+		mask_t values = tag.get_values_for(attribute_mask);
+		size_t x = PwrNlp::count_bits_set(values);
+		if (x > 1) {
+			s *= x;
+		}
 	}
-	return value_attribute_[id];
+	return s;
 }
 
-const std::vector<value_idx_t>& Tagset::get_attribute_values(
-		attribute_idx_t a) const
+bool Tagset::tag_is_singular(const Tag& tag) const
 {
-	assert(attribute_dict_.is_id_valid(a));
-	return attribute_values_[a];
+	if (PwrNlp::count_bits_set(tag.get_pos()) != 1) return false;
+	foreach (mask_t attribute_mask, all_attribute_masks()) {
+		mask_t values = tag.get_values_for(attribute_mask);
+		if (PwrNlp::count_bits_set(values) > 1) return false;
+	}
+	return true;
 }
 
-const std::vector<attribute_idx_t>& Tagset::get_pos_attributes(
-		pos_idx_t pos) const
+std::vector<Tag> Tagset::split_tag(const Tag& tag) const
+{
+	std::vector<Tag> tags;
+	mask_t pos = tag.get_pos();
+	while (pos.any()) {
+		idx_t pos_idx = PwrNlp::lowest_bit(pos);
+		mask_t pos_mask = static_cast<mask_t>(1) << pos_idx;
+		pos ^= pos_mask;
+		tags.push_back(Tag(pos_mask));
+	}
+
+	for (idx_t a = 0; a < attribute_count(); ++a) {
+		mask_t ma = get_attribute_mask(a);
+		mask_t v = tag.get_values_for(ma);
+		if (ma.any()) {
+			bool dup = false;
+			size_t sz = tags.size();
+			foreach (mask_t vm, get_attribute_values(a)) {
+				if ((v & vm).any()) {
+					if (dup) {
+						for (size_t i = 0; i < sz; ++i) {
+							tags.push_back(tags[i]);
+						}
+					}
+					dup = true;
+					for (size_t i = 0; i < sz; ++i) {
+						tags[i].add_values(vm);
+					}
+				}
+			}
+		}
+	}
+	return tags;
+}
+
+idx_t Tagset::get_pos_index(const string_range& pos) const
+{
+	return pos_dict_.get_id(pos);
+}
+
+const std::string& Tagset::get_pos_name(idx_t pos) const
+{
+	return pos_dict_.get_string(pos);
+}
+
+const std::string& Tagset::get_pos_name(mask_t pos) const
+{
+	return pos_dict_.get_string(get_pos_index(pos));
+}
+
+mask_t Tagset::get_pos_mask(const string_range& pos) const
+{
+	return get_pos_mask(get_pos_index(pos));
+}
+
+mask_t Tagset::get_pos_mask(idx_t pos) const
+{
+	if (pos >= 0) {
+		return static_cast<mask_t>(1) << pos;
+	} else {
+		return 0;
+	}
+}
+
+idx_t Tagset::get_pos_index(mask_t pos) const
+{
+	if (pos.none()) {
+		return -1;
+	} else {
+		return PwrNlp::lowest_bit(pos);
+	}
+}
+
+idx_t Tagset::get_attribute_index(const string_range& a) const
+{
+	return attribute_dict_.get_id(a);
+}
+
+const std::string& Tagset::get_attribute_name(idx_t a) const
+{
+	return attribute_dict_.get_string(a);
+}
+
+const std::vector<mask_t>& Tagset::get_attribute_values(idx_t a) const
+{
+	static std::vector<mask_t> null_vec;
+	if (a < 0 || a >= attribute_count()) {
+		return null_vec;
+	} else {
+		return attribute_values_[a];
+	}
+}
+
+mask_t Tagset::get_attribute_mask(idx_t a) const
+{
+	if (a < 0 || a >= attribute_count()) {
+		return 0;
+	} else {
+		return attribute_masks_[a];
+	}
+}
+
+mask_t Tagset::get_attribute_mask(const string_range& a) const
+{
+	return get_attribute_mask(get_attribute_index(a));
+}
+
+mask_t Tagset::get_value_mask(const std::string& v) const
+{
+	std::map<std::string, mask_t>::const_iterator ci;
+	ci = string_to_value_mask_.find(v);
+	if (ci == string_to_value_mask_.end()) {
+		return 0;
+	} else {
+		return ci->second;
+	}
+}
+
+const std::string& Tagset::get_value_name(mask_t v) const
+{
+	static std::string nullstr;
+	std::map<mask_t, std::string>::const_iterator ci;
+	ci = value_mask_to_string_.find(v);
+	if (ci == value_mask_to_string_.end()) {
+		return nullstr;
+	} else {
+		return ci->second;
+	}
+}
+
+idx_t Tagset::get_value_attribute(mask_t v) const
+{
+	std::map<mask_t, idx_t>::const_iterator ci;
+	ci = value_mask_to_attribute_index_.find(v);
+	if (ci == value_mask_to_attribute_index_.end()) {
+		return -1;
+	} else {
+		return ci->second;
+	}
+}
+
+const std::vector<idx_t>& Tagset::get_pos_attributes(idx_t pos) const
 {
 	assert(pos_dict_.is_id_valid(pos));
 	return pos_attributes_[pos];
 }
 
-const std::vector<bool>& Tagset::get_pos_valid_attributes(
-		pos_idx_t pos) const
+const std::vector<bool>& Tagset::get_pos_attributes_flag(
+		idx_t pos) const
 {
 	assert(pos_dict_.is_id_valid(pos));
 	return pos_valid_attributes_[pos];
 }
 
 const std::vector<bool>& Tagset::get_pos_required_attributes(
-		pos_idx_t pos) const
+		idx_t pos) const
 {
 	assert(pos_dict_.is_id_valid(pos));
 	return pos_required_attributes_[pos];
+}
+
+bool Tagset::pos_requires_attribute(idx_t pos, idx_t attribute) const
+{
+	return pos_required_attributes_[pos][attribute];
+}
+
+bool Tagset::pos_has_attribute(idx_t pos, idx_t attribute) const
+{
+	return pos_valid_attributes_[pos][attribute];
+}
+
+mask_t Tagset::get_pos_value_mask(idx_t pos) const
+{
+	return pos_valid_value_masks_[pos];
+}
+
+mask_t Tagset::get_pos_required_mask(idx_t pos) const
+{
+	return pos_required_value_masks_[pos];
+}
+
+int Tagset::pos_count() const
+{
+	return pos_dict_.size();
+}
+
+int Tagset::attribute_count() const
+{
+	return attribute_dict_.size();
+}
+
+int Tagset::value_count() const
+{
+	return value_mask_to_string_.size();
 }
 
 size_t Tagset::size() const
@@ -421,7 +594,7 @@ size_t Tagset::size() const
 	for (size_t p = 0; p < pos_dict_.size(); ++p) {
 		size_t pos_size = 1;
 		for (size_t i = 0; i < pos_attributes_[p].size(); ++i) {
-			attribute_idx_t a = pos_attributes_[p][i];
+			idx_t a = pos_attributes_[p][i];
 			if (pos_required_attributes_[p][a]) {
 				pos_size *= attribute_values_[a].size();
 			} else {
@@ -461,14 +634,14 @@ void Tagset::lexemes_into_token(Token& tok, const UnicodeString& lemma,
 	}
 }
 
-size_t Tagset::get_original_pos_index(pos_idx_t pos) const
+int Tagset::get_original_pos_index(idx_t pos) const
 {
-	std::map<pos_idx_t, size_t>::const_iterator i =
+	std::map<idx_t, int>::const_iterator i =
 			original_pos_indices_.find(pos);
 	if (i != original_pos_indices_.end()) {
 		return i->second;
 	} else {
-		return static_cast<size_t>(-1);
+		return -1;
 	}
 }
 

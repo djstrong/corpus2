@@ -3,20 +3,19 @@
 
 #include <string>
 #include <vector>
-
+#include <cassert>
 #include <boost/cstdint.hpp>
 #include <boost/strong_typedef.hpp>
 #include <boost/operators.hpp>
+#include <libpwrutils/bitset.h>
 
 namespace Corpus2 {
 
 class Tagset;
 
 /// Typedefs for the string -> index mappings
-typedef boost::uint8_t idx_t;
-BOOST_STRONG_TYPEDEF(idx_t, pos_idx_t);
-BOOST_STRONG_TYPEDEF(idx_t, attribute_idx_t);
-BOOST_STRONG_TYPEDEF(idx_t, value_idx_t);
+typedef boost::int8_t idx_t;
+typedef PwrNlp::bitset<64> mask_t;
 BOOST_STRONG_TYPEDEF(boost::uint32_t, tagset_idx_t);
 
 /**
@@ -31,52 +30,100 @@ BOOST_STRONG_TYPEDEF(boost::uint32_t, tagset_idx_t);
  * This allows more sanity checking, esp. during tagset conversion.
  */
 class Tag
-	: boost::equality_comparable<Tag>, boost::less_than_comparable<Tag>
+//	: boost::equality_comparable<Tag>, boost::less_than_comparable<Tag>
 {
 public:
 	/// Empty tag constructor
-	Tag();
+	Tag()
+		: pos_(0), values_(0)
+	{
+	}
 
 	/// Tagset-and-POS (no values) constructor
-	Tag(tagset_idx_t tagset_id, pos_idx_t pos);
+	explicit Tag(mask_t pos)
+		: pos_(pos), values_(0)
+	{
+	}
 
 	/// Tagset-POS-values constructor
-	Tag(tagset_idx_t tagset_id, pos_idx_t pos,
-			const std::vector<value_idx_t>& values);
+	Tag(mask_t pos, mask_t values)
+		: pos_(pos), values_(values)
+	{
+	}
+
+	bool is_null() const {
+		return pos_ == 0 && values_ == 0;
+	}
+
+	int pos_count() const;
+
+	int get_pos_index() const;
 
 	/// POS (part-of-speech) accesor
-	pos_idx_t pos_id() const {
-		return pos_id_;
+	mask_t get_pos() const {
+		return pos_;
 	}
 
 	/// POS setter
-	void set_pos_id(pos_idx_t v) {
-		pos_id_ = v;
+	void set_pos(mask_t v) {
+		pos_ = v;
+	}
+
+	void add_pos(mask_t v) {
+		pos_ |= v;
 	}
 
 	/// values accesor
-	const std::vector<value_idx_t>& values() const {
+	mask_t get_values() const {
 		return values_;
 	}
 
+	mask_t get_values_for(mask_t mask) const {
+		return values_ & mask;
+	}
+
 	/// values accesor -- nonconst reference
-	std::vector<value_idx_t>& values() {
-		return values_;
+	void set_values(mask_t v) {
+		values_ = v;
+	}
+
+	void add_values(mask_t v) {
+		values_ |= v;
+	}
+
+	void add_values_masked(mask_t value, mask_t mask) {
+		//values_ = (values_ & ~mask) | (value & mask);
+		//see http://graphics.stanford.edu/~seander/bithacks.html#MaskedMerge
+		values_ = values_ ^ ((values_ ^ value) & mask);
+	}
+
+	Tag& combine_with(const Tag& other) {
+		pos_ |= other.pos_;
+		values_ |= other.values_;
+		return *this;
+	}
+
+	Tag get_combined(const Tag& other) const {
+		Tag t(*this);
+		return t.combine_with(other);
+	}
+
+	Tag& mask_with(const Tag& other) {
+		pos_ &= other.pos_;
+		values_ &= other.values_;
+		return *this;
+	}
+
+	Tag get_masked(const Tag& other) const {
+		Tag t(*this);
+		return t.mask_with(other);
 	}
 
 	/// debug aid, dump the tag's internal numeric representation
 	std::string raw_dump() const;
 
-	/// tagset id accesor
-	tagset_idx_t tagset_id() const {
-		return tagset_id_;
-	}
-
-	bool has_valid_tagset() const;
-
 	/**
-	 * Tag comparison. Tags sort by tagset id, then pos id, and finally
-	 * value-by-value. Boost is used to provide other comparison operators.
+	 * Tag comparison.
 	 */
 	bool operator<(const Tag& other) const;
 
@@ -87,16 +134,14 @@ public:
 
 private:
 	/// the POS id
-	pos_idx_t pos_id_;
-\
+	mask_t pos_;
+
 	/// the values
-	std::vector<value_idx_t> values_;
+	mask_t values_;
 
-	/// the tagset id
-	tagset_idx_t tagset_id_;
-
-	friend size_t hash_value(const Tag &tag);
 };
+
+size_t hash_value(const Tag &tag);
 
 } /* end ns Corpus2 */
 

@@ -37,9 +37,9 @@ struct preferred_lexeme_cmp
 	bool operator()(const Lexeme& l1, const Lexeme& l2) const {
 		return (!l1.is_disamb() && l2.is_disamb())
 				|| (l1.is_disamb() == l2.is_disamb()
-				&& (tagset->get_original_pos_index(l1.tag().pos_id()) >
-					tagset->get_original_pos_index(l2.tag().pos_id())
-				|| (l1.tag().pos_id() == l2.tag().pos_id()
+				&& (tagset->get_original_pos_index(l1.tag().get_pos_index()) >
+					tagset->get_original_pos_index(l2.tag().get_pos_index())
+				|| (l1.tag().get_pos() == l2.tag().get_pos()
 				&& l1 < l2)));
 	}
 };
@@ -89,14 +89,14 @@ bool Token::remove_duplicate_lexemes()
 	return old_size != lexemes_.size();
 }
 
-bool Token::orth_pos_match(pos_idx_t pos, const UnicodeString &orth) const
+bool Token::orth_pos_match(mask_t pos, const UnicodeString &orth) const
 {
 	if (orth.length() > 0) {
 		if (orth.caseCompare(orth_, 0) != 0) return false;
 	}
-	if (pos != static_cast<pos_idx_t>(-1)) {
+	if (pos.any()) {
 		foreach (const Lexeme& lex, lexemes_) {
-			if (lex.tag().pos_id() != pos) return false;
+			if (lex.tag().get_pos() != pos) return false;
 		}
 	}
 	return true;
