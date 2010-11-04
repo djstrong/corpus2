@@ -105,6 +105,19 @@ public:
 	static Tagset from_data(const char*);
 
 	/**
+	 * Parse a single tagset symbol and return the correspondig (partial) tag.
+	 *
+	 * Pos and value names result in a single-bit-set tag, attribite names
+	 * result in a tag with all values from that attribute set.
+	 *
+	 * The resulting tags will usually be invalid as standalone tags, so
+	 * there is no validation performed.
+	 *
+	 * An invalid string will result in a null tag being returned.
+	 */
+	Tag parse_symbol(const std::string& s) const;
+
+	/**
 	 * Tag parsing -- functional version, whole tag string.
 	 *
 	 * A simple wrapper for string split and a call to the split string
@@ -249,6 +262,28 @@ public:
 	 * missing attributes.
 	 */
 	std::string tag_to_no_opt_string(const Tag &tag) const;
+
+	/**
+	 * Create and return a string representation of the symbols contained
+	 * within a tag when treated as separate tagset symbols.
+	 *
+	 * There will be one string for each POS set in the tag, and enough symbols
+	 * to cover all the values. If compress_tags is false, there will be one
+	 * value name per value set. If compress_tags is true, in case there are
+	 * attributes with all values setin the tag, the name of the attribiute
+	 * will be used instead of separate names of the attribute's values.
+	 */
+	std::vector<std::string> tag_to_symbol_string_vector(const Tag& tag,
+			bool compress_attribites = true) const;
+
+	/**
+	 * Return a comma-separated string representation of all symbols contained
+	 * within a tag.
+	 *
+	 * @see tag_to_symbol_string_vector.
+	 */
+	std::string tag_to_symbol_string(const Tag& tag,
+			bool compress_attribites = true) const;
 
 	/**
 	 * Compute the number of singular tags that can be represented by the given

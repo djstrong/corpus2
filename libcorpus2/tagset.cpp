@@ -95,6 +95,20 @@ std::string Tagset::id_string(const Tag& tag) const
 	return ss.str();
 }
 
+Tag Tagset::parse_symbol(const std::string& s) const
+{
+	mask_t m = get_pos_mask(s);
+	if (m.none()) {
+		return Tag(m);
+	}
+	m = get_attribute_mask(s);
+	if (m.any()) {
+		return Tag(0, m);
+	}
+	m = get_value_mask(s);
+	return Tag(0, m);
+}
+
 void Tagset::parse_tag(const string_range &s, bool allow_extra,
 		boost::function<void(const Tag &)> sink) const
 {
@@ -367,6 +381,36 @@ std::string Tagset::tag_to_no_opt_string(const Tag &tag) const
 		}
 	}
 	return ss.str();
+}
+
+std::vector<std::string> Tagset::tag_to_symbol_string_vector(const Tag& tag,
+		bool compress_attributes) const
+{
+	std::vector<std::string> ret;
+	foreach (mask_t p, PwrNlp::set_bits(tag.get_pos())) {
+		ret.push_back(get_pos_name(p));
+	}
+	mask_t vals = tag.get_values();
+	if (compress_attributes) {
+		for (idx_t ai = 0; ai < attribute_count(); ++ai) {
+			mask_t amask = get_attribute_mask(ai);
+			if ((vals & amask) == amask) {
+				vals ^= amask;
+				ret.push_back(get_attribute_name(ai));
+			}
+		}
+	}
+	foreach (mask_t p, PwrNlp::set_bits(vals)) {
+		ret.push_back(get_value_name(p));
+	}
+	return ret;
+}
+
+std::string Tagset::tag_to_symbol_string(const Tag& tag,
+		bool compress_attributes) const
+{
+	return boost::algorithm::join(
+			tag_to_symbol_string_vector(tag, compress_attributes), ",");
 }
 
 size_t Tagset::tag_size(const Tag& tag) const

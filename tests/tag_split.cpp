@@ -196,6 +196,26 @@ BOOST_FIXTURE_TEST_CASE( tag_size, F )
 	BOOST_CHECK(tt == t);
 }
 
+BOOST_FIXTURE_TEST_CASE( s, F )
+{
+	Corpus2::Tag t = tagset->parse_simple_tag("some:tag:data", false);
+	Corpus2::Tag t2 = tagset->parse_simple_tag("same:tog:data", false);
+	BOOST_CHECK_EQUAL(tagset->tag_to_symbol_string(t), "some,tag,data");
+	BOOST_CHECK_EQUAL(tagset->tag_to_symbol_string(t2), "same,tog,data");
+	Corpus2::Tag t3 = t.get_combined(t2);
+	std::vector<std::string> v = tagset->tag_to_symbol_string_vector(t3);
+	std::sort(v.begin(), v.end());
+	std::vector<std::string> v2;
+	v2.push_back("some");
+	v2.push_back("same");
+	v2.push_back("tog");
+	v2.push_back("tag");
+	v2.push_back("data");
+	std::sort(v2.begin(), v2.end());
+	BOOST_CHECK_EQUAL_COLLECTIONS(v.begin(), v.end(), v2.begin(), v2.end());
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_CASE(bs_split)
