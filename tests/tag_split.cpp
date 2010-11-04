@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <set>
 #include <libpwrutils/foreach.h>
+#include <libpwrutils/bitset.h>
 #include <libcorpus2/tagset.h>
 #include <libcorpus2/token.h>
 
@@ -196,3 +197,14 @@ BOOST_FIXTURE_TEST_CASE( tag_size, F )
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_CASE(bs_split)
+{
+	std::bitset<32> x(0xf6543);
+	std::bitset<32> y(0);
+	foreach (std::bitset<32> b, PwrNlp::set_bits(x)) {
+		BOOST_CHECK_EQUAL(b.count(), 1);
+		y |= b;
+	}
+	BOOST_CHECK_EQUAL(x, y);
+}

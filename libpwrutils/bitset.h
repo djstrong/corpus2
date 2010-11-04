@@ -58,6 +58,69 @@ inline size_t lowest_bit(const unsigned long& t)
 	return boost::lowest_bit(t);
 }
 
+/// Helper iterator class for iterating through set bits
+template<typename T>
+struct set_bits_iterator
+{
+	typedef T value_type;
+	typedef std::forward_iterator_tag iterator_category;
+	typedef int difference_type;
+	typedef const T *pointer;
+	typedef const T &reference;
+	set_bits_iterator(const set_bits_iterator &i): i_(i.i_), c_(i.c_) {}
+	set_bits_iterator(const T& i) : i_(i), c_(0) {
+		adv();
+	}
+
+	set_bits_iterator &operator++() {
+		adv(); return *this;
+	}
+	set_bits_iterator operator++(int) {
+		set_bits_iterator c(*this);
+		c.adv();
+		return c;
+	}
+	bool operator==(const set_bits_iterator &i) const {
+		return i_ == i.i_ && c_ == i.c_;
+	}
+	bool operator!=(const set_bits_iterator &i) const {
+		return i_ != i.i_ || c_ != i.c_;
+	}
+	const T &operator*() const { return c_; }
+
+private:
+	void adv() {
+		c_.reset();
+		if (i_.any()) {
+			c_.set(lowest_bit(i_));
+			i_ ^= c_;
+		}
+	}
+
+	T i_;
+	T c_;
+};
+
+/**
+ * Function that returns a foreach-compatible iterator range that allows
+ * iterating through the set bits of a bitset. It only makes sense to read
+ * from the returned range.
+ *
+ * Example usage: \code
+ * foreach (const bitset<32>& b, my_bitset) {
+ *    foo_with(b);
+ * }
+ * \endcode
+ */
+template<size_t S>
+boost::iterator_range< set_bits_iterator< std::bitset<S> > > set_bits(
+		const bitset<S>& bs)
+{
+	return boost::iterator_range< set_bits_iterator< std::bitset<S> > >(
+			bs, bitset<S>()
+		);
+}
+
 } /* end ns PwrNlp */
 
 namespace std {
@@ -106,6 +169,6 @@ bool operator<(bitset<PwrNlp::ulong_bits> left, bitset<PwrNlp::ulong_bits> right
 	return left.to_ulong() < right.to_ulong();
 }
 
-}
+} /* end ns std */
 
 #endif // PWRNLP_BITSET_H

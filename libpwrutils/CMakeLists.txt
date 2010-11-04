@@ -4,7 +4,7 @@ PROJECT(pwrutils)
 
 set(pwrutils_ver_major "0")
 set(pwrutils_ver_minor "0")
-set(pwrutils_ver_patch "2")
+set(pwrutils_ver_patch "3")
 
 set(LIBPWRUTILS_VERSION
 	"${pwrutils_ver_major}.${pwrutils_ver_minor}.${pwrutils_ver_patch}")
