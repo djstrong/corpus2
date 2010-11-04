@@ -43,7 +43,7 @@ const Tagset& TagsetManager::get_tagset(const std::string &name)
 		id_cache_.insert(std::make_pair(ptr->id(), ptr));
 		ptr->set_name(name);
 		if (Path::Instance().get_verbose()) {
-			std::cerr << "Tagset '" << name << " loaded with id "
+			std::cerr << "Tagset '" << name << "' loaded with id "
 				<< (int)ptr->id() << "\n";
 		}
 	}
