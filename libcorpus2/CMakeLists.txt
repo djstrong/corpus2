@@ -68,7 +68,7 @@ SET(libcorpus2_STAT_SRC
 
 file(GLOB_RECURSE INCS "*.h")
 
-add_library(corpus2 SHARED ${libcorpus2_STAT_SRC} ${INCS})
+add_library(corpus2 ${libcorpus2_STAT_SRC} ${INCS})
 target_link_libraries(corpus2 ${LIBS})
 set_target_properties(corpus2 PROPERTIES
 	VERSION "${corpus2_ver_major}.${corpus2_ver_minor}"
