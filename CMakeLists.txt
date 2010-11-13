@@ -41,6 +41,9 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(LIBS "")
 include_directories(${Corpus2Library_SOURCE_DIR})
 
+set(Boost_USE_STATIC_LIBS        ON)
+set(Boost_USE_MULTITHREADED      ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
 set(LIBCORPUS2_INSTALL_DATA_DIR share/corpus2)
@@ -48,7 +51,7 @@ FIND_PATH(LIBCORPUS2_SRC_DATA_DIR
     test.tagset
     ${CMAKE_SOURCE_DIR}/corpus2data
 )
-MARK_AS_ADVANCED(LIBMACA_SRC_DATA_DIR)
+MARK_AS_ADVANCED(LIBCORPUS2_SRC_DATA_DIR)
 
 add_subdirectory(libpwrutils)
 add_subdirectory(libcorpus2)
