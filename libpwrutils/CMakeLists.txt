@@ -34,7 +34,16 @@ SET(libpwrutils_STAT_SRC
 
 file(GLOB_RECURSE INCS "*.h")
 
-add_library(pwrutils ${libpwrutils_STAT_SRC} ${INCS})
+if(WIN32)
+# For DLLs on Windows (aka SHARED libraries) you have to explicitly
+# specify the external API of the library. Nothing is exported
+# by default.
+# For UNIX on the other hand everything is exported by default.
+# Until external API is specified explicitly, build STATIC for WIN32
+	add_library(pwrutils STATIC ${libpwrutils_STAT_SRC} ${INCS})
+else(WIN32)
+	add_library(pwrutils SHARED ${libpwrutils_STAT_SRC} ${INCS})
+endif(WIN32)
 target_link_libraries(pwrutils ${LIBS} )
 set_target_properties(pwrutils PROPERTIES
 	VERSION "${pwrutils_ver_major}.${pwrutils_ver_minor}"
