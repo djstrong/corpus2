@@ -41,9 +41,13 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(LIBS "")
 include_directories(${Corpus2Library_SOURCE_DIR})
 
-set(Boost_USE_STATIC_LIBS        ON)
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
+if(WIN32)
+# Need to work out how to properly link to boost DLLs on Windows
+# For now, just link to static boost libs to make it work
+	set(Boost_USE_STATIC_LIBS        ON)
+	set(Boost_USE_MULTITHREADED      ON)
+	set(Boost_USE_STATIC_RUNTIME    OFF)
+endif(WIN32)
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
 set(LIBCORPUS2_INSTALL_DATA_DIR share/corpus2)
