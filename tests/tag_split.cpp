@@ -216,6 +216,18 @@ BOOST_FIXTURE_TEST_CASE( s, F )
 
 }
 
+BOOST_FIXTURE_TEST_CASE( symbols, F )
+{
+	Corpus2::Tag t;
+	t = tagset->parse_symbol("some");
+	BOOST_CHECK_EQUAL(tagset->tag_to_symbol_string(t), "some");
+	t = tagset->parse_symbol("tag");
+	BOOST_CHECK_EQUAL(tagset->tag_to_symbol_string(t), "tag");
+	t = tagset->parse_symbol("C");
+	BOOST_CHECK_EQUAL(tagset->tag_to_symbol_string(t), "C");
+	BOOST_CHECK(tagset->tag_to_symbol_string(t, false) != "C");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_CASE(bs_split)
