@@ -98,7 +98,7 @@ std::string Tagset::id_string(const Tag& tag) const
 Tag Tagset::parse_symbol(const std::string& s) const
 {
 	mask_t m = get_pos_mask(s);
-	if (m.none()) {
+	if (m.any()) {
 		return Tag(m);
 	}
 	m = get_attribute_mask(s);
