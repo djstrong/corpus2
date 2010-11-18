@@ -8,6 +8,10 @@
 #include <boost/pending/lowest_bit.hpp>
 #include <climits>
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#pragma intrinsic(_BitScanForward)
+#endif
 
 namespace PwrNlp {
 
@@ -37,13 +41,6 @@ size_t count_bits_set(const std::bitset<S>& b)
 	return b.count();
 }
 
-template <size_t S> inline
-size_t lowest_bit(const bitset<S>& b)
-{
-	// GCC specific
-	return b._Find_first();
-}
-
 /**
  * Get index of lowest set bit in an integral type
  */
@@ -55,8 +52,49 @@ inline size_t lowest_bit(const unsigned long long& t)
 
 inline size_t lowest_bit(const unsigned long& t)
 {
+#ifndef _MSC_VER
 	if (t <= 0) return static_cast<size_t>(-1);
 	return boost::lowest_bit(t);
+#else
+	unsigned long index = 0;
+	if(_BitScanForward(&index, t)) return index;
+	return static_cast<size_t>(-1);
+#endif
+}
+
+template <size_t S> inline
+size_t lowest_bit(const bitset<S>& b)
+{
+#ifdef __GNUC__
+	return b._Find_first();
+#elif _MSC_VER
+	for(size_t w = 0; w <= S / ulong_bits; ++w) {
+		unsigned long index = 0;
+		if(_BitScanForward(&index, b._Getword(w))) {
+			return index + w * PwrNlp::ulong_bits;
+		}
+	}
+	return static_cast<size_t>(-1);
+#else
+	if(b.none()) return static_cast<size_t>(-1);
+	
+	const bitset<S> mask(std::numeric_limits<unsigned long>::max());
+	bitset<S> c(b);
+	unsigned long offset = 0;
+	unsigned long ul = (c & mask).to_ulong(); 
+	while(ul == 0) {
+		c >>= PwrNlp::ulong_bits;
+		offset += PwrNlp::ulong_bits;
+		ul = (c & mask).to_ulong(); 
+	}
+	return lowest_bit(ul) + offset;
+#endif
+}
+
+template<> inline
+size_t lowest_bit(const word_bitset& b)
+{
+	return lowest_bit(b.to_ulong());
 }
 
 /// Helper iterator class for iterating through set bits

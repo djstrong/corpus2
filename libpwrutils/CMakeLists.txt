@@ -34,7 +34,7 @@ SET(libpwrutils_STAT_SRC
 
 file(GLOB_RECURSE INCS "*.h")
 
-add_library(pwrutils SHARED ${libpwrutils_STAT_SRC} ${INCS})
+add_library(pwrutils ${libpwrutils_STAT_SRC} ${INCS})
 target_link_libraries(pwrutils ${LIBS} )
 set_target_properties(pwrutils PROPERTIES
 	VERSION "${pwrutils_ver_major}.${pwrutils_ver_minor}"

@@ -56,10 +56,13 @@ namespace {
 
 void TokenTimer::register_signal_handler()
 {
+#ifdef SIGUSR1
 	struct sigaction s;
 	memset(&s, 0, sizeof(s));
 	s.sa_handler = &handler;
-	if (sigaction(SIGUSR1, &s, 0) != 0) {
+	if (sigaction(SIGUSR1, &s, 0) != 0)
+#endif
+	{
 		std::cerr << "Signal handler registration error\n";
 	}
 }
