@@ -135,11 +135,7 @@ public:
 	 */
 	void parse_tag(const char* c, bool allow_extra,
 			boost::function<void (const Tag&)> sink) const {
-#ifndef _MSC_VER
-		parse_tag(std::make_pair(c, c + strlen(c)), allow_extra, sink);
-#else // no const char* to std::string::const_iterator conversion
 		parse_tag(std::string(c), allow_extra, sink);
-#endif
 	}
 
 	/**
@@ -178,11 +174,7 @@ public:
 	 * version.
 	 */
 	std::vector<Tag> parse_tag(const char* c, bool allow_extra) const {
-#ifndef _MSC_VER
-		return parse_tag(std::make_pair(c, c + strlen(c)), allow_extra);
-#else // no const char* to std::string::const_iterator conversion
 		return parse_tag(std::string(c), allow_extra);
-#endif
 	}
 
 	/**
@@ -209,12 +201,7 @@ public:
 	 * version.
 	 */
 	Tag parse_simple_tag(const char* c, bool allow_extra) const {
-#ifndef _MSC_VER
-		return parse_simple_tag(std::make_pair(c, c + strlen(c)),
-				allow_extra);
-#else // no const char* to std::string::const_iterator conversion
 		return parse_simple_tag(std::string(c), allow_extra);	
-#endif
 	}
 
 	/**
