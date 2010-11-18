@@ -280,12 +280,9 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 
 Tag Tagset::make_ign_tag() const
 {
-#ifndef _MSC_VER
-	mask_t ign_pos_mask = get_pos_mask("ign");
-#else //no const char* to std::string::const_iterator conversion
+
 	static const std::string ign("ign");
 	mask_t ign_pos_mask = get_pos_mask(ign);
-#endif
 	assert(ign_pos_mask.any());
 	return Tag(ign_pos_mask);
 }

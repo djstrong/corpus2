@@ -40,3 +40,12 @@ BOOST_AUTO_TEST_CASE( token_dup_lexemes )
 	BOOST_CHECK(!t.remove_duplicate_lexemes());
 	BOOST_CHECK(t == tt);
 }
+
+BOOST_AUTO_TEST_CASE( is_icu_working )
+{
+	std::string s("aaa");
+	UnicodeString u(UnicodeString::fromUTF8(s));
+	std::string s2 = PwrNlp::to_utf8(u);
+	BOOST_CHECK_EQUAL(s, s2);
+}
+
