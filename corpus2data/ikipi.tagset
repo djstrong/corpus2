@@ -25,7 +25,7 @@ num     nmb cas gnd [acm]
 ppron12 nmb cas gnd per [acn]
 ppron3  nmb cas gnd per [acn] [ppr]
 siebie  cas
-fin	nmb [gnd] per asp [tns]
+fin	nmb per asp [gnd] [tns]
 bedzie  nmb per asp tns
 aglt    nmb per asp vcl
 praet   nmb gnd asp
@@ -38,7 +38,7 @@ pant    asp
 ger     nmb cas gnd asp ngt
 pact    nmb cas gnd asp ngt
 ppas    nmb cas gnd asp ngt
-winien  nmb gnd asp
+winien  nmb gnd asp [per]
 pred
 prep    cas [vcl]
 conj
