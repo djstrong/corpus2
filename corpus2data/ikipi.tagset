@@ -25,7 +25,7 @@ num     nmb cas gnd [acm]
 ppron12 nmb cas gnd per [acn]
 ppron3  nmb cas gnd per [acn] [ppr]
 siebie  cas
-fin	nmb per asp [gnd] [tns]
+fin	nmb per asp tns [gnd]
 bedzie  nmb per asp tns
 aglt    nmb per asp vcl
 praet   nmb gnd asp
