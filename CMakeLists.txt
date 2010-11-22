@@ -41,9 +41,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(LIBS "")
 include_directories(${Corpus2Library_SOURCE_DIR})
 
-set(Boost_USE_STATIC_LIBS        ON)
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
+set(Boost_USE_STATIC_LIBS        OFF)
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
 
 set(LIBCORPUS2_INSTALL_DATA_DIR share/corpus2)
@@ -52,24 +50,6 @@ FIND_PATH(LIBCORPUS2_SRC_DATA_DIR
     ${CMAKE_SOURCE_DIR}/corpus2data
 )
 MARK_AS_ADVANCED(LIBCORPUS2_SRC_DATA_DIR)
-
-# For DLLs on Windows (aka SHARED libraries) you have to explicitly
-# specify the external API of the library. Nothing is exported
-# by default.
-# For UNIX on the other hand everything is exported by default.
-# We were building libraries SHARED but without specyfing
-# external API. It worked on UNIX but not on Windows.
-# This is changed now so add_library entries do not specify library
-# type and therefore use default. Below, the default is set
-# to build SHARED libs on anything but WIN32, so for Windows/cygwin
-# we are building STATIC (todo: is cygwin ok w/o externs?)
-# To make DLLs on Windows, exports have to be defined and then
-# add_library entry changed to state SHARED for given library.
-# Once this is done for all libraries, and all are marked
-# explicitly as SHARED, the below will won't make a difference.
-if(NOT WIN32)
-    set(BUILD_SHARED_LIBS TRUE)
-endif(NOT WIN32)
 
 add_subdirectory(libpwrutils)
 add_subdirectory(libcorpus2)
