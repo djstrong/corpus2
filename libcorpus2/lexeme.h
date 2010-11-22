@@ -37,7 +37,7 @@ public:
 	/// Helper creation function
 	static Lexeme create(const UnicodeString& lemma, const Tag& tag);
 
-	/// Lemma accesor
+	/// Lemma accessor
 	const UnicodeString& lemma() const {
 		return lemma_;
 	}
@@ -47,12 +47,12 @@ public:
 		lemma_ = l;
 	}
 
-	/// UTF-8 lemma convenience accesor
+	/// UTF-8 lemma convenience accessor
 	const std::string lemma_utf8() const {
 		return PwrNlp::to_utf8(lemma_);
 	}
 
-	/// Tag accesor
+	/// Tag accessor
 	const Tag& tag() const {
 		return tag_;
 	}

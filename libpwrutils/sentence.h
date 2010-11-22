@@ -45,27 +45,27 @@ namespace PwrNlp {
 			return tokens_.empty();
 		}
 
-		/// Size accesor
+		/// Size accessor
 		size_t size() const {
 			return tokens_.size();
 		}
 
-		/// Token accesor
+		/// Token accessor
 		TT* operator[](size_t idx) {
 			return tokens_[idx];
 		}
 
-		/// Token accesor, const
+		/// Token accessor, const
 		const TT* operator[](size_t idx) const {
 			return tokens_[idx];
 		}
 
-		/// Underlying vector accesor, const
+		/// Underlying vector accessor, const
 		const std::vector<TT*>& tokens() const {
 			return tokens_;
 		}
 
-		/// Underlying vector accesor
+		/// Underlying vector accessor
 		std::vector<TT*>& tokens() {
 			return tokens_;
 		}
@@ -75,7 +75,7 @@ namespace PwrNlp {
 			tokens_.push_back(t);
 		}
 
-		/// convenience first token accesor
+		/// convenience first token accessor
 		const TT* first_token() const {
 			assert(!tokens_.empty());
 			return tokens_[0];

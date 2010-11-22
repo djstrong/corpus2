@@ -49,10 +49,10 @@ public:
 		verbose_loading_ = v;
 	}
 
-	/// Search path vector accesor
+	/// Search path vector accessor
 	const std::vector<std::string>& get_search_path() const;
 
-	/// Search path string representation accesor
+	/// Search path string representation accessor
 	std::string get_search_path_string() const;
 
 	/// Seacrh path setter, vector of already-split paths
@@ -62,7 +62,7 @@ public:
 	/// separator char
 	void set_search_path(const std::string &);
 
-	/// Separator accesor
+	/// Separator accessor
 	const std::string& get_path_separator() const;
 
 	/**

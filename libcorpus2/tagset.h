@@ -437,12 +437,12 @@ public:
 	 */
 	double size_extra() const;
 
-	/// Tagset ID accesor
+	/// Tagset ID accessor
 	tagset_idx_t id() const {
 		return id_;
 	}
 
-	/// Tagset name accesor
+	/// Tagset name accessor
 	std::string name() const {
 		return name_;
 	}

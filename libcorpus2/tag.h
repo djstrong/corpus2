@@ -59,7 +59,7 @@ public:
 
 	int get_pos_index() const;
 
-	/// POS (part-of-speech) accesor
+	/// POS (part-of-speech) accessor
 	mask_t get_pos() const {
 		return pos_;
 	}
@@ -73,7 +73,7 @@ public:
 		pos_ |= v;
 	}
 
-	/// values accesor
+	/// values accessor
 	mask_t get_values() const {
 		return values_;
 	}
@@ -82,7 +82,7 @@ public:
 		return values_ & mask;
 	}
 
-	/// values accesor -- nonconst reference
+	/// values accessor -- nonconst reference
 	void set_values(mask_t v) {
 		values_ = v;
 	}

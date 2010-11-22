@@ -40,7 +40,7 @@ private:
 
 /**
  * Convenience class for readers that keep a buffer of chunks. Sentence
- * and token accesors are based upon the chunk buffer.
+ * and token accessors are based upon the chunk buffer.
  *
  * A dervied class only neds to override ensure_more with a function that
  * fills the chunk buffer.
@@ -68,12 +68,12 @@ protected:
 
 /**
  * Convenience class for readers that internally read sentences. The token
- * accesor is based on the sentence buffer, so is the chunk accesor.
+ * accessor is based on the sentence buffer, so is the chunk accessor.
  *
  * A dervied class only neds to override actual_next_sentence with a
  * function that returns a new sentence.
  *
- * Note that the chunk accesor might well read the entire input and return
+ * Note that the chunk accessor might well read the entire input and return
  * one huge chunk with all the sentences.
  */
 class BufferedSentenceReader : public TokenReader
