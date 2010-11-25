@@ -122,7 +122,10 @@ Tag Tagset::parse_symbol(const std::string& s) const
 		return Tag(0, m);
 	}
 	m = get_value_mask(s);
-	return Tag(0, m);
+	if (m.any()) {
+		return Tag(0, m);
+	}
+	throw TagParseError("Not a tagset symbol", s, "", id_string());
 }
 
 void Tagset::parse_tag(const string_range &s, bool allow_extra,

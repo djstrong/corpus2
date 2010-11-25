@@ -129,7 +129,7 @@ public:
 	 * The resulting tags will usually be invalid as standalone tags, so
 	 * there is no validation performed.
 	 *
-	 * An invalid string will result in a null tag being returned.
+	 * An invalid string will result in a TagParseError exception.
 	 */
 	Tag parse_symbol(const std::string& s) const;
 
