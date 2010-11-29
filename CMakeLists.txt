@@ -5,10 +5,10 @@ cmake_minimum_required(VERSION 2.8.0)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeScripts)
 
 IF(NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-      "Choose the type of build, options are: None Debug Release
+	SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+		"Choose the type of build, options are: None Debug Release
 RelWithDebInfo MinSizeRel."
-      FORCE)
+		FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 
@@ -41,13 +41,21 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(LIBS "")
 include_directories(${Corpus2Library_SOURCE_DIR})
 
-set(Boost_USE_STATIC_LIBS        OFF)
-find_package(Boost 1.41 REQUIRED COMPONENTS program_options filesystem regex)
+find_package(Boost 1.41 REQUIRED COMPONENTS program_options system filesystem regex)
+
+if(MSVC OR BORLAND)
+# Use the auto-linking feature, don't try to add libraries yourself:
+	set(Boost_LIBRARIES "")
+# Note the default is to link static libs and it is left like that here.
+# You can make it link to DLL by defining BOOST_#module#_DYN_LINK
+# in C++ source file or somewhere in CMake file, e.g. 
+# add_definitions( -DBOOST_FILESYSTEM_DYN_LINK )
+endif(MSVC OR BORLAND)
 
 set(LIBCORPUS2_INSTALL_DATA_DIR share/corpus2)
 FIND_PATH(LIBCORPUS2_SRC_DATA_DIR
-    test.tagset
-    ${CMAKE_SOURCE_DIR}/corpus2data
+	test.tagset
+	${CMAKE_SOURCE_DIR}/corpus2data
 )
 MARK_AS_ADVANCED(LIBCORPUS2_SRC_DATA_DIR)
 
