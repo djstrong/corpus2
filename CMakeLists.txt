@@ -24,7 +24,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
 
 		# Strict compilation for C files is disabled until somebody wants to clean them.
-		set(CMAKE_C_FLAGS"-W -Wall -ansi $ENV{CFLAGS}" 
+		set(CMAKE_C_FLAGS "-W -Wall -ansi $ENV{CFLAGS}" 
 				CACHE STRING "Flags used by the C compiler during normal builds." FORCE)
 		set(CMAKE_C_FLAGS_DEBUG "-O0 -DDEBUG -ggdb3 -W -Wall -ansi $ENV{CFLAGS}"
 				CACHE STRING "Flags used by the C compiler during debug builds." FORCE)
