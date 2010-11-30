@@ -245,6 +245,16 @@ BOOST_FIXTURE_TEST_CASE( symbols, F )
 	BOOST_CHECK_THROW(tagset->parse_symbol("asdf"), Corpus2::TagParseError);
 }
 
+BOOST_FIXTURE_TEST_CASE(attribute_mask_to_name, F)
+{
+	foreach (Corpus2::mask_t a, tagset->all_attribute_masks()) {
+		std::string aname = tagset->get_attribute_name(a);
+		BOOST_CHECK(!aname.empty());
+		Corpus2::mask_t aa = tagset->get_attribute_mask(aname);
+		BOOST_CHECK_EQUAL(a, aa);
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_CASE(bs_split)
@@ -257,3 +267,7 @@ BOOST_AUTO_TEST_CASE(bs_split)
 	}
 	BOOST_CHECK_EQUAL(x, y);
 }
+
+
+
+

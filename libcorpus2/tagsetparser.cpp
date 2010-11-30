@@ -117,6 +117,8 @@ Tagset TagsetParser::load_ini(std::istream &is)
 			current_value <<= 1;
 		}
 		tagset.attribute_masks_.push_back(attribute_mask);
+		tagset.attribute_mask_to_index_.insert(std::make_pair(
+			attribute_mask, current_attribute_index));
 		++current_attribute_index;
 	}
 	tagset.attribute_dict_.load_sorted_data(vec);
