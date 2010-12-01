@@ -122,7 +122,10 @@ Tag Tagset::parse_symbol(const std::string& s) const
 		return Tag(0, m);
 	}
 	m = get_value_mask(s);
-	return Tag(0, m);
+	if (m.any()) {
+		return Tag(0, m);
+	}
+	throw TagParseError("Not a tagset symbol", s, "", id_string());
 }
 
 void Tagset::parse_tag(const string_range &s, bool allow_extra,
@@ -532,9 +535,31 @@ idx_t Tagset::get_attribute_index(const string_range& a) const
 	return attribute_dict_.get_id(a);
 }
 
+idx_t Tagset::get_attribute_index(mask_t a) const
+{
+	std::map<mask_t, idx_t>::const_iterator ci;
+	ci = attribute_mask_to_index_.find(a);
+	if (ci == attribute_mask_to_index_.end()) {
+		return -1;
+	} else {
+		return ci->second;
+	}
+}
+
 const std::string& Tagset::get_attribute_name(idx_t a) const
 {
 	return attribute_dict_.get_string(a);
+}
+
+const std::string& Tagset::get_attribute_name(mask_t a) const
+{
+	static std::string nullstr;
+	idx_t index = get_attribute_index(a);
+	if (index < 0 || index > attribute_count()) {
+		return nullstr;
+	} else {
+		return attribute_dict_.get_string(index);
+	}
 }
 
 const std::vector<mask_t>& Tagset::get_attribute_values(idx_t a) const

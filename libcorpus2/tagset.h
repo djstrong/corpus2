@@ -129,7 +129,7 @@ public:
 	 * The resulting tags will usually be invalid as standalone tags, so
 	 * there is no validation performed.
 	 *
-	 * An invalid string will result in a null tag being returned.
+	 * An invalid string will result in a TagParseError exception.
 	 */
 	Tag parse_symbol(const std::string& s) const;
 
@@ -375,9 +375,17 @@ public:
 	/// @returns -1 on invalid name
 	idx_t get_attribute_index(const string_range& a) const;
 
+	/// Attribute mask -> index mapping
+	/// @returns -1 on invalid mask
+	idx_t get_attribute_index(mask_t a) const;
+
 	/// Attribute index -> name
 	/// @returns empty string on invalid index
-	const std::string& get_attribute_name(idx_t pos) const;
+	const std::string& get_attribute_name(idx_t a) const;
+
+	/// Attribute mask -> name
+	/// @returns empty string on invalid mask
+	const std::string& get_attribute_name(mask_t a) const;
 
 	/// Value mask -> attribute index mapping.
 	/// if the value mask contains values from more than one attribute,
@@ -576,6 +584,9 @@ private:
 
 	/// Attribute index to combined value mask
 	std::vector<mask_t> attribute_masks_;
+
+	/// Attribute combined mask to attribute name
+	std::map<mask_t, idx_t> attribute_mask_to_index_;
 
 	/// reverse mapping, from a value mask to the respective attribute
 	/// index (values are assumed to be unique and not shared between
