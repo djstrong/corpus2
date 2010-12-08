@@ -52,6 +52,7 @@ SET(libcorpus2_STAT_SRC
 	token.cpp
 	io/orthwriter.cpp
 	io/plainwriter.cpp
+	io/premorphwriter.cpp
 	io/reader.cpp
 	io/rft.cpp
 	io/sax.cpp
