@@ -54,6 +54,8 @@ Token* BufferedChunkReader::get_next_token()
 		if (s != NULL) {
 			std::copy(s->tokens().begin(), s->tokens().end(),
 					std::back_inserter(token_buf_));
+			s->tokens().clear();
+			delete s;
 		} else {
 			more = false;
 		}
@@ -76,6 +78,8 @@ Sentence* BufferedChunkReader::get_next_sentence()
 		if (c != NULL) {
 			std::copy(c->sentences().begin(), c->sentences().end(),
 					std::back_inserter(sentence_buf_));
+			c->sentences().clear();
+			delete c;
 		} else {
 			more = false;
 		}
