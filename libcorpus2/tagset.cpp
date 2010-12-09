@@ -252,9 +252,9 @@ Tag Tagset::parse_simple_tag(const string_range_vector &ts,
 	for (size_t i = 1; i < ts.size(); ++i) {
 		if (!ts[i].empty()) {
 			mask_t val = get_value_mask(boost::copy_range<std::string>(ts[i]));
-			if (val == 0) {
+			if (val.none()) {
 				mask_t a = get_attribute_mask(ts[i]);
-				if (a != 0) {
+				if (a.any()) {
 					values &= (~a);
 				} else {
 					throw TagParseError("Unknown attribute value",
@@ -335,7 +335,7 @@ bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 
 	for (idx_t i = 0; i < attribute_count(); ++i) {
 		mask_t value = t.get_values_for(get_attribute_mask(i));
-		if (value == 0) {
+		if (value.none()) {
 			if (required[i]) {
 				if (os) {
 					(*os)  << " red attribuite "

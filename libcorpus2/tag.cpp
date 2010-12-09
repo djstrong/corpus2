@@ -36,7 +36,7 @@ int Tag::pos_count() const
 
 int Tag::get_pos_index() const
 {
-	if (pos_ == 0) return -1;
+	if (pos_.none()) return -1;
 	return PwrNlp::lowest_bit(pos_);
 }
 

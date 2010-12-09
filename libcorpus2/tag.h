@@ -68,7 +68,7 @@ public:
 	}
 
 	bool is_null() const {
-		return pos_ == 0 && values_ == 0;
+		return pos_.none() && values_.none();
 	}
 
 	int pos_count() const;
