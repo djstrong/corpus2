@@ -36,7 +36,7 @@ public:
 
 	~Chunk();
 
-	Chunk* clone() const;
+	boost::shared_ptr<Chunk> clone_shared() const;
 
 	bool has_attribute(const std::string& name) const;
 
@@ -44,15 +44,15 @@ public:
 
 	void set_attribute(const std::string& name, const std::string& value);
 
-	std::vector<Sentence*>& sentences() {
+	std::vector< boost::shared_ptr<Sentence> >& sentences() {
 		return sentences_;
 	}
 
-	const std::vector<Sentence*>& sentences() const {
+	const std::vector< boost::shared_ptr<Sentence> >& sentences() const {
 		return sentences_;
 	}
 
-	void append(Sentence* s) {
+	void append(const boost::shared_ptr<Sentence>& s) {
 		sentences_.push_back(s);
 	}
 
@@ -63,7 +63,7 @@ public:
 	}
 
 private:
-	std::vector<Sentence*> sentences_;
+	std::vector< boost::shared_ptr<Sentence> > sentences_;
 	attr_map_t attributes_;
 };
 

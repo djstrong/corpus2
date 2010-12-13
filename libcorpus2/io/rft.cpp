@@ -19,6 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libpwrutils/foreach.h>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/make_shared.hpp>
 
 namespace Corpus2 {
 
@@ -62,7 +63,7 @@ void RftWriter::write_sentence(const Sentence& s)
 
 void RftWriter::write_chunk(const Chunk& c)
 {
-	foreach (Sentence* s, c.sentences()) {
+	foreach (const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence(*s);
 	}
 }
@@ -72,10 +73,10 @@ RftReader::RftReader(const Tagset& tagset, std::istream& is, bool disamb)
 {
 }
 
-Sentence* RftReader::actual_next_sentence()
+Sentence::Ptr RftReader::actual_next_sentence()
 {
 	std::string line;
-	Sentence* s = NULL;
+	Sentence::Ptr s;
 	while (is().good()) {
 		std::getline(is(), line);
 		if (line.empty()) {
@@ -92,8 +93,8 @@ Sentence* RftReader::actual_next_sentence()
 				Token* t = new Token();
 				t->set_orth(UnicodeString::fromUTF8(orth));
 				t->set_wa(PwrNlp::Whitespace::Space);
-				if (s == NULL) {
-					s = new Sentence();
+				if (!s) {
+					s = boost::make_shared<Sentence>();
 					t->set_wa(PwrNlp::Whitespace::Newline);
 				}
 				t->add_lexeme(Lexeme(t->orth(), tag));

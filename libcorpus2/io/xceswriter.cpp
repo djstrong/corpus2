@@ -76,7 +76,7 @@ void XcesWriter::write_sentence(const Sentence& s)
 void XcesWriter::write_chunk(const Chunk &c)
 {
 	bool new_chunk = true;
-	foreach (const Sentence* s, c.sentences()) {
+	foreach (const Sentence::ConstPtr& s, c.sentences()) {
 		if (split_chunks_on_newlines_ && !s->tokens().empty()) {
 			const Token* first = s->first_token();
 			if (first->wa() == PwrNlp::Whitespace::ManyNewlines) {

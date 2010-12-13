@@ -61,7 +61,7 @@ public:
 
 protected:
 	/// BufferedSentenceReader override
-	Sentence* actual_next_sentence();
+	Sentence::Ptr actual_next_sentence();
 
 	std::istream& is_;
 

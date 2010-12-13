@@ -15,6 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/reader.h>
+#include <boost/make_shared.hpp>
 
 namespace Corpus2 {
 
@@ -37,12 +38,6 @@ BufferedChunkReader::~BufferedChunkReader()
 	foreach (Token* t, token_buf_) {
 		delete t;
 	}
-	foreach (Sentence* s, sentence_buf_) {
-		delete s;
-	}
-	foreach (Chunk* c, chunk_buf_) {
-		delete c;
-	}
 }
 
 Token* BufferedChunkReader::get_next_token()
@@ -50,12 +45,11 @@ Token* BufferedChunkReader::get_next_token()
 	bool more = true;
 	while (token_buf_.empty() && more) {
 		ensure_more();
-		Sentence* s = get_next_sentence();
-		if (s != NULL) {
+		Sentence::Ptr s = get_next_sentence();
+		if (s) {
 			std::copy(s->tokens().begin(), s->tokens().end(),
 					std::back_inserter(token_buf_));
-			s->tokens().clear();
-			delete s;
+			s->release_tokens();
 		} else {
 			more = false;
 		}
@@ -69,37 +63,35 @@ Token* BufferedChunkReader::get_next_token()
 	}
 }
 
-Sentence* BufferedChunkReader::get_next_sentence()
+Sentence::Ptr BufferedChunkReader::get_next_sentence()
 {
 	bool more = true;
 	while (sentence_buf_.empty() && more) {
 		ensure_more();
-		Chunk* c = get_next_chunk();
-		if (c != NULL) {
+		boost::shared_ptr<Chunk> c = get_next_chunk();
+		if (c) {
 			std::copy(c->sentences().begin(), c->sentences().end(),
 					std::back_inserter(sentence_buf_));
-			c->sentences().clear();
-			delete c;
 		} else {
 			more = false;
 		}
 	}
 	if (sentence_buf_.empty()) {
-		return NULL;
+		return Sentence::Ptr();
 	} else {
-		Sentence* s = sentence_buf_.front();
+		Sentence::Ptr s = sentence_buf_.front();
 		sentence_buf_.pop_front();
 		return s;
 	}
 }
 
-Chunk* BufferedChunkReader::get_next_chunk()
+boost::shared_ptr<Chunk> BufferedChunkReader::get_next_chunk()
 {
 	ensure_more();
 	if (chunk_buf_.empty()) {
-		return NULL;
+		return boost::shared_ptr<Chunk>();
 	} else {
-		Chunk* t = chunk_buf_.front();
+		boost::shared_ptr<Chunk> t = chunk_buf_.front();
 		chunk_buf_.pop_front();
 		return t;
 	}
@@ -107,7 +99,7 @@ Chunk* BufferedChunkReader::get_next_chunk()
 
 BufferedSentenceReader::BufferedSentenceReader(const Tagset& tagset)
 	: TokenReader(tagset), chunkify_(true)
-	, sentence_buf_(NULL), token_buf_()
+	, sentence_buf_(), token_buf_()
 {
 }
 
@@ -115,8 +107,8 @@ Token* BufferedSentenceReader::get_next_token()
 {
 	bool more = true;
 	while (token_buf_.empty() && more) {
-		Sentence* s = get_next_sentence();
-		if (s != NULL) {
+		Sentence::Ptr s = get_next_sentence();
+		if (s) {
 			std::copy(s->tokens().begin(), s->tokens().end(),
 				std::back_inserter(token_buf_));
 		} else {
@@ -132,32 +124,32 @@ Token* BufferedSentenceReader::get_next_token()
 	}
 }
 
-Sentence* BufferedSentenceReader::get_next_sentence()
+Sentence::Ptr BufferedSentenceReader::get_next_sentence()
 {
 	if (sentence_buf_ != NULL) {
-		Sentence* s = sentence_buf_;
-		sentence_buf_ = NULL;
+		Sentence::Ptr s = sentence_buf_;
+		sentence_buf_.reset();
 		return s;
 	} else {
 		return actual_next_sentence();
 	}
 }
 
-Chunk* BufferedSentenceReader::get_next_chunk()
+boost::shared_ptr<Chunk> BufferedSentenceReader::get_next_chunk()
 {
-	Sentence* s = get_next_sentence();
-	if (s == NULL) {
-		return NULL;
+	Sentence::Ptr s = get_next_sentence();
+	if (!s) {
+		return boost::shared_ptr<Chunk>();
 	} else {
-		Chunk* c = new Chunk;
+		boost::shared_ptr<Chunk> c = boost::make_shared<Chunk>();
 		c->append(s);
 		s = get_next_sentence();
-		while (s != NULL && (!chunkify_ || s->first_token()->wa() !=
+		while (s && (!chunkify_ || s->first_token()->wa() !=
 				PwrNlp::Whitespace::ManyNewlines)) {
 			c->append(s);
 			s = get_next_sentence();
 		}
-		if (s != NULL) {
+		if (s) {
 			sentence_buf_ = s;
 		}
 		return c;

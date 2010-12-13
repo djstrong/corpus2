@@ -60,7 +60,7 @@ void PremorphWriter::write_sentence(const Sentence &s)
 void PremorphWriter::write_chunk(const Chunk &c)
 {
 	paragraph_head(c);
-	foreach (const Sentence* s, c.sentences()) {
+	foreach (const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence(*s);
 	}
 	os() << "</chunk>\n";

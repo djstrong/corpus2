@@ -18,7 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/io/sax.h>
 #include <libpwrutils/foreach.h>
 #include <libxml++/libxml++.h>
-
+#include <boost/make_shared.hpp>
 #include <fstream>
 
 namespace Corpus2 {
@@ -26,8 +26,9 @@ namespace Corpus2 {
 class XcesReaderImpl : public BasicSaxParser
 {
 public:
-	XcesReaderImpl(const Tagset& tagset, std::deque<Chunk*>& obuf,
-			bool disamb_only, bool disamb_sh);
+	XcesReaderImpl(const Tagset& tagset,
+		std::deque< boost::shared_ptr<Chunk> >& obuf,
+		bool disamb_only, bool disamb_sh);
 
 	~XcesReaderImpl();
 
@@ -50,11 +51,11 @@ protected:
 
 	Token* tok_;
 
-	Sentence* sent_;
+	Sentence::Ptr sent_;
 
-	Chunk* chunk_;
+	boost::shared_ptr<Chunk> chunk_;
 
-	std::deque<Chunk*>& obuf_;
+	std::deque< boost::shared_ptr<Chunk> >& obuf_;
 
 	bool disamb_only_;
 
@@ -101,11 +102,12 @@ void XcesReader::ensure_more()
 }
 
 XcesReaderImpl::XcesReaderImpl(const Tagset& tagset,
-		std::deque<Chunk*>& obuf, bool disamb_only, bool disamb_sh)
+		std::deque< boost::shared_ptr<Chunk> >& obuf,
+		bool disamb_only, bool disamb_sh)
 	: BasicSaxParser()
 	, tagset_(tagset), state_(XS_NONE), chunkless_(false)
 	, wa_(PwrNlp::Whitespace::Newline)
-	, sbuf_(), tok_(NULL), sent_(NULL), chunk_(NULL), obuf_(obuf)
+	, sbuf_(), tok_(NULL), sent_(), chunk_(), obuf_(obuf)
 	, disamb_only_(disamb_only), disamb_sh_(disamb_sh)
 {
 }
@@ -113,8 +115,6 @@ XcesReaderImpl::XcesReaderImpl(const Tagset& tagset,
 XcesReaderImpl::~XcesReaderImpl()
 {
 	delete tok_;
-	delete sent_;
-	delete chunk_;
 }
 
 void XcesReaderImpl::on_start_element(const Glib::ustring &name,
@@ -132,10 +132,10 @@ void XcesReaderImpl::on_start_element(const Glib::ustring &name,
 				//throw XcesError("Top level <chunk> is type=\"s\"");
 				state_ = XS_SENTENCE;
 				chunkless_ = true;
-				chunk_ = new Chunk;
-				sent_ = new Sentence;
+				chunk_ = boost::make_shared<Chunk>();
+				sent_ = boost::make_shared<Sentence>();
 			} else {
-				chunk_ = new Chunk;
+				chunk_ = boost::make_shared<Chunk>();
 				state_ = XS_CHUNK;
 				foreach (const Attribute& a, attributes) {
 					chunk_->set_attribute(a.name, a.value);
@@ -146,7 +146,7 @@ void XcesReaderImpl::on_start_element(const Glib::ustring &name,
 				throw XcesError("Sub level <chunk> not type=\"s\"");
 			}
 			state_ = XS_SENTENCE;
-			sent_ = new Sentence;
+			sent_ = boost::make_shared<Sentence>();
 		} else {
 			throw XcesError("Unexpected <chunk>");
 		}
@@ -217,10 +217,10 @@ void XcesReaderImpl::on_end_element(const Glib::ustring &name)
 		state_ = XS_SENTENCE;
 	} else if (state_ == XS_SENTENCE && name == "chunk") {
 		chunk_->append(sent_);
-		sent_ = NULL;
+		sent_.reset();
 		if (chunkless_) {
 			obuf_.push_back(chunk_);
-			chunk_ = NULL;
+			chunk_.reset();
 			state_ = XS_NONE;
 			chunkless_ = false;
 		} else {
@@ -228,7 +228,7 @@ void XcesReaderImpl::on_end_element(const Glib::ustring &name)
 		}
 	} else if (state_ == XS_CHUNK && name == "chunk") {
 		obuf_.push_back(chunk_);
-		chunk_ = NULL;
+		chunk_.reset();
 		state_ = XS_NONE;
 	}
 }

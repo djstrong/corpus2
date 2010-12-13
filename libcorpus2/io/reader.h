@@ -42,9 +42,9 @@ public:
 
 	virtual Token* get_next_token() = 0;
 
-	virtual Sentence* get_next_sentence() = 0;
+	virtual Sentence::Ptr get_next_sentence() = 0;
 
-	virtual Chunk* get_next_chunk() = 0;
+	virtual boost::shared_ptr<Chunk> get_next_chunk() = 0;
 
 	const Tagset& tagset() {
 		return tagset_;
@@ -70,15 +70,15 @@ public:
 
 	Token* get_next_token();
 
-	Sentence* get_next_sentence();
+	Sentence::Ptr get_next_sentence();
 
-	Chunk* get_next_chunk();
+	boost::shared_ptr<Chunk> get_next_chunk();
 
 protected:
 	virtual void ensure_more() = 0;
 
-	std::deque<Chunk*> chunk_buf_;
-	std::deque<Sentence*> sentence_buf_;
+	std::deque< boost::shared_ptr<Chunk> > chunk_buf_;
+	std::deque< Sentence::Ptr > sentence_buf_;
 	std::deque<Token*> token_buf_;
 };
 
@@ -99,16 +99,16 @@ public:
 
 	Token* get_next_token();
 
-	Sentence* get_next_sentence();
+	Sentence::Ptr get_next_sentence();
 
-	Chunk* get_next_chunk();
+	boost::shared_ptr<Chunk> get_next_chunk();
 
 protected:
-	virtual Sentence* actual_next_sentence() = 0;
+	virtual Sentence::Ptr actual_next_sentence() = 0;
 
 	bool chunkify_;
 
-	Sentence* sentence_buf_;
+	Sentence::Ptr sentence_buf_;
 
 	std::deque<Token*> token_buf_;
 };

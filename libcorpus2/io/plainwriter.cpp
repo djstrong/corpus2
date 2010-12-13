@@ -48,7 +48,7 @@ void PlainWriter::write_sentence(const Sentence &s)
 void PlainWriter::write_chunk(const Chunk& c)
 {
 	os() << "[[[<<<\n\n";
-	foreach (const Sentence* s, c.sentences()) {
+	foreach (const boost::shared_ptr<Sentence>& s, c.sentences()) {
 		write_sentence(*s);
 	}
 	os() << ">>>]]]\n\n";

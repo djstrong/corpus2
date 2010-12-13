@@ -18,14 +18,74 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #define LIBCORPUS2_SENTENCE_H
 
 #include <libcorpus2/token.h>
-
 #include <libpwrutils/sentence.h>
+#include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
 
-/// typedef for a sentence of Corpus2 tokens based on the PwrNlp sentence
-/// template.
-typedef PwrNlp::SentenceTemplate<Token> Sentence;
+class Sentence : private boost::noncopyable
+{
+public:
+	typedef boost::shared_ptr<Sentence> Ptr;
+	typedef boost::shared_ptr<const Sentence> ConstPtr;
+
+	/// Empty constructor
+	Sentence()
+		: tokens_()
+	{
+	}
+
+	Ptr clone_shared() const;
+
+	/// Destructor
+	~Sentence();
+
+	void release_tokens();
+
+	bool empty() const {
+		return tokens_.empty();
+	}
+
+	/// Size accessor
+	size_t size() const {
+		return tokens_.size();
+	}
+
+	/// Token accessor
+	Token* operator[](size_t idx) {
+		return tokens_[idx];
+	}
+
+	/// Token accessor, const
+	const Token* operator[](size_t idx) const {
+		return tokens_[idx];
+	}
+
+	/// Underlying vector accessor, const
+	const std::vector<Token*>& tokens() const {
+		return tokens_;
+	}
+
+	/// Underlying vector accessor
+	std::vector<Token*>& tokens() {
+		return tokens_;
+	}
+
+	/// Helper function for appending tokens
+	void append(Token* t) {
+		tokens_.push_back(t);
+	}
+
+	/// convenience first token accessor
+	const Token* first_token() const {
+		assert(!tokens_.empty());
+		return tokens_[0];
+	}
+
+private:
+	/// The tokens this sentence contains and owns
+	std::vector<Token*> tokens_;
+};
 
 } /* end ns Corpus2 */
 

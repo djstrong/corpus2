@@ -15,7 +15,30 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/sentence.h>
+#include <boost/make_shared.hpp>
 
 namespace Corpus2 {
+
+Sentence::~Sentence()
+{
+	foreach (const Token* t, tokens_) {
+		delete t;
+	}
+}
+
+Sentence::Ptr Sentence::clone_shared() const
+{
+	Sentence::Ptr s = boost::make_shared<Sentence>();
+	foreach (const Token* t, tokens_) {
+		s->append(t->clone());
+	}
+	return s;
+}
+
+void Sentence::release_tokens()
+{
+	tokens_.clear();
+}
+
 
 } /* end ns Corpus2 */

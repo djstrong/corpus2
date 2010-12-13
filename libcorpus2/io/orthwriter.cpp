@@ -67,7 +67,7 @@ void OrthWriter::write_sentence(const Sentence &s)
 
 void OrthWriter::write_chunk(const Chunk &c)
 {
-	foreach (const Sentence* s, c.sentences()) {
+	foreach (const Sentence::Ptr& s, c.sentences()) {
 		write_sentence(*s);
 		if (!actual_ws_) {
 			os() << "\n";
