@@ -19,6 +19,11 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
+Sentence::Sentence()
+	: tokens_()
+{
+}
+
 Sentence::~Sentence()
 {
 	foreach (const Token* t, tokens_) {

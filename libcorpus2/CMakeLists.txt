@@ -41,6 +41,10 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
 SET(libcorpus2_STAT_SRC
+	ann/annotatedsentence.cpp
+	ann/channel.cpp
+	ann/iob.cpp
+	ann/view.cpp
 	chunk.cpp
 	exception.cpp
 	lexeme.cpp

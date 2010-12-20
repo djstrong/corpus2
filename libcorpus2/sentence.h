@@ -30,15 +30,12 @@ public:
 	typedef boost::shared_ptr<const Sentence> ConstPtr;
 
 	/// Empty constructor
-	Sentence()
-		: tokens_()
-	{
-	}
+	Sentence();
 
-	Ptr clone_shared() const;
+	virtual Ptr clone_shared() const;
 
 	/// Destructor
-	~Sentence();
+	virtual ~Sentence();
 
 	void release_tokens();
 
@@ -82,7 +79,7 @@ public:
 		return tokens_[0];
 	}
 
-private:
+protected:
 	/// The tokens this sentence contains and owns
 	std::vector<Token*> tokens_;
 };
