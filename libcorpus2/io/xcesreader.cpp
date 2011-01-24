@@ -18,6 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/io/sax.h>
 #include <libpwrutils/foreach.h>
 #include <libxml++/libxml++.h>
+#include <libxml2/libxml/parser.h>
 #include <boost/make_shared.hpp>
 #include <fstream>
 
@@ -37,6 +38,8 @@ protected:
 			const AttributeList& attributes);
 	void on_end_element(const Glib::ustring & name);
 
+	void finish_sentence();
+
 	const Tagset& tagset_;
 
 	enum state_t { XS_NONE, XS_CHUNK, XS_SENTENCE, XS_TOK, XS_ORTH, XS_LEX,
@@ -44,6 +47,8 @@ protected:
 	state_t state_;
 
 	bool chunkless_;
+
+	bool out_of_chunk_;
 
 	PwrNlp::Whitespace::Enum wa_;
 
@@ -105,7 +110,7 @@ XcesReaderImpl::XcesReaderImpl(const Tagset& tagset,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
 		bool disamb_only, bool disamb_sh)
 	: BasicSaxParser()
-	, tagset_(tagset), state_(XS_NONE), chunkless_(false)
+	, tagset_(tagset), state_(XS_NONE), chunkless_(false), out_of_chunk_(false)
 	, wa_(PwrNlp::Whitespace::Newline)
 	, sbuf_(), tok_(NULL), sent_(), chunk_(), obuf_(obuf)
 	, disamb_only_(disamb_only), disamb_sh_(disamb_sh)
@@ -126,6 +131,10 @@ void XcesReaderImpl::on_start_element(const Glib::ustring &name,
 			if (a.name == "type") {
 				type = a.value;
 			}
+		}
+		if (out_of_chunk_) {
+			finish_sentence();
+			out_of_chunk_ = false;
 		}
 		if (state_ == XS_NONE) {
 			if (type == "s") {
@@ -191,6 +200,31 @@ void XcesReaderImpl::on_start_element(const Glib::ustring &name,
 		clear_buf();
 	} else if (name == "ns") {
 		wa_ = PwrNlp::Whitespace::None;
+	} else if (name == "tok" && state_ == XS_NONE) {
+		std::cerr << "Warning: out-of-chunk token, assuming sentence start on line ";
+		std::cerr << this->context_->input->line << "\n";
+		chunkless_ = true;
+		out_of_chunk_ = true;
+		chunk_ = boost::make_shared<Chunk>();
+		sent_ = boost::make_shared<Sentence>();
+		state_ = XS_TOK;
+		tok_ = new Token();
+		tok_->set_wa(wa_);
+		wa_ = PwrNlp::Whitespace::Space;
+	}
+}
+
+void XcesReaderImpl::finish_sentence()
+{
+	chunk_->append(sent_);
+	sent_.reset();
+	if (chunkless_) {
+		obuf_.push_back(chunk_);
+		chunk_.reset();
+		state_ = XS_NONE;
+		chunkless_ = false;
+	} else {
+		state_ = XS_CHUNK;
 	}
 }
 
@@ -216,16 +250,7 @@ void XcesReaderImpl::on_end_element(const Glib::ustring &name)
 		tok_ = NULL;
 		state_ = XS_SENTENCE;
 	} else if (state_ == XS_SENTENCE && name == "chunk") {
-		chunk_->append(sent_);
-		sent_.reset();
-		if (chunkless_) {
-			obuf_.push_back(chunk_);
-			chunk_.reset();
-			state_ = XS_NONE;
-			chunkless_ = false;
-		} else {
-			state_ = XS_CHUNK;
-		}
+		finish_sentence();
 	} else if (state_ == XS_CHUNK && name == "chunk") {
 		obuf_.push_back(chunk_);
 		chunk_.reset();
