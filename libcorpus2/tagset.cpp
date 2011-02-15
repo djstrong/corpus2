@@ -141,6 +141,7 @@ namespace {
 			std::vector< mask_t > & current,
 			const std::vector<mask_t> & to_add, mask_t to_add_attr)
 	{
+		if (to_add.empty()) return;
 		size_t current_size = current.size();
 		for (size_t ai = 1; ai < to_add.size(); ++ai) {
 			for (size_t oi = 0; oi < current_size; ++oi) {
