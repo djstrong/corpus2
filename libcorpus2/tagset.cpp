@@ -282,6 +282,16 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 	//		<< " of " << pos_required_attributes_idx_[pos_idx].size() << "\n";
 	size_t has_req = PwrNlp::count_bits_set(required_values & values);
 	if (has_req != pos_required_attributes_idx_[pos_idx].size()) {
+		foreach (idx_t a, get_pos_attributes(pos_idx)) {
+			if (pos_requires_attribute(pos_idx, a)) {
+				mask_t amask = get_attribute_mask(a);
+				if ((values & amask).none()) {
+					throw TagParseError("Required attribute missing",
+	                                tag_to_string(Tag(get_pos_mask(pos_idx), values)),
+        	                        get_attribute_name(a), id_string());
+				}
+			}
+		}
 		throw TagParseError("Required attribute missing",
 				tag_to_string(Tag(get_pos_mask(pos_idx), values)),
 				get_pos_name(pos_idx), id_string());
