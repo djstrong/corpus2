@@ -288,8 +288,8 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 				mask_t amask = get_attribute_mask(a);
 				if ((values & amask).none()) {
 					throw TagParseError("Required attribute missing",
-	                                tag_to_string(Tag(get_pos_mask(pos_idx), values)),
-        	                        get_attribute_name(a), id_string());
+						tag_to_string(Tag(get_pos_mask(pos_idx), values)),
+						get_attribute_name(a), id_string());
 				}
 			}
 		}
