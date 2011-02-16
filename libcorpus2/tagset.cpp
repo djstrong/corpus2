@@ -177,6 +177,7 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 			std::vector<mask_t> values;
 			mask_t amask;
 			foreach (string_range& dot, dots) {
+				if (dot.empty()) continue;
 				mask_t v = get_value_mask(boost::copy_range<std::string>(dot));
 				mask_t curr = get_attribute_mask(get_value_attribute(v));
 
