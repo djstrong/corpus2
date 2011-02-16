@@ -38,6 +38,15 @@ public:
 
 	boost::shared_ptr<Chunk> clone_shared() const;
 
+	bool empty() const {
+		return sentences_.empty();
+	}
+
+	/// Size accessor
+	size_t size() const {
+		return sentences_.size();
+	}
+
 	bool has_attribute(const std::string& name) const;
 
 	std::string get_attribute(const std::string& name) const;
