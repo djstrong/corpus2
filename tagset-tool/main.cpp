@@ -92,11 +92,11 @@ void tagset_info(const Corpus2::Tagset& tagset)
 	std::cerr << "Corpus2::Tagset loaded: "
 		<< tagset.pos_count() << " POSes, "
 		<< tagset.attribute_count() << " attributes, "
-		<< tagset.value_count() << " values [";
+		<< tagset.value_count() << " values [ ";
 	for (Corpus2::idx_t a = 0; a < tagset.attribute_count(); ++a) {
 		std::cerr << tagset.get_attribute_values(a).size() << " ";
 	}
-	std::cerr << "\n";
+	std::cerr << "]\n";
 	std::cerr << "Size is " << tagset.size()
 		<< " (extra size is " << tagset.size_extra() << ")\n";
 	std::cerr << "POSes: ";

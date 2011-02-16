@@ -141,6 +141,7 @@ namespace {
 			std::vector< mask_t > & current,
 			const std::vector<mask_t> & to_add, mask_t to_add_attr)
 	{
+		if (to_add.empty()) return;
 		size_t current_size = current.size();
 		for (size_t ai = 1; ai < to_add.size(); ++ai) {
 			for (size_t oi = 0; oi < current_size; ++oi) {
@@ -176,6 +177,7 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 			std::vector<mask_t> values;
 			mask_t amask;
 			foreach (string_range& dot, dots) {
+				if (dot.empty()) continue;
 				mask_t v = get_value_mask(boost::copy_range<std::string>(dot));
 				mask_t curr = get_attribute_mask(get_value_attribute(v));
 
@@ -281,6 +283,16 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 	//		<< " of " << pos_required_attributes_idx_[pos_idx].size() << "\n";
 	size_t has_req = PwrNlp::count_bits_set(required_values & values);
 	if (has_req != pos_required_attributes_idx_[pos_idx].size()) {
+		foreach (idx_t a, get_pos_attributes(pos_idx)) {
+			if (pos_requires_attribute(pos_idx, a)) {
+				mask_t amask = get_attribute_mask(a);
+				if ((values & amask).none()) {
+					throw TagParseError("Required attribute missing",
+						tag_to_string(Tag(get_pos_mask(pos_idx), values)),
+						get_attribute_name(a), id_string());
+				}
+			}
+		}
 		throw TagParseError("Required attribute missing",
 				tag_to_string(Tag(get_pos_mask(pos_idx), values)),
 				get_pos_name(pos_idx), id_string());
