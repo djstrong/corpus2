@@ -25,6 +25,11 @@ Sentence::Ptr AnnotationView::clone_shared() const
 	return copy;
 }
 
+void AnnotationView::release_original()
+{
+	original_.reset();
+}
+
 void AnnotationView::commit()
 {
 	commit_to(original_, ann_name_);
@@ -34,6 +39,9 @@ void AnnotationView::commit_to(
 	const boost::shared_ptr<AnnotatedSentence> &original,
 	const std::string &ann_name)
 {
+	if (!original) {
+		throw AnnotationViewOutOfSync("null-pointer-to-original");
+	}
 	if (!original->has_channel(ann_name)) {
 		throw MissingAnnotationChannel(ann_name);
 	}

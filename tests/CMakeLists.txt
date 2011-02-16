@@ -6,6 +6,7 @@ add_definitions(-DLIBCORPUS2_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/")
 
 add_executable( tests
 	main.cpp
+	ann_basic.cpp
 	basic.cpp
 	tag_split.cpp
 	tagset_parse.cpp

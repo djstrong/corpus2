@@ -48,6 +48,25 @@ void AnnotationChannel::make_segments_from_iob()
 	}
 }
 
+int AnnotationChannel::renumber_segments()
+{
+	std::map<int, int> re;
+	int next = 0;
+	for (size_t i = 0; i < segments_.size(); ++i) {
+		if (segments_[i] > 0) {
+			std::map<int, int>::const_iterator ci = re.find(segments_[i]);
+			if (ci != re.end()) {
+				segments_[i] = ci->second;
+			} else {
+				++next;
+				re.insert(std::make_pair(segments_[i], next));
+				segments_[i] = next;
+			}
+		}
+	}
+	return next;
+}
+
 IOB::Enum AnnotationChannel::get_iob_at(int idx)
 {
 	if (idx >= 0 && idx < static_cast<int>(iobs_.size())) {
@@ -78,6 +97,7 @@ std::vector<Annotation> AnnotationChannel::make_annotation_vector() const
 			rv[s].head_index = i;
 		}
 	}
+	std::sort(rv.begin(), rv.end(), AnnotationHeadCompare());
 	rv.erase(std::remove_if(rv.begin(), rv.end(),
 		boost::bind(&Annotation::empty, _1)));
 	return rv;

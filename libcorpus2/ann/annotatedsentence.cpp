@@ -24,6 +24,27 @@ Sentence::Ptr AnnotatedSentence::clone_shared() const
 	return copy;
 }
 
+boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence(
+	const boost::shared_ptr<Sentence>& s)
+{
+	boost::shared_ptr<AnnotatedSentence> a = boost::make_shared<AnnotatedSentence>();
+	foreach (Token* t, s->tokens()) {
+		a->append(t);
+	}
+	s->release_tokens();
+	return a;
+}
+
+boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence_clone(
+	const boost::shared_ptr<Sentence>& s)
+{
+	boost::shared_ptr<AnnotatedSentence> a = boost::make_shared<AnnotatedSentence>();
+	foreach (Token* t, s->tokens()) {
+		a->append(t->clone());
+	}
+	return a;
+}
+
 void AnnotatedSentence::create_channel(const std::string& name)
 {
 	channels_.insert(std::make_pair(name, AnnotationChannel(tokens_.size())));
