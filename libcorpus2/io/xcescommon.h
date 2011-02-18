@@ -29,6 +29,12 @@ void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
 		const Token& t, int indent, bool output_disamb = false,
 		bool sort = false, bool whitespace_info = false);
 
+void token_as_xces_xml_head(std::ostream& os,
+		const Token& t, int indent, bool whitespace_info /* false */);
+
+void token_as_xces_xml_body(std::ostream& os, const Tagset& tagset,
+		const Token& t, int indent, bool output_disamb /* = false */,
+		bool sort /* = false */);
 /**
  * Output a xml-encoded version of the given string into the given ostream.
  * The default XML entity substitutions are made: less than, greater than,

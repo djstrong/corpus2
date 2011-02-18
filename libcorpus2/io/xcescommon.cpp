@@ -46,9 +46,8 @@ namespace {
 	}
 }
 
-void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
-		const Token& t, int indent, bool output_disamb /* = false */,
-		bool sort /* = false */, bool whitespace_info /* false */)
+void token_as_xces_xml_head(std::ostream& os,
+		const Token& t, int indent, bool whitespace_info /* false */)
 {
 	if (t.wa() == PwrNlp::Whitespace::None) {
 		osi(os, indent) << "<ns/>\n";
@@ -59,7 +58,12 @@ void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
 		osi(os, indent) << "<tok ws=\""
 			<< PwrNlp::Whitespace::to_string(t.wa()) << "\">\n";
 	}
-	++indent;
+}
+
+void token_as_xces_xml_body(std::ostream& os, const Tagset& tagset,
+		const Token& t, int indent, bool output_disamb /* = false */,
+		bool sort /* = false */)
+{
 	osi(os, indent) << "<orth>";
 	encode_xml_entities_into(os, t.orth_utf8());
 	os << "</orth>\n";
@@ -80,6 +84,15 @@ void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
 			os << s;
 		}
 	}
+}
+
+void token_as_xces_xml(std::ostream& os, const Tagset& tagset,
+		const Token& t, int indent, bool output_disamb /* = false */,
+		bool sort /* = false */, bool whitespace_info /* false */)
+{
+	token_as_xces_xml_head(os, t, indent, whitespace_info);
+	++indent;
+	token_as_xces_xml_body(os, tagset, t, indent, output_disamb, sort);
 	--indent;
 	osi(os, indent) << "</tok>\n";
 }
