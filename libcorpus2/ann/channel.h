@@ -84,9 +84,21 @@ public:
 	/**
 	 * The segment-index array accesor
 	 */
+	std::vector<int>& segments() {
+		return segments_;
+	}
+
+	/**
+	 * The segment-index array accesor, const
+	 */
 	const std::vector<int>& segments() const {
 		return segments_;
 	}
+
+	/**
+	 * Segment index getter, 0 (no segment) if idx is out of range.
+	 */
+	int get_segment_at(int idx) const;
 
 	/**
 	 * The IOB data vector
@@ -96,7 +108,7 @@ public:
 	}
 
 	/**
-	 * IOB getter, returns IOB::O if idx is out of range
+	 * IOB getter, returns IOB::O if idx is out of range.
 	 */
 	IOB::Enum get_iob_at(int idx);
 
@@ -105,12 +117,29 @@ public:
 	 */
 	void set_iob_at(int idx, IOB::Enum iob);
 
+	/**
+	 * Head flag getter, false if out of range.
+	 */
+	bool is_head_at(int idx) const;
+
+	/**
+	 * Head flag setter, out of range indices are not processed.
+	 */
+	void set_head_at(int idx, bool v);
+
+	/**
+	 * Compose a string consisting of all IOB markers in order.
+	 */
+	std::string dump_iob() const;
+
 private:
 	/// segment indices
 	std::vector<int> segments_;
 
 	/// IOB data
 	std::vector<IOB::Enum> iobs_;
+
+	std::vector<bool> heads_;
 };
 
 } /* end ns Corpus2 */
