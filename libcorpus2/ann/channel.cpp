@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <boost/bind.hpp>
 #include <sstream>
+#include <set>
 
 namespace Corpus2 {
 
@@ -14,6 +15,13 @@ AnnotationChannel::AnnotationChannel()
 AnnotationChannel::AnnotationChannel(int size)
 	: segments_(size), iobs_(size), heads_(size)
 {
+}
+
+void AnnotationChannel::resize(int size)
+{
+	segments_.resize(size);
+	iobs_.resize(size);
+	heads_.resize(size);
 }
 
 void AnnotationChannel::make_iob_from_segments()
@@ -78,6 +86,13 @@ int AnnotationChannel::get_segment_at(int idx) const
 	}
 }
 
+void AnnotationChannel::set_segment_at(int token_idx, int segment_idx)
+{
+	if (token_idx >= 0 && token_idx < static_cast<int>(segments_.size())) {
+		segments_[token_idx] = segment_idx;
+	}
+}
+
 IOB::Enum AnnotationChannel::get_iob_at(int idx)
 {
 	if (idx >= 0 && idx < static_cast<int>(iobs_.size())) {
@@ -110,9 +125,11 @@ void  AnnotationChannel::set_head_at(int idx, bool v)
 	}
 }
 
-std::vector<Annotation> AnnotationChannel::make_annotation_vector() const
+std::vector<Annotation> AnnotationChannel::make_annotation_vector(
+	AnnotationVectorMode mode) const
 {
 	std::vector<Annotation> rv;
+	std::vector<int> not_annotated;
 	int smax = 0;
 	for (size_t i = 0; i < segments_.size(); ++i) {
 		int s = segments_[i];
@@ -124,7 +141,14 @@ std::vector<Annotation> AnnotationChannel::make_annotation_vector() const
 			if (heads_[i]) {
 				rv[s - 1].head_index = i;
 			}
+		} else if (mode & AnnotationChannel::O_INCLUSIVE) {
+			not_annotated.push_back(i);
 		}
+	}
+	foreach (int na, not_annotated) {
+		rv.push_back(Annotation());
+		rv.back().indices.push_back(na);
+		rv.back().head_index = na;
 	}
 	rv.erase(std::remove_if(rv.begin(), rv.end(),
 		boost::bind(&Annotation::empty, _1)), rv.end());
@@ -144,6 +168,28 @@ std::string AnnotationChannel::dump_iob() const
 		ss << Corpus2::IOB::to_string(e);
 	}
 	return ss.str();
+}
+
+void AnnotationChannel::do_counts(int& annotations, int& disjoint, int& unannotated) const
+{
+	std::set<int> used_sids;
+	std::set<int> disjoint_sids;
+	int last_sid = 0;
+	annotations = 0;
+	disjoint = 0;
+	unannotated = 0;
+	foreach (int sid, segments_) {
+		if (sid == 0) {
+			++unannotated;
+		} else if (!used_sids.insert(sid).second) { //was already there
+			if (last_sid != sid) {
+				disjoint_sids.insert(sid);
+			}
+		}
+		last_sid = sid;
+	}
+	annotations = used_sids.size();
+	disjoint = disjoint_sids.size();
 }
 
 } /* end ns Corpus2 */

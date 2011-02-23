@@ -4,10 +4,9 @@
 #include <libcorpus2/sentence.h>
 #include <libcorpus2/exception.h>
 #include <libcorpus2/ann/channel.h>
+#include <libcorpus2/ann/view.h>
 
 namespace Corpus2 {
-
-class AnnotationView;
 
 /**
  * Exception class for use when a requested annotation channel does not exist
@@ -43,6 +42,9 @@ public:
 	~AnnotatedSentence();
 
 	Sentence::Ptr clone_shared() const;
+
+	/// typedef for the channels
+	typedef std::map<std::string, AnnotationChannel> chan_map_t;
 
 	/**
 	 * Create an AnnotatedSentence from a Sentence, grabing all the tokens
@@ -94,10 +96,16 @@ public:
 		return i->second;
 	}
 
-private:
-	/// typedef for tha channels
-	typedef std::map<std::string, AnnotationChannel> chan_map_t;
+	const chan_map_t& all_channels() const {
+		return channels_;
+	}
 
+	/// Sentence override, extends annotation objects
+	void append(Token *t);
+
+	std::string annotation_info() const;
+
+private:
 	/// the actual channels
 	chan_map_t channels_;
 };

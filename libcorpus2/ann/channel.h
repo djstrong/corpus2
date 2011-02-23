@@ -52,6 +52,12 @@ public:
 	 */
 	explicit AnnotationChannel(int size);
 
+	int size() const {
+		return segments_.size();
+	}
+
+	void resize(int size);
+
 	/**
 	 * Discard IOB annotation information, regenerate it from the segment info.
 	 */
@@ -68,18 +74,22 @@ public:
 	 */
 	int renumber_segments();
 
-	/**
-	 * Create a vector of AnnotationSegment objects, each corresponding to
-	 * an annotation, with the annotations possibly being disjoint.
-	 */
-	std::vector<Annotation> make_annotation_vector() const;
+	enum AnnotationVectorMode
+	{
+		O_DISJOINT_EXCLUSIVE = 0,
+		O_CONTINUOUS = 1,
+		O_INCLUSIVE = 2,
+		O_CONTINUOUS_INCLUSIVE = 3,
+	};
 
 	/**
 	 * Create a vector of AnnotationSegment objects, each corresponding to
-	 * an annotation, forcing the annotations to be continous (disjoint
-	 * annotations are split)
+	 * an annotation, with the annotations possibly being disjoint unless
+	 * O_CONTINUOUS is specified in mode, and omiting unanottated tokens unless
+	 * O_INCLUSIVE is specified.
 	 */
-	std::vector<Annotation> make_continuous_annotation_vector() const;
+	std::vector<Annotation> make_annotation_vector(
+		AnnotationVectorMode mode = O_DISJOINT_EXCLUSIVE) const;
 
 	/**
 	 * The segment-index array accesor
@@ -99,6 +109,11 @@ public:
 	 * Segment index getter, 0 (no segment) if idx is out of range.
 	 */
 	int get_segment_at(int idx) const;
+
+	/**
+	 * Segment index setter, out of range indices are not processed.
+	 */
+	void set_segment_at(int token_idx, int segment_idx);
 
 	/**
 	 * The IOB data vector
@@ -131,6 +146,8 @@ public:
 	 * Compose a string consisting of all IOB markers in order.
 	 */
 	std::string dump_iob() const;
+
+	void do_counts(int& annotations, int& disjoint, int& unannotated) const;
 
 private:
 	/// segment indices

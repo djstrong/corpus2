@@ -54,6 +54,7 @@ SET(libcorpus2_STAT_SRC
 	tagsetmanager.cpp
 	tagsetparser.cpp
 	token.cpp
+	io/cclreader.cpp
 	io/orthwriter.cpp
 	io/plainwriter.cpp
 	io/premorphwriter.cpp

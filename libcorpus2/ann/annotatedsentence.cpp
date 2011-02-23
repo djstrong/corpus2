@@ -1,6 +1,8 @@
 #include <libcorpus2/ann/annotatedsentence.h>
 #include <libcorpus2/ann/view.h>
 #include <boost/make_shared.hpp>
+#include <sstream>
+#include <libpwrutils/plural.h>
 
 namespace Corpus2 {
 
@@ -56,7 +58,7 @@ boost::shared_ptr<AnnotationView> create_view(
 	const std::string& ann_name)
 {
 	const AnnotationChannel& chan = s->get_channel(ann_name);
-	std::vector<Annotation> ann = chan.make_annotation_vector();
+	std::vector<Annotation> ann = chan.make_annotation_vector(AnnotationChannel::O_INCLUSIVE);
 	boost::shared_ptr<AnnotationView> view;
 	view = boost::make_shared<AnnotationView>(s, ann_name);
 	foreach (const Annotation& a, ann) {
@@ -74,6 +76,31 @@ boost::shared_ptr<AnnotationView> create_view(
 		view->append(t);
 	}
 	return view;
+}
+
+void AnnotatedSentence::append(Token *t)
+{
+	Sentence::append(t);
+	foreach (chan_map_t::value_type& v, channels_) {
+		v.second.resize(size());
+	}
+}
+
+std::string AnnotatedSentence::annotation_info() const
+{
+	std::stringstream ss;
+	foreach (const chan_map_t::value_type& v, channels_) {
+		ss << "Channel " << v.first << ": \t";
+		int ann, disj, un;
+		v.second.do_counts(ann, disj, un);
+		ss << PwrNlp::enpln(ann, "annotation") << ", ";
+		ss << disj << " disjoint, ";
+		int a = size() - un;
+		double r = (double)a / size();
+		ss << "annotations span: " << a << "/" << size() << " tokens (" << r*100 << "%)";
+		ss << "\n";
+	}
+	return ss.str();
 }
 
 } /* end ns Corpus2 */

@@ -69,7 +69,9 @@ public:
 	}
 
 	/// Helper function for appending tokens
-	void append(Token* t) {
+	/// Might be overriden in a child class to make adding a token keep
+	/// extra invariants
+	virtual void append(Token* t) {
 		tokens_.push_back(t);
 	}
 

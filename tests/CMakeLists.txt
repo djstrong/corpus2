@@ -9,6 +9,7 @@ add_executable( tests
 	ann_basic.cpp
 	basic.cpp
 	io.cpp
+	ioann.cpp
 	tag_split.cpp
 	tagset_parse.cpp
 )

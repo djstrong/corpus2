@@ -14,8 +14,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
     See the LICENSE and COPYING files for more details.
 */
 
-#ifndef LIBCORPUS2_IO_XCESREADER_H
-#define LIBCORPUS2_IO_XCESREADER_H
+#ifndef LIBCORPUS2_IO_CCLREADER_H
+#define LIBCORPUS2_IO_CCLREADER_H
 
 #include <libcorpus2/io/reader.h>
 #include <libcorpus2/io/xces.h>
@@ -25,18 +25,18 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
-class XcesReaderImpl;
+class CclReaderImpl;
 
-class XcesReader : public BufferedChunkReader
+class CclReader : public BufferedChunkReader
 {
 public:
-	XcesReader(const Tagset& tagset, std::istream& is,
+	CclReader(const Tagset& tagset, std::istream& is,
 			bool disamb_only = false, bool disamb_sh = false);
 
-	XcesReader(const Tagset& tagset, const std::string& filename,
+	CclReader(const Tagset& tagset, const std::string& filename,
 			bool disamb_only = false, bool disamb_sh = false);
 
-	~XcesReader();
+	~CclReader();
 
 	std::istream& is() {
 		return *is_;
@@ -49,9 +49,9 @@ protected:
 	std::istream* is_;
 	boost::scoped_ptr<std::istream> is_owned_;
 
-	boost::scoped_ptr<XcesReaderImpl> impl_;
+	boost::scoped_ptr<CclReaderImpl> impl_;
 };
 
 } /* end ns Corpus2 */
 
-#endif // LIBCORPUS2_IO_XCESREADER_H
+#endif // LIBCORPUS2_IO_CCLREADER_H
