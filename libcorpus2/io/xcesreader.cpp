@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/xcesreader.h>
-#include <libcorpus2/io/sax.h>
+#include <libcorpus2/io/xmlreader.h>
 #include <libpwrutils/foreach.h>
 #include <libxml++/libxml++.h>
 #include <libxml2/libxml/parser.h>
@@ -24,7 +24,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
-class XcesReaderImpl : public BasicSaxParser
+class XcesReaderImpl : public XmlReader
 {
 public:
 	XcesReaderImpl(const Tagset& tagset,
@@ -34,37 +34,6 @@ public:
 	~XcesReaderImpl();
 
 protected:
-	void on_start_element(const Glib::ustring & name,
-			const AttributeList& attributes);
-	void on_end_element(const Glib::ustring & name);
-
-	void finish_sentence();
-
-	const Tagset& tagset_;
-
-	enum state_t { XS_NONE, XS_CHUNK, XS_SENTENCE, XS_TOK, XS_ORTH, XS_LEX,
-			XS_LEMMA, XS_TAG };
-	state_t state_;
-
-	bool chunkless_;
-
-	bool out_of_chunk_;
-
-	PwrNlp::Whitespace::Enum wa_;
-
-	Glib::ustring sbuf_;
-
-	Token* tok_;
-
-	Sentence::Ptr sent_;
-
-	boost::shared_ptr<Chunk> chunk_;
-
-	std::deque< boost::shared_ptr<Chunk> >& obuf_;
-
-	bool disamb_only_;
-
-	bool disamb_sh_;
 };
 
 XcesReader::XcesReader(const Tagset& tagset, std::istream& is,
@@ -109,153 +78,15 @@ void XcesReader::ensure_more()
 XcesReaderImpl::XcesReaderImpl(const Tagset& tagset,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
 		bool disamb_only, bool disamb_sh)
-	: BasicSaxParser()
-	, tagset_(tagset), state_(XS_NONE), chunkless_(false), out_of_chunk_(false)
-	, wa_(PwrNlp::Whitespace::Newline)
-	, sbuf_(), tok_(NULL), sent_(), chunk_(), obuf_(obuf)
-	, disamb_only_(disamb_only), disamb_sh_(disamb_sh)
+	: XmlReader(tagset, obuf)
 {
+	XmlReader::set_disamb_only(disamb_only);
+	XmlReader::set_disamb_sh(disamb_sh);
+	sentence_tag_name_ = "chunk";
 }
 
 XcesReaderImpl::~XcesReaderImpl()
 {
-	delete tok_;
-}
-
-void XcesReaderImpl::on_start_element(const Glib::ustring &name,
-		const AttributeList& attributes)
-{
-	if (name == "chunk") {
-		std::string type;
-		foreach (const Attribute& a, attributes) {
-			if (a.name == "type") {
-				type = a.value;
-			}
-		}
-		if (out_of_chunk_) {
-			finish_sentence();
-			out_of_chunk_ = false;
-		}
-		if (state_ == XS_NONE) {
-			if (type == "s") {
-				//throw XcesError("Top level <chunk> is type=\"s\"");
-				state_ = XS_SENTENCE;
-				chunkless_ = true;
-				chunk_ = boost::make_shared<Chunk>();
-				sent_ = boost::make_shared<Sentence>();
-			} else {
-				chunk_ = boost::make_shared<Chunk>();
-				state_ = XS_CHUNK;
-				foreach (const Attribute& a, attributes) {
-					chunk_->set_attribute(a.name, a.value);
-				}
-			}
-		} else if (state_ == XS_CHUNK) {
-			if (type != "s") {
-				throw XcesError("Sub level <chunk> not type=\"s\"");
-			}
-			state_ = XS_SENTENCE;
-			sent_ = boost::make_shared<Sentence>();
-		} else {
-			throw XcesError("Unexpected <chunk>");
-		}
-	} else if (state_ == XS_SENTENCE && name == "tok") {
-		state_ = XS_TOK;
-		tok_ = new Token();
-		tok_->set_wa(wa_);
-		wa_ = PwrNlp::Whitespace::Space;
-	} else if (state_ == XS_TOK && name == "orth") {
-		state_ = XS_ORTH;
-		grab_characters_ = true;
-		clear_buf();
-	} else if (state_ == XS_TOK && name == "lex") {
-		assert(tok_ != NULL);
-		bool is_disamb = false;
-		if (!disamb_sh_) {
-			foreach (const Attribute& a, attributes) {
-				if (a.name == "disamb" && a.value == "1") {
-					is_disamb = true;
-				}
-			}
-		} else {
-			is_disamb = true;
-			foreach (const Attribute& a, attributes) {
-				if (a.name == "disamb_sh" && a.value == "0") {
-					is_disamb = false;
-				}
-			}
-		}
-		if (!disamb_only_ || is_disamb) {
-			tok_->add_lexeme(Lexeme());
-			tok_->lexemes().back().set_disamb(is_disamb);
-			state_ = XS_LEX;
-		}
-	} else if (state_ == XS_LEX && name == "base") {
-		state_ = XS_LEMMA;
-		grab_characters_ = true;
-		clear_buf();
-	} else if (state_ == XS_LEX && name == "ctag") {
-		state_ = XS_TAG;
-		grab_characters_ = true;
-		clear_buf();
-	} else if (name == "ns") {
-		wa_ = PwrNlp::Whitespace::None;
-	} else if (name == "tok" && state_ == XS_NONE) {
-		std::cerr << "Warning: out-of-chunk token, assuming sentence start on line ";
-		std::cerr << this->context_->input->line << "\n";
-		chunkless_ = true;
-		out_of_chunk_ = true;
-		chunk_ = boost::make_shared<Chunk>();
-		sent_ = boost::make_shared<Sentence>();
-		state_ = XS_TOK;
-		tok_ = new Token();
-		tok_->set_wa(wa_);
-		wa_ = PwrNlp::Whitespace::Space;
-	}
-}
-
-void XcesReaderImpl::finish_sentence()
-{
-	chunk_->append(sent_);
-	sent_.reset();
-	if (chunkless_) {
-		obuf_.push_back(chunk_);
-		chunk_.reset();
-		state_ = XS_NONE;
-		chunkless_ = false;
-	} else {
-		state_ = XS_CHUNK;
-	}
-}
-
-void XcesReaderImpl::on_end_element(const Glib::ustring &name)
-{
-	if (state_ == XS_ORTH && name == "orth") {
-		tok_->set_orth(UnicodeString::fromUTF8(get_buf()));
-		grab_characters_ = false;
-		state_ = XS_TOK;
-	} else if (state_ == XS_LEMMA && name == "base") {
-		tok_->lexemes().back().set_lemma(UnicodeString::fromUTF8(get_buf()));
-		grab_characters_ = false;
-		state_ = XS_LEX;
-	} else if (state_ == XS_TAG && name == "ctag") {
-		Tag tag = tagset_.parse_simple_tag(get_buf(), true);
-		tok_->lexemes().back().set_tag(tag);
-		grab_characters_ = false;
-		state_ = XS_LEX;
-	} else if (state_ == XS_LEX && name == "lex") {
-		state_ = XS_TOK;
-	} else if (state_ == XS_TOK && name == "tok") {
-		sent_->append(tok_);
-		tok_ = NULL;
-		state_ = XS_SENTENCE;
-	} else if (state_ == XS_SENTENCE && name == "chunk") {
-		finish_sentence();
-	} else if (state_ == XS_CHUNK && name == "chunk") {
-		obuf_.push_back(chunk_);
-		chunk_.reset();
-		state_ = XS_NONE;
-	}
 }
 
 } /* end ns Corpus2 */

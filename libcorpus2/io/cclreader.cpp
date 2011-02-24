@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/cclreader.h>
-#include <libcorpus2/io/sax.h>
+#include <libcorpus2/io/xmlreader.h>
 #include <libpwrutils/foreach.h>
 #include <libxml++/libxml++.h>
 #include <libxml2/libxml/parser.h>
@@ -26,7 +26,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
-class CclReaderImpl : public BasicSaxParser
+class CclReaderImpl : public XmlReader
 {
 public:
 	CclReaderImpl(const Tagset& tagset,
@@ -36,29 +36,23 @@ public:
 	~CclReaderImpl();
 
 protected:
-	void on_start_element(const Glib::ustring & name,
-			const AttributeList& attributes);
-	void on_end_element(const Glib::ustring & name);
+	bool process_start_element(const Glib::ustring & name,
+		const AttributeList& attributes);
 
-	void finish_sentence();
+	bool process_end_element(const Glib::ustring& name);
 
-	const Tagset& tagset_;
+	void start_chunk(const AttributeList &attributes);
 
-	enum state_t { XS_NONE, XS_CHUNK, XS_SENTENCE, XS_TOK, XS_ANN, XS_ORTH, XS_LEX,
-			XS_LEMMA, XS_TAG, XS_REL };
-	state_t state_;
+	void start_sentence(const AttributeList &attributes);
 
-	bool chunkless_;
+	void start_token(const AttributeList &attributes);
 
-	bool out_of_chunk_;
+	void finish_token();
 
-	PwrNlp::Whitespace::Enum wa_;
+	static const int STATE_ANN = 901;
+	static const int STATE_REL = 902;
 
-	Glib::ustring sbuf_;
-
-	Token* tok_;
-
-	boost::shared_ptr<AnnotatedSentence> sent_;
+	boost::shared_ptr<AnnotatedSentence> ann_sent_;
 
 	std::string ann_chan_;
 
@@ -69,14 +63,6 @@ protected:
 	token_ann_t token_anns_;
 
 	std::set<std::string> token_ann_heads_;
-
-	boost::shared_ptr<Chunk> chunk_;
-
-	std::deque< boost::shared_ptr<Chunk> >& obuf_;
-
-	bool disamb_only_;
-
-	bool disamb_sh_;
 };
 
 CclReader::CclReader(const Tagset& tagset, std::istream& is,
@@ -121,58 +107,53 @@ void CclReader::ensure_more()
 CclReaderImpl::CclReaderImpl(const Tagset& tagset,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
 		bool disamb_only, bool disamb_sh)
-	: BasicSaxParser()
-	, tagset_(tagset), state_(XS_NONE), chunkless_(false), out_of_chunk_(false)
-	, wa_(PwrNlp::Whitespace::Newline)
-	, sbuf_(), tok_(NULL), sent_(), chunk_(), obuf_(obuf)
-	, disamb_only_(disamb_only), disamb_sh_(disamb_sh)
+	: XmlReader(tagset, obuf)
 {
+	XmlReader::set_disamb_only(disamb_only);
+	XmlReader::set_disamb_sh(disamb_sh);
+	sentence_tag_name_ = "sentence";
 }
 
 CclReaderImpl::~CclReaderImpl()
 {
-	delete tok_;
 }
 
-void CclReaderImpl::on_start_element(const Glib::ustring &name,
-		const AttributeList& attributes)
+void CclReaderImpl::start_chunk(const AttributeList& attributes)
 {
-	if (name == "chunk") {
-		std::string type;
-		foreach (const Attribute& a, attributes) {
-			if (a.name == "type") {
-				type = a.value;
-			}
-		}
-		if (type == "s") {
-			throw XcesError("Trying to parse XCES as CCL (<chunk type=\"s\">)");
-		} else if (state_ == XS_NONE) {
-			chunk_ = boost::make_shared<Chunk>();
-			state_ = XS_CHUNK;
-			foreach (const Attribute& a, attributes) {
-				chunk_->set_attribute(a.name, a.value);
-			}
-		} else if (state_ == XS_CHUNK) {
-			throw XcesError("Nested <chunk>");
-		} else {
-			throw XcesError("Unexpected <chunk>");
-		}
-	} else if (state_ == XS_CHUNK && name == "sentence") {
-		state_ = XS_SENTENCE;
-		sent_ = boost::make_shared<AnnotatedSentence>();
-	} else if (state_ == XS_SENTENCE && name == "tok") {
-		state_ = XS_TOK;
-		tok_ = new Token();
-		tok_->set_wa(wa_);
-		wa_ = PwrNlp::Whitespace::Space;
-		token_anns_.clear();
-		token_ann_heads_.clear();
-	} else if (state_ == XS_TOK && name == "orth") {
-		state_ = XS_ORTH;
-		grab_characters_ = true;
-		clear_buf();
-	} else if (state_ == XS_TOK && name == "ann") {
-		state_ = XS_ANN;
+	chunk_ = boost::make_shared<Chunk>();
+	std::string type = get_type_from_attributes(attributes);
+	if (type == "s") {
+		throw XcesError("Trying to parse XCES as CCL (<chunk type=\"s\">)");
+	}
+	foreach (const Attribute& a, attributes) {
+		chunk_->set_attribute(a.name, a.value);
+	}
+	state_ = STATE_CHUNK;
+	std::cerr << "Chunk";
+}
+
+
+
+void CclReaderImpl::start_sentence(const AttributeList& /*attributes*/)
+{
+	ann_sent_ = boost::make_shared<AnnotatedSentence>();
+	sent_ = ann_sent_;
+	state_ = STATE_SENTENCE;
+}
+
+
+void CclReaderImpl::start_token(const AttributeList& attributes)
+{
+	XmlReader::start_token(attributes);
+	token_anns_.clear();
+	token_ann_heads_.clear();
+}
+
+bool CclReaderImpl::process_start_element(const Glib::ustring & name,
+	const AttributeList& attributes)
+{
+	if (state_ == STATE_TOK && name == "ann") {
+		state_ = STATE_ANN;
 		grab_characters_ = true;
 		clear_buf();
 		ann_chan_ = "";
@@ -187,102 +168,40 @@ void CclReaderImpl::on_start_element(const Glib::ustring &name,
 		if (ann_chan_.empty()) {
 			throw XcesError("<ann> with no channel name");
 		}
-	} else if (state_ == XS_TOK && name == "lex") {
-		assert(tok_ != NULL);
-		bool is_disamb = false;
-		foreach (const Attribute& a, attributes) {
-			if (a.name == "disamb" && a.value == "1") {
-				is_disamb = true;
-			}
-		}
-		if (!disamb_only_ || is_disamb) {
-			tok_->add_lexeme(Lexeme());
-			tok_->lexemes().back().set_disamb(is_disamb);
-			state_ = XS_LEX;
-		}
-	} else if (state_ == XS_LEX && name == "base") {
-		state_ = XS_LEMMA;
-		grab_characters_ = true;
-		clear_buf();
-	} else if (state_ == XS_LEX && name == "ctag") {
-		state_ = XS_TAG;
-		grab_characters_ = true;
-		clear_buf();
-	} else if (name == "ns") {
-		wa_ = PwrNlp::Whitespace::None;
-	} else if (name == "tok" && state_ == XS_NONE) {
-		std::cerr << "Warning: out-of-chunk token, assuming sentence start on line ";
-		std::cerr << this->context_->input->line << "\n";
-		chunkless_ = true;
-		out_of_chunk_ = true;
-		chunk_ = boost::make_shared<Chunk>();
-		sent_ = boost::make_shared<AnnotatedSentence>();
-		state_ = XS_TOK;
-		tok_ = new Token();
-		tok_->set_wa(wa_);
-		wa_ = PwrNlp::Whitespace::Space;
-	}
-}
-
-void CclReaderImpl::finish_sentence()
-{
-	chunk_->append(sent_);
-	sent_.reset();
-	if (chunkless_) {
-		obuf_.push_back(chunk_);
-		chunk_.reset();
-		state_ = XS_NONE;
-		chunkless_ = false;
+		return true;
 	} else {
-		state_ = XS_CHUNK;
+		return false;
 	}
 }
 
-void CclReaderImpl::on_end_element(const Glib::ustring &name)
+bool CclReaderImpl::process_end_element(const Glib::ustring & name)
 {
-	if (state_ == XS_ORTH && name == "orth") {
-		tok_->set_orth(UnicodeString::fromUTF8(get_buf()));
-		grab_characters_ = false;
-		state_ = XS_TOK;
-	} else if (state_ == XS_ANN && name == "ann") {
+	if (state_ == STATE_ANN && name == "ann") {
 		std::string buf = get_buf();
 		grab_characters_ = false;
 		int segid = atoi(buf.c_str());
-		if (!sent_->has_channel(ann_chan_)) {
-			sent_->create_channel(ann_chan_);
+		if (!ann_sent_->has_channel(ann_chan_)) {
+			ann_sent_->create_channel(ann_chan_);
 		}
 		if (segid > 0) {
 			token_anns_.insert(std::make_pair(ann_chan_, segid));
 			token_ann_heads_.insert(ann_chan_);
 		}
-		state_ = XS_TOK;
-	} else if (state_ == XS_LEMMA && name == "base") {
-		tok_->lexemes().back().set_lemma(UnicodeString::fromUTF8(get_buf()));
-		grab_characters_ = false;
-		state_ = XS_LEX;
-	} else if (state_ == XS_TAG && name == "ctag") {
-		Tag tag = tagset_.parse_simple_tag(get_buf(), true);
-		tok_->lexemes().back().set_tag(tag);
-		grab_characters_ = false;
-		state_ = XS_LEX;
-	} else if (state_ == XS_LEX && name == "lex") {
-		state_ = XS_TOK;
-	} else if (state_ == XS_TOK && name == "tok") {
-		sent_->append(tok_);
-		tok_ = NULL;
-		state_ = XS_SENTENCE;
-		foreach (const token_ann_t::value_type& v, token_anns_) {
-			sent_->get_channel(v.first).set_segment_at(sent_->size() - 1, v.second);
-			if (token_ann_heads_.find(v.first) != token_ann_heads_.end()) {
-				sent_->get_channel(v.first).set_head_at(sent_->size() - 1, true);
-			}
+		state_ = STATE_TOK;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void CclReaderImpl::finish_token()
+{
+	XmlReader::finish_token();
+	foreach (const token_ann_t::value_type& v, token_anns_) {
+		ann_sent_->get_channel(v.first).set_segment_at(sent_->size() - 1, v.second);
+		if (token_ann_heads_.find(v.first) != token_ann_heads_.end()) {
+			ann_sent_->get_channel(v.first).set_head_at(sent_->size() - 1, true);
 		}
-	} else if (state_ == XS_SENTENCE && name == "sentence") {
-		finish_sentence();
-	} else if (state_ == XS_CHUNK && name == "chunk") {
-		obuf_.push_back(chunk_);
-		chunk_.reset();
-		state_ = XS_NONE;
 	}
 }
 

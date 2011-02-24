@@ -68,6 +68,7 @@ SET(libcorpus2_STAT_SRC
 	io/xcesreader.cpp
 	io/xcesvalidate.cpp
 	io/xceswriter.cpp
+	io/xmlreader.cpp
 	util/settings.cpp
 	util/symboldictionary.cpp
 	util/tokentimer.cpp

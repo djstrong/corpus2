@@ -99,6 +99,7 @@ BOOST_AUTO_TEST_CASE( iobase )
 	ssin << swiatopoglad_ann;
 	Corpus2::CclReader xr(tagset, ssin);
 	boost::shared_ptr<Corpus2::Chunk> chunk = xr.get_next_chunk();
+	BOOST_REQUIRE(chunk);
 	std::stringstream ss;
 	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create("xces,flat", ss, tagset));
 	w->write_chunk(*chunk);
