@@ -47,14 +47,15 @@ BOOST_AUTO_TEST_CASE( token_dup_lexemes )
 	t.add_lexeme(l2);
 	BOOST_CHECK(!t.check_duplicate_lexemes());
 	BOOST_CHECK(!t.remove_duplicate_lexemes());
-	Corpus2::Token tt(t);
+	Corpus2::Token* tt = t.clone();
 	t.add_lexeme(l1);
-	BOOST_CHECK(t != tt);
+	BOOST_CHECK(t != *tt);
 	BOOST_CHECK(t.check_duplicate_lexemes());
 	BOOST_CHECK(t.remove_duplicate_lexemes());
 	BOOST_CHECK(!t.check_duplicate_lexemes());
 	BOOST_CHECK(!t.remove_duplicate_lexemes());
-	BOOST_CHECK(t == tt);
+	BOOST_CHECK(t == *tt);
+	delete tt;
 }
 
 BOOST_AUTO_TEST_CASE( is_icu_working )

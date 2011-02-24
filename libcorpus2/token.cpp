@@ -17,11 +17,12 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/token.h>
 #include <sstream>
 #include <libpwrutils/foreach.h>
+#include <libcorpus2/tokenmetadata.h>
 
 namespace Corpus2 {
 
 Token::Token()
-	: orth_(), wa_(), lexemes_()
+	: orth_(), wa_(), lexemes_(), metadata_(NULL)
 {
 }
 
@@ -32,7 +33,13 @@ Token::Token(const UnicodeString &orth, PwrNlp::Whitespace::Enum wa)
 
 Token* Token::clone() const
 {
-	Token* t = new Token(*this);
+	Token* t = new Token();
+	t->orth_ = orth_;
+	t->wa_ = wa_;
+	t->lexemes_ = lexemes_;
+	if (metadata_.get()) {
+		t->set_metadata(metadata_->clone());
+	}
 	return t;
 }
 
@@ -116,6 +123,11 @@ bool Token::orth_pos_match(mask_t pos, const UnicodeString &orth) const
 		}
 	}
 	return true;
+}
+
+void Token::create_metadata()
+{
+	metadata_.reset(new TokenMetaData);
 }
 
 } /* end ns Corpus2 */

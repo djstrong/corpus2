@@ -12,6 +12,7 @@ add_executable( tests
 	ioann.cpp
 	tag_split.cpp
 	tagset_parse.cpp
+	tokenmetadata.cpp
 )
 
 target_link_libraries ( tests corpus2 pwrutils ${Boost_LIBRARIES})

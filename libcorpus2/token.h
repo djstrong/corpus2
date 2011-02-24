@@ -24,10 +24,15 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libpwrutils/whitespace.h>
 
 #include <unicode/unistr.h>
+#include <memory>
 #include <string>
 #include <vector>
 
 namespace Corpus2 {
+
+
+/// Forward declaration of optional Token metadata class
+class TokenMetaData;
 
 /**
  * A single token with morphological analyses.
@@ -37,7 +42,7 @@ namespace Corpus2 {
  * of possible interpretations stored as lexemes.
  */
 class Token
-	: boost::equality_comparable<Token>
+	: boost::equality_comparable<Token>, boost::noncopyable
 {
 public:
 	/// Creates an empty Token
@@ -135,6 +140,19 @@ public:
 	 */
 	bool orth_pos_match(mask_t pos, const UnicodeString& orth) const;
 
+	/// Metadata setter
+	void set_metadata(TokenMetaData* md) {
+		metadata_.reset(md);
+	}
+
+	/// Metadata getter
+	TokenMetaData* get_metadata() const {
+		return metadata_.get();
+	}
+
+	/// Creates an empty metdata object for this Token
+	void create_metadata();
+
 private:
 	/// The orth (actual encountered form)
 	//boost::flyweight<UnicodeString> orth_;
@@ -145,6 +163,9 @@ private:
 
 	/// The possible lexemes
 	std::vector<Lexeme> lexemes_;
+
+	/// Metadata
+	std::auto_ptr<TokenMetaData> metadata_;
 };
 
 } /* end ns Corpus2 */
