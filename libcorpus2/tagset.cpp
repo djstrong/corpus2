@@ -128,12 +128,13 @@ Tag Tagset::parse_symbol(const std::string& s) const
 	throw TagParseError("Not a tagset symbol", s, "", id_string());
 }
 
-void Tagset::parse_tag(const string_range &s, bool allow_extra,
-		boost::function<void(const Tag &)> sink) const
+void Tagset::parse_tag(const string_range &s,
+		boost::function<void(const Tag &)> sink,
+		ParseMode mode /* = ParseDefault*/) const
 {
 	string_range_vector fields;
 	boost::algorithm::split(fields, s, boost::is_any_of(":"));
-	parse_tag(fields, allow_extra, sink);
+	parse_tag(fields, sink, mode);
 }
 
 namespace {
@@ -155,8 +156,9 @@ namespace {
 	}
 }
 
-void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
-		boost::function<void(const Tag &)>sink) const
+void Tagset::parse_tag(const string_range_vector &fields,
+		boost::function<void(const Tag &)>sink,
+		ParseMode mode /* = ParseDefault*/) const
 {
 	if (fields.empty()) {
 		throw TagParseError("No POS", "", "", id_string());
@@ -209,37 +211,38 @@ void Tagset::parse_tag(const string_range_vector &fields, bool allow_extra,
 		} // else empty, do nothing
 	}
 	foreach (mask_t variant, all_variants) {
-		sink(make_tag(pos_idx, variant, allow_extra));
+		sink(make_tag(pos_idx, variant, mode));
 	}
 }
 
 std::vector<Tag> Tagset::parse_tag(const string_range& sr,
-		bool allow_extra) const
+		ParseMode mode /* = ParseDefault*/) const
 {
 	string_range_vector fields;
 	boost::algorithm::split(fields, sr, boost::is_any_of(":"));
-	return parse_tag(fields, allow_extra);
+	return parse_tag(fields, mode);
 }
 
 std::vector<Tag> Tagset::parse_tag(const string_range_vector &fields,
-		bool allow_extra) const
+		ParseMode mode /* = ParseDefault*/) const
 {
 	std::vector<Tag> tags;
-	parse_tag(fields, allow_extra,
-			  boost::bind(&std::vector<Tag>::push_back, boost::ref(tags),
-				_1));
+	parse_tag(fields,
+		boost::bind(&std::vector<Tag>::push_back, boost::ref(tags),_1),
+		mode);
 	return tags;
 }
 
-Tag Tagset::parse_simple_tag(const string_range &s, bool allow_extra) const
+Tag Tagset::parse_simple_tag(const string_range &s,
+		ParseMode mode /* = ParseDefault*/) const
 {
 	string_range_vector fields;
 	boost::algorithm::split(fields, s, boost::is_any_of(std::string(":")));
-	return parse_simple_tag(fields, allow_extra);
+	return parse_simple_tag(fields, mode);
 }
 
 Tag Tagset::parse_simple_tag(const string_range_vector &ts,
-		bool allow_extra) const
+		ParseMode mode /* = ParseDefault*/) const
 {
 	if (ts.empty()) {
 		throw TagParseError("Empty POS+attribute list", "", "",
@@ -269,11 +272,11 @@ Tag Tagset::parse_simple_tag(const string_range_vector &ts,
 			}
 		}
 	}
-
-	return make_tag(pos_idx, values, allow_extra);
+	return make_tag(pos_idx, values, mode);
 }
 
-Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
+Tag Tagset::make_tag(idx_t pos_idx, mask_t values,
+		ParseMode mode /* = ParseDefault*/) const
 {
 	mask_t required_values = get_pos_required_mask(pos_idx);
 	//std::cerr << values << "\n";
@@ -281,32 +284,43 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values, bool allow_extra) const
 	//std::cerr << (required_values & values) << "\n";
 	//std::cerr << PwrNlp::count_bits_set(required_values & values)
 	//		<< " of " << pos_required_attributes_idx_[pos_idx].size() << "\n";
-	size_t has_req = PwrNlp::count_bits_set(required_values & values);
-	if (has_req != pos_required_attributes_idx_[pos_idx].size()) {
-		foreach (idx_t a, get_pos_attributes(pos_idx)) {
-			if (pos_requires_attribute(pos_idx, a)) {
-				mask_t amask = get_attribute_mask(a);
-				if ((values & amask).none()) {
-					throw TagParseError("Required attribute missing",
-						tag_to_string(Tag(get_pos_mask(pos_idx), values)),
-						get_attribute_name(a), id_string());
+	if (mode & ParseCheckRequired) {
+		size_t has_req = PwrNlp::count_bits_set(required_values & values);
+		if (has_req != pos_required_attributes_idx_[pos_idx].size()) {
+			foreach (idx_t a, get_pos_attributes(pos_idx)) {
+				if (pos_requires_attribute(pos_idx, a)) {
+					mask_t amask = get_attribute_mask(a);
+					if ((values & amask).none()) {
+						throw TagParseError("Required attribute missing",
+							tag_to_string(Tag(get_pos_mask(pos_idx), values)),
+							get_attribute_name(a), id_string());
+					}
 				}
 			}
+			throw TagParseError("Required attribute missing",
+					tag_to_string(Tag(get_pos_mask(pos_idx), values)),
+					get_pos_name(pos_idx), id_string());
 		}
-		throw TagParseError("Required attribute missing",
-				tag_to_string(Tag(get_pos_mask(pos_idx), values)),
-				get_pos_name(pos_idx), id_string());
 	}
-	mask_t valid_values = get_pos_value_mask(pos_idx);
-	mask_t invalid = values & ~valid_values;
-	if (invalid.any() && !allow_extra) {
-		mask_t first_invalid = PwrNlp::lowest_bit(invalid);
-		throw TagParseError("Attribute not valid for this POS",
-				get_value_name(first_invalid),
-				get_pos_name(pos_idx), id_string());
+	if (!(mode & ParseAllowExtra)) {
+		mask_t valid_values = get_pos_value_mask(pos_idx);
+		mask_t invalid = values & ~valid_values;
+		if (invalid.any()) {
+			mask_t first_invalid = PwrNlp::lowest_bit(invalid);
+			throw TagParseError("Attribute not valid for this POS",
+					get_value_name(first_invalid),
+					get_pos_name(pos_idx), id_string());
+		}
 	}
-	// check singularity?
-	return Tag(get_pos_mask(pos_idx), values);
+	Tag tag(get_pos_mask(pos_idx), values);
+	if (mode & ParseCheckSingular) {
+		if (!tag_is_singular(tag)) {
+			throw TagParseError("Parsed tag not singular",
+					tag_to_symbol_string(tag, false),
+					get_pos_name(pos_idx), id_string());
+		}
+	}
+	return tag;
 }
 
 Tag Tagset::make_ign_tag() const
@@ -318,23 +332,24 @@ Tag Tagset::make_ign_tag() const
 	return Tag(ign_pos_mask);
 }
 
-bool Tagset::validate_tag(const Tag &t, bool allow_extra,
-		std::ostream* os) const
+bool Tagset::validate_tag(const Tag &t, ParseMode mode /* = ParseDefault*/,
+		std::ostream* os /* = NULL */) const
 {
-	if (t.pos_count() != 1) {
-		if (os) {
-			(*os) << " POS not singular :  " << t.pos_count();
+	if (mode & ParseCheckSingular) {
+		if (t.pos_count() != 1) {
+			if (os) {
+				(*os) << " POS not singular :  " << t.pos_count();
+			}
+			return false;
 		}
-		return false;
-	}
-	size_t ts = tag_size(t);
-	if (ts != 1) {
-		if (os) {
-			(*os) << " Tag not singular :  " << ts;
+		size_t ts = tag_size(t);
+		if (ts != 1) {
+			if (os) {
+				(*os) << " Tag not singular :  " << ts;
+			}
+			return false;
 		}
-		return false;
 	}
-
 	idx_t pos_idx = t.get_pos_index();
 	if (!pos_dict_.is_id_valid(pos_idx)) {
 		if (os) {
@@ -342,13 +357,13 @@ bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 		}
 		return false;
 	}
-	std::vector<bool> valid = get_pos_attributes_flag(pos_idx);
-	std::vector<bool> required = get_pos_required_attributes(pos_idx);
+	const std::vector<bool>& valid = get_pos_attributes_flag(pos_idx);
+	const std::vector<bool>& required = get_pos_required_attributes(pos_idx);
 
 	for (idx_t i = 0; i < attribute_count(); ++i) {
 		mask_t value = t.get_values_for(get_attribute_mask(i));
 		if (value.none()) {
-			if (required[i]) {
+			if ((mode & ParseCheckRequired) && required[i]) {
 				if (os) {
 					(*os)  << " red attribuite "
 						<< get_attribute_name(i)
@@ -357,7 +372,7 @@ bool Tagset::validate_tag(const Tag &t, bool allow_extra,
 				return false;
 			}
 		} else {
-			if (!valid[i] && !allow_extra) {
+			if (!valid[i] && !(mode & ParseAllowExtra)) {
 				if (os) {
 					(*os) << " Extra attribute value: "
 						<< get_value_name(value)
@@ -417,7 +432,7 @@ std::string Tagset::tag_to_no_opt_string(const Tag &tag) const
 }
 
 std::vector<std::string> Tagset::tag_to_symbol_string_vector(const Tag& tag,
-		bool compress_attributes) const
+		bool compress_attributes /* = true */) const
 {
 	std::vector<std::string> ret;
 	foreach (mask_t p, PwrNlp::set_bits(tag.get_pos())) {
@@ -440,7 +455,7 @@ std::vector<std::string> Tagset::tag_to_symbol_string_vector(const Tag& tag,
 }
 
 std::string Tagset::tag_to_symbol_string(const Tag& tag,
-		bool compress_attributes) const
+		bool compress_attributes /* = true */) const
 {
 	return boost::algorithm::join(
 			tag_to_symbol_string_vector(tag, compress_attributes), ",");
@@ -729,7 +744,7 @@ void Tagset::lexemes_into_token(Token& tok, const UnicodeString& lemma,
 			boost::bind(lex, _1));
 
 	foreach (const string_range& o, options) {
-		parse_tag(o, true, func);
+		parse_tag(o, func);
 	}
 }
 

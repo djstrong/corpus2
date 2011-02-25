@@ -119,9 +119,9 @@ void XcesValidatorImpl::on_end_element(const Glib::ustring &name)
 		state_ = XS_TOK;
 	} else if (state_ == XS_TAG && name == "ctag") {
 		try {
-			Tag tag = tagset_.parse_simple_tag(sbuf_, true);
+			Tag tag = tagset_.parse_simple_tag(sbuf_);
 			std::stringstream ss;
-			if (!tagset_.validate_tag(tag, false, &ss)) {
+			if (!tagset_.validate_tag(tag, Tagset::ParseStrict, &ss)) {
 				error_preamble(os_, last_orth_, sbuf_, token_idx_, tag_idx_);
 				os_ << ss.str() << "\n";
 			}

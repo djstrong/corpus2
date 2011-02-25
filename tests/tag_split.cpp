@@ -48,7 +48,7 @@ struct F {
 
 		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
 			const Corpus2::Tag& tag = lex.tag();
-			BOOST_WARN(tagset->validate_tag(tag, false, &std::cerr));
+			BOOST_WARN(tagset->validate_tag(tag, Corpus2::Tagset::ParseStrict, &std::cerr));
 			actual.insert(tagset->tag_to_string(tag));
 			tags.push_back(tag);
 		}
@@ -185,9 +185,9 @@ BOOST_FIXTURE_TEST_CASE( underscore_dots, F )
 
 BOOST_FIXTURE_TEST_CASE( tag_size, F )
 {
-	Corpus2::Tag t = tagset->parse_simple_tag("some:tag:data", false);
-	Corpus2::Tag t2 = tagset->parse_simple_tag("some:tog:data", false);
-	Corpus2::Tag t3 = tagset->parse_simple_tag("same:tag:data", false);
+	Corpus2::Tag t = tagset->parse_simple_tag("some:tag:data");
+	Corpus2::Tag t2 = tagset->parse_simple_tag("some:tog:data");
+	Corpus2::Tag t3 = tagset->parse_simple_tag("same:tag:data");
 	BOOST_CHECK(tagset->tag_is_singular(t));
 	BOOST_CHECK_EQUAL(tagset->tag_size(t), 1);
 	BOOST_CHECK(tagset->tag_is_singular(t2));
@@ -200,7 +200,7 @@ BOOST_FIXTURE_TEST_CASE( tag_size, F )
 	t.add_pos(t3.get_pos());
 	BOOST_CHECK(!tagset->tag_is_singular(t));
 	BOOST_CHECK_EQUAL(tagset->tag_size(t), 4);
-	Corpus2::Tag t4 = tagset->parse_simple_tag("same:other:thang", true);
+	Corpus2::Tag t4 = tagset->parse_simple_tag("same:other:thang", Corpus2::Tagset::ParseLoose);
 	t.add_values(t4.get_values() & tagset->get_attribute_mask(std::string("A")));
 	BOOST_CHECK_EQUAL(tagset->tag_size(t), 6);
 	std::vector<Corpus2::Tag> tags = tagset->split_tag(t);
@@ -214,8 +214,8 @@ BOOST_FIXTURE_TEST_CASE( tag_size, F )
 
 BOOST_FIXTURE_TEST_CASE( s, F )
 {
-	Corpus2::Tag t = tagset->parse_simple_tag("some:tag:data", false);
-	Corpus2::Tag t2 = tagset->parse_simple_tag("same:tog:data", false);
+	Corpus2::Tag t = tagset->parse_simple_tag("some:tag:data");
+	Corpus2::Tag t2 = tagset->parse_simple_tag("same:tog:data");
 	BOOST_CHECK_EQUAL(tagset->tag_to_symbol_string(t), "some,tag,data");
 	BOOST_CHECK_EQUAL(tagset->tag_to_symbol_string(t2), "same,tog,data");
 	Corpus2::Tag t3 = t.get_combined(t2);

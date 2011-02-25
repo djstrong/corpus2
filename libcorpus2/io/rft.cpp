@@ -89,7 +89,7 @@ Sentence::Ptr RftReader::actual_next_sentence()
 				std::string orth = line.substr(0, tab);
 				std::string tag_string = line.substr(tab + 1);
 				boost::algorithm::replace_all(tag_string, ".", ":");
-				Tag tag = tagset().parse_simple_tag(tag_string, false);
+				Tag tag = tagset().parse_simple_tag(tag_string);
 				Token* t = new Token();
 				t->set_orth(UnicodeString::fromUTF8(orth));
 				t->set_wa(PwrNlp::Whitespace::Space);

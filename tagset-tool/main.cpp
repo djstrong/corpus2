@@ -182,7 +182,7 @@ void tag_parse_cb(const Corpus2::Tagset& tagset, bool validate, bool sort,
 			std::stringstream ss;
 			ss << tagset.tag_to_string(lex.tag());
 			if (validate) {
-				tagset.validate_tag(lex.tag(), false, &ss);
+				tagset.validate_tag(lex.tag(), Corpus2::Tagset::ParseStrict, &ss);
 			}
 			if (internals) {
 				ss << "\n" << lex.tag().raw_dump() << "";

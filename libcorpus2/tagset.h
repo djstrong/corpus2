@@ -121,6 +121,20 @@ public:
 	static Tagset from_data(const char*);
 
 	/**
+	 * Mode enum for tag parsing
+	 */
+	enum ParseMode {
+		ParseCheckRequired = 1, /// Check for presence of required attributes
+		ParseAllowExtra = 2, /// Allow extra attributes
+		ParseCheckSingular = 4, /// Check tag singularity
+
+		ParseDefault = ParseCheckRequired, /// Default mode
+		ParseRequiredWithExtra = ParseCheckRequired | ParseAllowExtra,
+		ParseStrict = ParseCheckRequired | ParseCheckSingular,
+		ParseLoose = ParseAllowExtra
+	};
+
+	/**
 	 * Parse a single tagset symbol and return the correspondig (partial) tag.
 	 *
 	 * Pos and value names result in a single-bit-set tag, attribite names
@@ -139,8 +153,9 @@ public:
 	 * A simple wrapper for string split and a call to the split string
 	 * version.
 	 */
-	void parse_tag(const string_range& s, bool allow_extra,
-			boost::function<void (const Tag&)> sink) const;
+	void parse_tag(const string_range& s,
+		boost::function<void (const Tag&)> sink,
+		ParseMode mode = ParseDefault) const;
 
 	/**
 	 * Tag parsing -- functional version, whole tag string, char* overload.
@@ -149,9 +164,10 @@ public:
 	 * A simple wrapper for string split and a call to the split string
 	 * version.
 	 */
-	void parse_tag(const char* c, bool allow_extra,
-			boost::function<void (const Tag&)> sink) const {
-		parse_tag(std::string(c), allow_extra, sink);
+	void parse_tag(const char* c,
+			boost::function<void (const Tag&)> sink,
+			ParseMode mode = ParseDefault) const {
+		parse_tag(std::string(c), sink, mode);
 	}
 
 	/**
@@ -171,8 +187,9 @@ public:
 	 * - an underscore (_) indicates that all values for the attribute at
 	 *   the underscore's position should be taken.
 	 */
-	void parse_tag(const string_range_vector& ts, bool allow_extra,
-			boost::function<void (const Tag&)> sink) const;
+	void parse_tag(const string_range_vector& ts,
+			boost::function<void (const Tag&)> sink,
+			ParseMode mode = ParseDefault) const;
 
 	/**
 	 * Tag parsing -- plain version, whole string.
@@ -181,7 +198,7 @@ public:
 	 * version.
 	 */
 	std::vector<Tag> parse_tag(const string_range& s,
-			bool allow_extra) const;
+			ParseMode mode = ParseDefault) const;
 
 	/**
 	 * Tag parsing -- plain version, whole string, char* overload.
@@ -189,8 +206,9 @@ public:
 	 * A simple wrapper for string split and a call to the split string
 	 * version.
 	 */
-	std::vector<Tag> parse_tag(const char* c, bool allow_extra) const {
-		return parse_tag(std::string(c), allow_extra);
+	std::vector<Tag> parse_tag(const char* c,
+			ParseMode mode = ParseDefault) const {
+		return parse_tag(std::string(c), mode);
 	}
 
 	/**
@@ -200,7 +218,7 @@ public:
 	 * the tags end up in a vector, which is then returned.
 	 */
 	std::vector<Tag> parse_tag(const string_range_vector& ts,
-			bool allow_extra) const;
+			ParseMode mode = ParseDefault) const;
 
 	/**
 	 * Simple tag parsing -- whole string version.
@@ -208,7 +226,8 @@ public:
 	 * A simple wrapper for string split and a call to the split string
 	 * version.
 	 */
-	Tag parse_simple_tag(const string_range& s, bool allow_extra) const;
+	Tag parse_simple_tag(const string_range& s,
+			ParseMode mode = ParseDefault) const;
 
 	/**
 	 * Simple tag parsing -- whole string version, char* overload.
@@ -216,8 +235,9 @@ public:
 	 * A simple wrapper for string split and a call to the split string
 	 * version.
 	 */
-	Tag parse_simple_tag(const char* c, bool allow_extra) const {
-		return parse_simple_tag(std::string(c), allow_extra);	
+	Tag parse_simple_tag(const char* c,
+			ParseMode mode = ParseDefault) const {
+		return parse_simple_tag(std::string(c), mode);
 	}
 
 	/**
@@ -228,17 +248,17 @@ public:
 	 * underscores or plus / pipe characters).
 	 */
 	Tag parse_simple_tag(const string_range_vector& ts,
-			bool allow_extra) const;
-
+			ParseMode mode = ParseDefault) const;
 
 	/**
 	 * Create a tag from the given POS and a (unsorted) vector of values.
 	 *
 	 * The POS is assumed to be valid in this tagset.
 	 * The values are assumed to be valid in this tagset, but are checked
-	 * for correctness with regards to the POS.
+	 * for correctness with regards to the POS according to the mode.
 	 */
-	Tag make_tag(idx_t pos, mask_t values, bool allow_extra) const;
+	Tag make_tag(idx_t pos, mask_t values,
+			ParseMode mode = ParseDefault) const;
 
 	/**
 	 * Convenience function for creating a 'ign' (ignored) tag within this
@@ -255,7 +275,7 @@ public:
 	 * * no extra attrbutes are set, unless allow_extra is true
 	 * @return true if the tag is valid, false otherwise
 	 */
-	bool validate_tag(const Tag& t, bool allow_extra,
+	bool validate_tag(const Tag& t, ParseMode mode = ParseDefault,
 			std::ostream* os = NULL) const;
 
 	/**
