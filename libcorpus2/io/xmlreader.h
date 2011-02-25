@@ -43,6 +43,14 @@ public:
 		disamb_sh_ = v;
 	}
 
+	void set_warn_on_inconsistent(bool v) {
+		warn_on_inconsistent_ = v;
+	}
+
+	void set_warn_on_unexpected(bool v) {
+		warn_on_unexpected_ = v;
+	}
+
 protected:
 	std::string get_type_from_attributes(const AttributeList& attributes) const;
 
@@ -81,10 +89,13 @@ protected:
 	static const int STATE_LEMMA = 6;
 	static const int STATE_TAG = 7;
 
+	/// The state of the parser
 	int state_;
 
+	/// Flag signyfying there was a sentence outside of a chunk
 	bool chunkless_;
 
+	/// Flag signyfying there was a token outside of a sentence/chunk
 	bool out_of_chunk_;
 
 	/// Whitespace for the next token
@@ -111,10 +122,13 @@ protected:
 	/// Read Pantera-like disamb_sh diamb tag markings
 	bool disamb_sh_;
 
+	/// Flag to control warning messages on state errors
 	bool warn_on_inconsistent_;
 
+	/// Floag to control warning messages on unknown tags
 	bool warn_on_unexpected_;
 
+	/// Tag name for sentence objects, customized in child class ctors
 	std::string sentence_tag_name_;
 };
 
