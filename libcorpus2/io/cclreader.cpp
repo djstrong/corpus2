@@ -129,7 +129,6 @@ void CclReaderImpl::start_chunk(const AttributeList& attributes)
 		chunk_->set_attribute(a.name, a.value);
 	}
 	state_ = STATE_CHUNK;
-	std::cerr << "Chunk";
 }
 
 

@@ -56,7 +56,7 @@ std::string XmlReader::get_type_from_attributes(const AttributeList& attributes)
 void XmlReader::on_start_element(const Glib::ustring &name,
 		const AttributeList& attributes)
 {
-	std::cerr << name << state_ << "\n";
+	//std::cerr << name << state_ << "\n";
 	if (state_ == STATE_NONE && name == "chunk") {
 		start_chunk(attributes);
 	} else if (state_ == STATE_CHUNK && name == sentence_tag_name_) {
@@ -180,7 +180,6 @@ void XmlReader::start_lexeme(const AttributeList &attributes)
 
 void XmlReader::finish_chunk()
 {
-	std::cerr << "FC\n";
 	assert(chunk_);
 	obuf_.push_back(chunk_);
 	chunk_.reset();
@@ -212,8 +211,7 @@ void XmlReader::finish_token()
 
 void XmlReader::on_end_element(const Glib::ustring &name)
 {
-	std::cerr << "/" << name << state_ << "\n";
-
+	//std::cerr << "/" << name << state_ << "\n";
 	if (state_ == STATE_ORTH && name == "orth") {
 		tok_->set_orth(UnicodeString::fromUTF8(get_buf()));
 		grab_characters_ = false;
