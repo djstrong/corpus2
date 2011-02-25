@@ -33,6 +33,7 @@ XmlReader::XmlReader(const Tagset& tagset,
 	, sbuf_(), tok_(NULL), sent_(), chunk_(), obuf_(obuf)
 	, disamb_only_(false), disamb_sh_(false)
 	, warn_on_inconsistent_(true), warn_on_unexpected_(true)
+	, loose_tag_parsing_(false)
 {
 }
 
@@ -221,7 +222,8 @@ void XmlReader::on_end_element(const Glib::ustring &name)
 		grab_characters_ = false;
 		state_ = STATE_LEX;
 	} else if (state_ == STATE_TAG && name == "ctag") {
-		Tag tag = tagset_.parse_simple_tag(get_buf(), true);
+		Tag tag = tagset_.parse_simple_tag(get_buf(),
+			loose_tag_parsing_ ? Tagset::ParseLoose : Tagset::ParseDefault);
 		tok_->lexemes().back().set_tag(tag);
 		grab_characters_ = false;
 		state_ = STATE_LEX;

@@ -51,6 +51,10 @@ public:
 		warn_on_unexpected_ = v;
 	}
 
+	void set_loose_tag_parsing(bool v) {
+		loose_tag_parsing_ = v;
+	}
+
 protected:
 	std::string get_type_from_attributes(const AttributeList& attributes) const;
 
@@ -130,6 +134,9 @@ protected:
 
 	/// Tag name for sentence objects, customized in child class ctors
 	std::string sentence_tag_name_;
+
+	/// Flag to disable strict tag correctness checking
+	bool loose_tag_parsing_;
 };
 
 } /* end ns Corpus2 */
