@@ -46,6 +46,9 @@ public:
 
 	virtual boost::shared_ptr<Chunk> get_next_chunk() = 0;
 
+	virtual void set_option(const std::string& /*option*/) {
+	}
+
 	const Tagset& tagset() {
 		return tagset_;
 	}

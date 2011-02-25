@@ -89,4 +89,13 @@ XcesReaderImpl::~XcesReaderImpl()
 {
 }
 
+void XcesReader::set_option(const std::string& option)
+{
+	if (option == "loose") {
+		impl_->set_loose_tag_parsing(true);
+	} else if (option == "strict") {
+		impl_->set_loose_tag_parsing(false);
+	}
+}
+
 } /* end ns Corpus2 */
