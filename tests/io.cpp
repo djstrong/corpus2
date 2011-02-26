@@ -85,6 +85,14 @@ static char swiatopoglad_broken[] =
 "<orth>Uważam</orth>\n"
 "<lex disamb=\"1\"><base>uważać</base><ctag>fin:sg:pri:imperf</ctag></lex>\n"
 "</tok>\n"
+"<chunk id=\"ch51\" type=\"tok\">\n"
+"<chunk type=\"s\">\n"
+"<tok>\n"
+"<orth>Uważam</orth>\n"
+"<lex disamb=\"1\"><base>uważać</base><ctag>fin:sg:pri:imperf</ctag></lex>\n"
+"</tok>\n"
+"</chunk>\n"
+"</chunk>\n"
 "</chunkList>\n"
 "</cesAna>\n"
 ;
@@ -118,6 +126,10 @@ BOOST_AUTO_TEST_CASE( io_oo )
 	w->write_chunk(*chunk);
 	w->finish();
 	BOOST_CHECK_EQUAL(ss.str(), swiatopoglad);
+	chunk = xr.get_next_chunk();
+	BOOST_CHECK(chunk);
+	chunk = xr.get_next_chunk();
+	BOOST_CHECK(chunk);
 }
 
 

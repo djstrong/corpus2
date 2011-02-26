@@ -98,6 +98,10 @@ void XmlReader::on_start_element(const Glib::ustring &name,
 		//nop
 	} else if (process_start_element(name, attributes)) {
 		//nop
+	} else if (out_of_chunk_ && state_ == STATE_SENTENCE && name == "chunk") {
+		finish_sentence();
+		out_of_chunk_ = false;
+		start_chunk(attributes);
 	} else if (warn_on_unexpected_) {
 		std::cerr << "Unexpected tag <" << name << "> on line ";
 		std::cerr << this->context_->input->line << " (" << state_ << ")\n";
@@ -118,13 +122,8 @@ bool XmlReader::process_end_element(const Glib::ustring & /*name*/)
 
 void XmlReader::start_chunk(const AttributeList& attributes)
 {
-	if (out_of_chunk_) {
-		finish_sentence();
-		out_of_chunk_ = false;
-	}
 	std::string type = get_type_from_attributes(attributes);
 	chunk_ = boost::make_shared<Chunk>();
-
 	if (type == "s") {
 		// top-level chunk is a sentence
 		start_sentence(attributes);
