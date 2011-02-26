@@ -85,11 +85,12 @@ void XmlReader::on_start_element(const Glib::ustring &name,
 			std::cerr << "Warning: out-of-chunk token, assuming sentence start on line ";
 			std::cerr << this->context_->input->line << "\n";
 		}
-		chunkless_ = true;
-		out_of_chunk_ = true;
 		AttributeList fake;
 		start_chunk(fake);
+		fake.push_back(Attribute("type", "s"));
 		start_sentence(fake);
+		chunkless_ = true;
+		out_of_chunk_ = true;
 		start_token(attributes);
 	} else if (state_ == STATE_NONE && name == "cesAna") {
 		//nop
