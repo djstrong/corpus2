@@ -53,8 +53,42 @@ static char swiatopoglad[] =
 "</chunkList>\n"
 "</cesAna>\n"
 ;
-}
 
+static char swiatopoglad_broken[] =
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+"<!DOCTYPE cesAna SYSTEM \"xcesAnaIPI.dtd\">\n"
+"<cesAna xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.0\" type=\"lex disamb\">\n"
+"<chunkList>\n"
+"<chunk id=\"ch51\" type=\"tok\">\n"
+"<chunk type=\"s\">\n"
+"<tok>\n"
+"<orth>Uważam</orth>\n"
+"<lex disamb=\"1\"><base>uważać</base><ctag>fin:sg:pri:imperf</ctag></lex>\n"
+"</tok>\n"
+"<ns/>\n"
+"<tok>\n"
+"<orth>,</orth>\n"
+"<lex disamb=\"1\"><base>,</base><ctag>interp</ctag></lex>\n"
+"</tok>\n"
+"<tok>\n"
+"<orth>że</orth>\n"
+"<lex disamb=\"1\"><base>że</base><ctag>conj</ctag></lex>\n"
+"</tok>\n"
+"<tok>\n"
+"<orth>światopogląd</orth>\n"
+"<lex><base>światopogląd</base><ctag>subst:sg:acc:m3</ctag></lex>\n"
+"<lex disamb=\"1\"><base>światopogląd</base><ctag>subst:sg:nom:m3</ctag></lex>\n"
+"</tok>\n"
+"</chunk>\n"
+"</chunk>\n"
+"<tok>\n"
+"<orth>Uważam</orth>\n"
+"<lex disamb=\"1\"><base>uważać</base><ctag>fin:sg:pri:imperf</ctag></lex>\n"
+"</tok>\n"
+"</chunkList>\n"
+"</cesAna>\n"
+;
+}
 BOOST_AUTO_TEST_SUITE( io )
 
 BOOST_AUTO_TEST_CASE( iobase )
@@ -70,5 +104,21 @@ BOOST_AUTO_TEST_CASE( iobase )
 	w->finish();
 	BOOST_CHECK_EQUAL(ss.str(), swiatopoglad);
 }
+
+BOOST_AUTO_TEST_CASE( io_oo )
+{
+	const Corpus2::Tagset& tagset = Corpus2::get_named_tagset("kipi");
+	std::stringstream ssin;
+	ssin << swiatopoglad_broken;
+	Corpus2::XcesReader xr(tagset, ssin);
+	//xr.set_warn_on_inconsistent(false)
+	boost::shared_ptr<Corpus2::Chunk> chunk = xr.get_next_chunk();
+	std::stringstream ss;
+	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create("xces,flat", ss, tagset));
+	w->write_chunk(*chunk);
+	w->finish();
+	BOOST_CHECK_EQUAL(ss.str(), swiatopoglad);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
