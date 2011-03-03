@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE( io_oo )
 	std::stringstream ssin;
 	ssin << swiatopoglad_broken;
 	Corpus2::XcesReader xr(tagset, ssin);
-	//xr.set_warn_on_inconsistent(false)
+	xr.set_option("no_warn_inconsistent");
 	boost::shared_ptr<Corpus2::Chunk> chunk = xr.get_next_chunk();
 	std::stringstream ss;
 	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create("xces,flat", ss, tagset));

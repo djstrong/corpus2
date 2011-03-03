@@ -95,6 +95,8 @@ void XcesReader::set_option(const std::string& option)
 		impl_->set_loose_tag_parsing(true);
 	} else if (option == "strict") {
 		impl_->set_loose_tag_parsing(false);
+	} else if (option == "no_warn_inconsistent") {
+		impl_->set_warn_on_inconsistent(false);
 	}
 }
 

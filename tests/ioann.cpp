@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE( iobase )
 	BOOST_CHECK_EQUAL(meh->tokens()[1]->orth_utf8(), "Uważam że");
 	BOOST_CHECK_EQUAL(meh->tokens()[2]->orth_utf8(), "światopogląd");
 
-	std::cerr << as->annotation_info();
+	//std::cerr << as->annotation_info();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
