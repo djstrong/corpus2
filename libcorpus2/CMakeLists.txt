@@ -56,6 +56,7 @@ SET(libcorpus2_STAT_SRC
 	token.cpp
 	tokenmetadata.cpp
 	io/cclreader.cpp
+	io/fastxces.cpp
 	io/orthwriter.cpp
 	io/plainwriter.cpp
 	io/premorphwriter.cpp
