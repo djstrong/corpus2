@@ -1,4 +1,4 @@
-#include <libcorpus/$LN.h>
+#include <libcorpus2/$LN.h>
 
 namespace Corpus2 {
 
