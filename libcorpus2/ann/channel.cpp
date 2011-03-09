@@ -170,6 +170,24 @@ std::string AnnotationChannel::dump_iob() const
 	return ss.str();
 }
 
+std::string AnnotationChannel::dump_segments() const
+{
+	std::stringstream ss;
+	foreach (int s, segments_) {
+		ss << s;
+	}
+	return ss.str();
+}
+
+std::string AnnotationChannel::dump_heads() const
+{
+	std::stringstream ss;
+	foreach (bool b, heads_) {
+		ss << (b ? "H" : " ");
+	}
+	return ss.str();
+}
+
 void AnnotationChannel::do_counts(int& annotations, int& disjoint, int& unannotated) const
 {
 	std::set<int> used_sids;

@@ -147,6 +147,16 @@ public:
 	 */
 	std::string dump_iob() const;
 
+	/**
+	 * Compose a string consisting of all segment indices in order.
+	 */
+	std::string dump_segments() const;
+
+	/**
+	 * Compose a string consisting of all head flags in order
+	 */
+	std::string dump_heads() const;
+
 	void do_counts(int& annotations, int& disjoint, int& unannotated) const;
 
 private:

@@ -102,6 +102,9 @@ BOOST_AUTO_TEST_CASE( iobase )
 	BOOST_REQUIRE(chunk);
 	std::stringstream ss;
 	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create("xces,flat", ss, tagset));
+	//boost::shared_ptr<Corpus2::TokenWriter> wann(Corpus2::TokenWriter::create("ccl", std::cerr, tagset));
+	//wann->write_chunk(*chunk);
+	//wann->finish();
 	w->write_chunk(*chunk);
 	w->finish();
 	BOOST_CHECK_EQUAL(ss.str(), swiatopoglad);
@@ -113,6 +116,8 @@ BOOST_AUTO_TEST_CASE( iobase )
 	BOOST_REQUIRE(as->has_channel("cute"));
 	as->get_channel("cute").make_iob_from_segments();
 	BOOST_CHECK_EQUAL(as->get_channel("cute").dump_iob(), "BIOB");
+	BOOST_CHECK_EQUAL(as->get_channel("cute").dump_segments(), "1102");
+	BOOST_CHECK_EQUAL(as->get_channel("cute").dump_heads(), "    ");
 	Corpus2::Sentence::Ptr cute = Corpus2::create_view(as, "cute");
 	BOOST_REQUIRE_EQUAL(cute->size(), 3);
 	BOOST_CHECK_EQUAL(cute->tokens()[0]->orth_utf8(), "Uważam,");
