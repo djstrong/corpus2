@@ -184,7 +184,9 @@ bool CclReaderImpl::process_end_element(const Glib::ustring & name)
 		}
 		if (segid > 0) {
 			token_anns_.insert(std::make_pair(ann_chan_, segid));
-			token_ann_heads_.insert(ann_chan_);
+			if (ann_head_) {
+				token_ann_heads_.insert(ann_chan_);
+			}
 		}
 		state_ = STATE_TOK;
 		return true;
@@ -201,6 +203,17 @@ void CclReaderImpl::finish_token()
 		if (token_ann_heads_.find(v.first) != token_ann_heads_.end()) {
 			ann_sent_->get_channel(v.first).set_head_at(sent_->size() - 1, true);
 		}
+	}
+}
+
+void CclReader::set_option(const std::string& option)
+{
+	if (option == "loose") {
+		impl_->set_loose_tag_parsing(true);
+	} else if (option == "strict") {
+		impl_->set_loose_tag_parsing(false);
+	} else if (option == "no_warn_inconsistent") {
+		impl_->set_warn_on_inconsistent(false);
 	}
 }
 

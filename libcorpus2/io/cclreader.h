@@ -42,6 +42,8 @@ public:
 		return *is_;
 	}
 
+	void set_option(const std::string& option);
+
 protected:
 	void ensure_more();
 

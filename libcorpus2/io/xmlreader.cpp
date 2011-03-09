@@ -240,4 +240,5 @@ void XmlReader::on_end_element(const Glib::ustring &name)
 	}
 }
 
+
 } /* end ns Corpus2 */

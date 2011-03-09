@@ -56,6 +56,7 @@ SET(libcorpus2_STAT_SRC
 	token.cpp
 	tokenmetadata.cpp
 	io/cclreader.cpp
+	io/cclwriter.cpp
 	io/fastxces.cpp
 	io/orthwriter.cpp
 	io/plainwriter.cpp
@@ -70,6 +71,7 @@ SET(libcorpus2_STAT_SRC
 	io/xcesvalidate.cpp
 	io/xceswriter.cpp
 	io/xmlreader.cpp
+	io/xmlwriter.cpp
 	util/settings.cpp
 	util/symboldictionary.cpp
 	util/tokentimer.cpp
