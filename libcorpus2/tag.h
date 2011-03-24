@@ -148,6 +148,16 @@ public:
 	 */
 	bool operator==(const Tag& other) const;
 
+	/**
+	 * Boost seralization support. Users must include appropriate boost headers.
+	 */
+	template<class Archive>
+	void serialize(Archive & ar,const unsigned int version)
+	{
+		ar & pos_;
+		ar & values_;
+	}
+
 private:
 	/// the POS id
 	mask_t pos_;
