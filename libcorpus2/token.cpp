@@ -15,9 +15,10 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/token.h>
-#include <sstream>
 #include <libpwrutils/foreach.h>
 #include <libcorpus2/tokenmetadata.h>
+#include <sstream>
+#include <boost/bind.hpp>
 
 namespace Corpus2 {
 
@@ -77,6 +78,25 @@ size_t Token::get_preferred_lexeme_index(const Tagset& tagset) const
 	std::vector<Lexeme>::const_iterator pref;
 	pref = std::max_element(lexemes_.begin(), lexemes_.end(), cmp);
 	return std::distance(lexemes_.begin(), pref);
+}
+
+bool Token::has_disamb_lexeme() const
+{
+	return std::find_if(lexemes().begin(), lexemes().end(),
+		boost::bind(&Lexeme::is_disamb, _1)) != lexemes().end();
+}
+
+int Token::count_disamb_lexemes() const
+{
+	return std::count_if(lexemes().begin(), lexemes().end(),
+		boost::bind(&Lexeme::is_disamb, _1));
+}
+
+std::pair<Token::lexeme_filter_iterator, Token::lexeme_filter_iterator> Token::disamb_lexemes() const
+{
+	lexeme_filter_iterator f1(boost::bind(&Lexeme::is_disamb, _1), lexemes().begin(), lexemes().end());
+	lexeme_filter_iterator f2(boost::bind(&Lexeme::is_disamb, _1), lexemes().end(), lexemes().end());
+	return std::make_pair(f1, f2);
 }
 
 void Token::make_ign(const Tagset& tagset)

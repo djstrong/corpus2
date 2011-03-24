@@ -23,6 +23,9 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libpwrutils/util.h>
 #include <libpwrutils/whitespace.h>
 
+#include <boost/iterator/filter_iterator.hpp>
+#include <boost/function.hpp>
+
 #include <unicode/unistr.h>
 #include <memory>
 #include <string>
@@ -127,6 +130,28 @@ public:
 	 * Ordering of the lexemes can change.
 	 */
 	bool remove_duplicate_lexemes();
+
+	/**
+	 * Return true if there is at least one disambed lexeme in this token.
+	 */
+	bool has_disamb_lexeme() const;
+
+	/**
+	 * Return the count of disambed lexemes in this token.
+	 */
+	int count_disamb_lexemes() const;
+
+	/// Helper iterator typedef
+	typedef boost::filter_iterator<
+		boost::function<bool (const Lexeme&)>,
+		std::vector<Lexeme>::const_iterator
+	> lexeme_filter_iterator;
+
+	/**
+	 * Helper to iterate through disamb-marked lexemes only (lexemes with
+	 * the disamb flag false are skipped).
+	 */
+	std::pair<lexeme_filter_iterator, lexeme_filter_iterator> disamb_lexemes() const;
 
 	/**
 	 * Check if all the lexemes of the token have the given POS, and and
