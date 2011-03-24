@@ -85,7 +85,7 @@ std::string TagsetMismatch::info() const
 tagset_idx_t Tagset::next_id_ = static_cast<tagset_idx_t>(0);
 
 Tagset::Tagset()
-	: id_(++next_id_)
+	: id_(++next_id_), valid_pos_mask_(0)
 {
 }
 
@@ -125,7 +125,22 @@ Tag Tagset::parse_symbol(const std::string& s) const
 	if (m.any()) {
 		return Tag(0, m);
 	}
+	if (s == "@pos") {
+		return Tag(valid_pos_mask_);
+	}
 	throw TagParseError("Not a tagset symbol", s, "", id_string());
+}
+
+Tag Tagset::parse_symbol_string(const std::string &s) const
+{
+	Tag t;
+	std::vector<std::string> parts;
+	boost::algorithm::split(parts, s, boost::is_any_of(","));
+	foreach (const std::string& ss, parts) {
+		t.combine_with(parse_symbol(ss));
+	}
+	return t;
+
 }
 
 void Tagset::parse_tag(const string_range &s,

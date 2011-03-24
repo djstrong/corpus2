@@ -187,6 +187,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 	for (size_t i = 0; i < poses_plain.size(); ++i) {
 		idx_t p = tagset.pos_dictionary().get_id(poses_plain[i]);
 		tagset.original_pos_indices_.insert(std::make_pair(p,i));
+		tagset.valid_pos_mask_ |= (mask_t(1) << i);
 	}
 
 	return tagset;

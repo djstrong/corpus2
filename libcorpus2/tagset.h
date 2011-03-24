@@ -148,6 +148,14 @@ public:
 	Tag parse_symbol(const std::string& s) const;
 
 	/**
+	 * Parse a comma-separated list of tagset symbols, calling parse_symbol
+	 * repeatedly. No validation is performed other than the validity of
+	 * each individual symbol.
+	 */
+	Tag parse_symbol_string(const std::string& s) const;
+
+
+	/**
 	 * Tag parsing -- functional version, whole tag string.
 	 *
 	 * A simple wrapper for string split and a call to the split string
@@ -632,6 +640,9 @@ private:
 
 	/// Flags for attribute indices which are required for a given POS
 	std::vector< std::vector<bool> > pos_required_attributes_;
+
+	/// Valid POS mask
+	mask_t valid_pos_mask_;
 };
 
 /* implementation */
