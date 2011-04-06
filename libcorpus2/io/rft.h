@@ -48,12 +48,15 @@ public:
 
 private:
 	bool warn_on_no_lexemes_;
+	/// Whether using TiMBL/MBT variant (slightly different than RFT per se).
+	bool mbt_dialect_;
 };
 
 class RftReader : public BufferedSentenceReader
 {
 public:
-	RftReader(const Tagset& tagset, std::istream& is, bool disamb);
+	RftReader(const Tagset& tagset, std::istream& is, bool disamb,
+		bool mbt_dialect = false); // TODO move to some sort of params
 
 	std::istream& is() {
 		return is_;
@@ -66,6 +69,8 @@ protected:
 	std::istream& is_;
 
 	bool disamb_;
+	/// Whether using TiMBL/MBT variant (slightly different than RFT per se).
+	bool mbt_dialect_;
 
 };
 

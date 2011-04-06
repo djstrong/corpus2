@@ -24,16 +24,20 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 bool RftWriter::registered = TokenWriter::register_writer<RftWriter>(
-		"rft", "");
+		"rft", "mbt");
 
 RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
 	: TokenWriter(os, tagset, params), warn_on_no_lexemes_(true)
+	, mbt_dialect_(false)
 {
 	foreach (const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "nowarn") {
 			warn_on_no_lexemes_ = false;
+		}
+		else if (p == "mbt") {
+			mbt_dialect_ = true;
 		}
 	}
 }
@@ -48,7 +52,9 @@ void RftWriter::write_token(const Token& t)
 	} else {
 		const Lexeme& pref = t.get_preferred_lexeme(tagset());
 		std::string tag_str = tagset().tag_to_no_opt_string(pref.tag());
-		os() << boost::algorithm::replace_all_copy(tag_str, ":", ".");
+		os () << (mbt_dialect_
+			? tag_str // when MBT-compliant, suppress colon substitution
+			: boost::algorithm::replace_all_copy(tag_str, ":", "."));
 	}
 	os() << "\n";
 }
@@ -57,6 +63,9 @@ void RftWriter::write_sentence(const Sentence& s)
 {
 	foreach (const Token* t, s.tokens()) {
 		write_token(*t);
+	}
+	if (mbt_dialect_) {
+		os() << "<utt>";
 	}
 	os() << "\n";
 }
@@ -68,8 +77,10 @@ void RftWriter::write_chunk(const Chunk& c)
 	}
 }
 
-RftReader::RftReader(const Tagset& tagset, std::istream& is, bool disamb)
+RftReader::RftReader(const Tagset& tagset, std::istream& is, bool disamb,
+		bool mbt_dialect)
 	: BufferedSentenceReader(tagset), is_(is), disamb_(disamb)
+	, mbt_dialect_(mbt_dialect)
 {
 }
 
@@ -79,7 +90,8 @@ Sentence::Ptr RftReader::actual_next_sentence()
 	Sentence::Ptr s;
 	while (is().good()) {
 		std::getline(is(), line);
-		if (line.empty()) {
+		if (line.empty()
+			|| (mbt_dialect_ && line.find_first_of("<utt>") == 0)) { // TODO: check
 			return s;
 		} else {
 			size_t tab = line.find('\t');
@@ -88,7 +100,9 @@ Sentence::Ptr RftReader::actual_next_sentence()
 			} else {
 				std::string orth = line.substr(0, tab);
 				std::string tag_string = line.substr(tab + 1);
-				boost::algorithm::replace_all(tag_string, ".", ":");
+				if (!mbt_dialect_) {
+					boost::algorithm::replace_all(tag_string, ".", ":");
+				}
 				Tag tag = tagset().parse_simple_tag(tag_string);
 				Token* t = new Token();
 				t->set_orth(UnicodeString::fromUTF8(orth));
