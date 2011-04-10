@@ -209,11 +209,11 @@ int main(int argc, char** argv)
 	boost::program_options::options_description desc("Allowed options");
 	desc.add_options()
 			("tagset,t", value(&tagset_load),
-			 "Path to tagset ini file to load\n")
+			 "Path to tagset ini file to load")
 			("save-tagset,S", value(&tagset_save),
-			 "Path to tagset ini file to save\n")
+			 "Path to tagset ini file to save")
 			("quiet,q", value(&quiet)->zero_tokens(),
-			 "Suppress startup info\n")
+			 "Suppress startup info")
 			("parse,p", value(&parse)->zero_tokens(),
 			 "Parse complex tag strings mode")
 			("internals,i", value(&internals)->zero_tokens(),
