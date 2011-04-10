@@ -240,6 +240,8 @@ int main(int argc, char** argv)
 
 	if (vm.count("help")) {
 		std::cout << desc << "\n";
+		std::cout << "Available tagsets: ";
+		std::cout << Corpus2::available_tagsets() << "\n";
 		return 1;
 	}
 

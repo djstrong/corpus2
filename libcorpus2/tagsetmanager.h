@@ -81,6 +81,8 @@ inline const Tagset& get_named_tagset(tagset_idx_t id) {
 	return TagsetManagerSingleton::Instance().get_tagset(id);
 }
 
+std::string available_tagsets();
+
 } /* end ns Corpus2 */
 
 #endif // LIBCORPUS2_TAGSETMANAGER_H

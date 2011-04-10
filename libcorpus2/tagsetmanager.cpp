@@ -21,6 +21,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <boost/algorithm/string/join.hpp>
 
 namespace Corpus2 {
 
@@ -94,6 +95,11 @@ boost::shared_ptr<Tagset> TagsetManager::get_cache_entry(tagset_idx_t id)
 	} else {
 		return i->second;
 	}
+}
+
+std::string available_tagsets()
+{
+	return boost::algorithm::join(Path::Instance().list_files(".tagset"), " ");
 }
 
 } /* end ns Corpus2 */
