@@ -100,6 +100,24 @@ bool PathSearcherBase::open_stream(const std::string& filename,
 	return false;
 }
 
+std::vector<std::string> PathSearcherBase::list_files(const std::string& suffix) const
+{
+	using boost::filesystem::directory_iterator;
+	std::vector<std::string> out;
+	foreach (const std::string& s, get_search_path()) {
+		boost::filesystem::path p(s);
+		if (boost::filesystem::is_directory(s)) {
+			for (directory_iterator i(p); i != directory_iterator(); ++i) {
+				boost::filesystem::path in = i->path();
+				if (in.extension() == suffix) {
+					out.push_back(in.stem());
+				}
+			}
+		}
+	}
+	return out;
+}
+
 
 ConfigPathSetter::ConfigPathSetter(PathSearcherBase& ps,
 		const std::string &new_path)

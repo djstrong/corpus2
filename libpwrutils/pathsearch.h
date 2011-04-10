@@ -85,6 +85,11 @@ public:
 	bool open_stream(const std::string& filename, std::ifstream& ifs,
 			const std::string& info = "");
 
+	/**
+	 * Look for files matching a condition.
+	 */
+	std::vector<std::string> list_files(const std::string& suffix) const;
+
 private:
 	/// The search paths
 	std::vector<std::string> paths_;
