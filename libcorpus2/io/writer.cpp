@@ -92,6 +92,17 @@ std::vector<std::string> TokenWriter::available_writer_types()
 	return TokenWriterFactorySingleton::Instance().factory.RegisteredIds();
 }
 
+std::string TokenWriter::writer_help(const std::string& class_id)
+{
+	std::map<std::string, std::string>::const_iterator c;
+	c = TokenWriterFactorySingleton::Instance().help.find(class_id);
+	if (c != TokenWriterFactorySingleton::Instance().help.end()) {
+		return c->second;
+	} else {
+		return "";
+	}
+}
+
 std::vector<std::string> TokenWriter::available_writer_types_help()
 {
 	std::vector<std::string> v = available_writer_types();

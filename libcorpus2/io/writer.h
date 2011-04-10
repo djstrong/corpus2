@@ -91,6 +91,11 @@ public:
 	static std::vector<std::string> available_writer_types();
 
 	/**
+	 * Function to get the help string for a writer
+	 */
+	static std::string writer_help(const std::string& class_id);
+
+	/**
 	 * Function to get a vector of available writer type strings with help
 	 * strings appended
 	 */
