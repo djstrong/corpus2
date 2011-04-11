@@ -179,5 +179,26 @@ BOOST_AUTO_TEST_CASE( io_oo )
 	BOOST_CHECK(chunk);
 }
 
+BOOST_AUTO_TEST_CASE( create_reader )
+{
+	const Corpus2::Tagset& tagset = Corpus2::get_named_tagset("kipi");
+	boost::shared_ptr<Corpus2::TokenReader> r;
+	std::stringstream ss;
+	ss << swiatopoglad;
+	r = Corpus2::TokenReader::create_stream_reader("xces,disamb_only,sh", tagset, ss);
+	boost::shared_ptr<Corpus2::XcesReader> xr;
+	xr = boost::dynamic_pointer_cast<Corpus2::XcesReader>(r);
+	BOOST_REQUIRE(xr);
+	BOOST_CHECK_EQUAL(xr->get_option("disamb_only"), "disamb_only");
+	BOOST_CHECK_EQUAL(xr->get_option("sh"), "sh");
+	r = Corpus2::TokenReader::create_stream_reader("xces,disamb_only,strict", tagset, ss);
+	xr = boost::dynamic_pointer_cast<Corpus2::XcesReader>(r);
+	BOOST_REQUIRE(xr);
+	BOOST_CHECK_EQUAL(xr->get_option("disamb_only"), "disamb_only");
+	BOOST_CHECK_EQUAL(xr->get_option("sh"), "");
+	BOOST_CHECK_EQUAL(xr->get_option("strict"), "strict");
+}
+
+
 
 BOOST_AUTO_TEST_SUITE_END();

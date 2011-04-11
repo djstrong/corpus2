@@ -19,6 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/reader.h>
 #include <libcorpus2/io/writer.h>
+#include <boost/scoped_ptr.hpp>
 
 namespace Corpus2 {
 
@@ -55,18 +56,29 @@ private:
 class RftReader : public BufferedSentenceReader
 {
 public:
-	RftReader(const Tagset& tagset, std::istream& is, bool disamb,
+	RftReader(const Tagset& tagset, std::istream& is, bool disamb = false,
+		bool mbt_dialect = false); // TODO move to some sort of params
+
+	RftReader(const Tagset& tagset, const std::string& filename, bool disamb = false,
 		bool mbt_dialect = false); // TODO move to some sort of params
 
 	std::istream& is() {
-		return is_;
+		return *is_;
 	}
+
+	void set_option(const std::string& option);
+
+	std::string get_option(const std::string& option);
+
+	static bool registered;
 
 protected:
 	/// BufferedSentenceReader override
 	Sentence::Ptr actual_next_sentence();
 
-	std::istream& is_;
+	std::istream* is_;
+	boost::scoped_ptr<std::istream> is_owned_;
+
 
 	bool disamb_;
 	/// Whether using TiMBL/MBT variant (slightly different than RFT per se).

@@ -20,11 +20,12 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
+#include <fstream>
 
 namespace Corpus2 {
 
 bool RftWriter::registered = TokenWriter::register_writer<RftWriter>(
-		"rft", "mbt");
+		"rft", "mbt,nowarn");
 
 RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
@@ -77,11 +78,29 @@ void RftWriter::write_chunk(const Chunk& c)
 	}
 }
 
+bool RftReader::registered = TokenReader::register_reader<RftReader>("rft",
+	"set_disamb,mbt");
+
+
 RftReader::RftReader(const Tagset& tagset, std::istream& is, bool disamb,
 		bool mbt_dialect)
-	: BufferedSentenceReader(tagset), is_(is), disamb_(disamb)
+	: BufferedSentenceReader(tagset), is_(&is), disamb_(disamb)
 	, mbt_dialect_(mbt_dialect)
 {
+}
+
+RftReader::RftReader(const Tagset& tagset, const std::string& filename, bool disamb,
+		bool mbt_dialect)
+	: BufferedSentenceReader(tagset), is_(), disamb_(disamb)
+	, mbt_dialect_(mbt_dialect)
+{
+	is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
+	if (this->is_owned_->bad()) {
+		throw Corpus2Error("File not found!");
+	}
+	else {
+		this->is_ = is_owned_.get();
+	}
 }
 
 Sentence::Ptr RftReader::actual_next_sentence()
@@ -122,5 +141,23 @@ Sentence::Ptr RftReader::actual_next_sentence()
 	return s;
 }
 
+void RftReader::set_option(const std::string &option)
+{
+	if (option == "mbt") {
+		mbt_dialect_ = true;
+	} else if (option == "set_disamb") {
+		disamb_ = true;
+	}
+}
+
+std::string RftReader::get_option(const std::string &option)
+{
+	if (option == "mbt") {
+		return mbt_dialect_ ? option : "";
+	} else if (option == "set_disamb") {
+		return disamb_ ? option : "";
+	}
+	return BufferedSentenceReader::get_option(option);
+}
 
 } /* end ns Corpus2 */

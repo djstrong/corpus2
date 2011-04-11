@@ -26,6 +26,10 @@ public:
 
 	void set_option(const std::string& option);
 
+	std::string get_option(const std::string& option);
+
+	static bool registered;
+
 protected:
 	void ensure_more();
 

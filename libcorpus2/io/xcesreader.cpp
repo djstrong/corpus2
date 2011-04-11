@@ -24,6 +24,9 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
+bool XcesReader::registered = TokenReader::register_reader<XcesReader>("xces",
+	"disamb_only,sh,loose,strict,no_warn_inconsistent");
+
 class XcesReaderImpl : public XmlReader
 {
 public:
@@ -97,7 +100,25 @@ void XcesReader::set_option(const std::string& option)
 		impl_->set_loose_tag_parsing(false);
 	} else if (option == "no_warn_inconsistent") {
 		impl_->set_warn_on_inconsistent(false);
+	} else if (option == "sh") {
+		impl_->set_disamb_sh(true);
+	} else if (option == "disamb_only") {
+		impl_->set_disamb_only(true);
 	}
+}
+
+std::string XcesReader::get_option(const std::string& option)
+{
+	if (option == "sh") {
+		return impl_->get_disamb_sh() ? option : "";
+	} else if (option == "disamb_only") {
+		return impl_->get_disamb_only() ? option : "";
+	} else if (option == "loose") {
+		return impl_->get_loose_tag_parsing() ? option : "";
+	} else if (option == "strict") {
+		return !impl_->get_loose_tag_parsing() ? option : "";
+	}
+	return BufferedChunkReader::get_option(option);
 }
 
 } /* end ns Corpus2 */

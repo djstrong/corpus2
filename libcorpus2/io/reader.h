@@ -36,26 +36,225 @@ namespace Corpus2 {
 class TokenReader : public TokenSource
 {
 public:
-	TokenReader(const Tagset& tagset);
+	/// Constructor --- only a Tagset is needed
+	explicit TokenReader(const Tagset& tagset);
 
+	/**
+	 * Reader creation from a class identifier (possibly with comma-separated
+	 * parameters / options that are passed to set_option), with a tagset and
+	 * a path to a file or some other resource that the reader will open.
+	 *
+	 * Any files open will be closed by the reader.
+	 */
+	static boost::shared_ptr<TokenReader> create_path_reader(
+		const std::string& class_id,
+		const Tagset& tagset,
+		const std::string& path);
+
+	/**
+	 * Reader creation as in create_path_reader, only readng form a stream
+	 * that is managed by the caller (so e.g. std::cin can be used). Generally
+	 * all stream readers are path readers, but not all path readers are
+	 * stream readers (a path reader might look and open more that one file,
+	 * which is beyond what this interface allows). Attempting to create a
+	 * reader that can not read a stream will result in an exception.
+	 */
+	static boost::shared_ptr<TokenReader> create_stream_reader(
+		const std::string& class_id,
+		const Tagset& tagset,
+		std::istream& stream);
+
+	/// Destructor
 	virtual ~TokenReader();
 
+	/**
+	 * Interface for getting a token from the reader. Note that the caller
+	 * must dispose of the Token it receives. A null value returned indicates
+	 * end of processing.
+	 *
+	 * There is no information about sentence boundaries in this mode.
+	 */
 	virtual Token* get_next_token() = 0;
 
+	/**
+	 * Interface for getting entire senteces from the reader.
+	 *
+	 * There is no information about chunk boundaries in that mode.
+	 */
 	virtual Sentence::Ptr get_next_sentence() = 0;
 
+	/**
+	 * Interface for getting entire chunks from the reader.
+	 */
 	virtual boost::shared_ptr<Chunk> get_next_chunk() = 0;
 
+	/**
+	 * General option setter.
+	 */
 	virtual void set_option(const std::string& /*option*/) {
 	}
 
+	/**
+	 * Option inspector. Should echo the option if it is set, return
+	 * an empty string otheriwse, and "unknown" if the option is invalid.
+	 */
+	virtual std::string get_option(const std::string& /*option*/) {
+		return "unknown";
+	}
+
+	/**
+	 * Tagset accesor
+	 */
 	const Tagset& tagset() {
 		return tagset_;
 	}
 
+	/**
+	 * Function to get a vector of available reader type strings.
+	 */
+	static std::vector<std::string> available_reader_types();
+
+	/**
+	 * Function to get the help string for a reader
+	 */
+	static std::string reader_help(const std::string& class_id);
+
+	/**
+	 * Function to get a vector of available reader type strings with help
+	 * strings appended
+	 */
+	static std::vector<std::string> available_reader_types_help();
+
+	/**
+	 * Convenience template for registering TokenReader derived classes.
+	 */
+	template <typename T>
+	static bool register_reader(const std::string& class_id,
+			const std::string& help = "");
+
+	/**
+	 * Convenience template for registering TokenReader derived classes.
+	 * Path-only verison.
+	 */
+	template <typename T>
+	static bool register_path_reader(const std::string& class_id,
+			const std::string& help = "");
+
 private:
+	/// Tagset used by the Reader
 	const Tagset& tagset_;
 };
+
+namespace detail {
+
+typedef Loki::Factory<
+	TokenReader, // The base class for objects created in the factory
+	std::string, // Identifier type
+	Loki::TL::MakeTypelist<
+		const Tagset& /*tagset*/,
+		std::istream& /*input*/,
+		const string_range_vector& /*params*/
+	>::Result
+> StreamTokenReaderFactoryType;
+
+typedef Loki::Factory<
+	TokenReader, // The base class for objects created in the factory
+	std::string, // Identifier type
+	Loki::TL::MakeTypelist<
+		const Tagset& /*tagset*/,
+		const std::string& /*path*/,
+		const string_range_vector& /*params*/
+	>::Result
+> PathTokenReaderFactoryType;
+
+struct TokenReaderFactory
+{
+	StreamTokenReaderFactoryType stream_factory;
+	PathTokenReaderFactoryType path_factory;
+	std::map<std::string, std::string> help;
+};
+
+/**
+ * Declaration of the TokenWriter factory as a singleton Loki object
+ * factory. The factory instance can be accessed as
+ * TokenLayerFactory::Instance(). It is assumed that all derived classes
+ * have the same constructor signature.
+ */
+typedef Loki::SingletonHolder<
+	TokenReaderFactory,
+	Loki::CreateUsingNew, // default, needed to change the item below
+	Loki::LongevityLifetime::DieAsSmallObjectChild // per libloki docs
+>
+TokenReaderFactorySingleton;
+
+/**
+ * Templated TokenReader creation function, stream variant
+ */
+template <typename T>
+inline
+T* stream_reader_creator(const Tagset& tagset, std::istream& is,
+	const string_range_vector& params)
+{
+	T* reader = new T(tagset, is);
+	foreach (const string_range& sr, params) {
+		reader->set_option(boost::copy_range<std::string>(sr));
+	}
+	return reader;
+}
+
+/**
+ * Templated TokenReader creation function, stream variant
+ */
+template <typename T>
+inline
+T* path_reader_creator(const Tagset& tagset, const std::string& path,
+	const string_range_vector& params)
+{
+	T* reader = new T(tagset, path);
+	foreach (const string_range& sr, params) {
+		reader->set_option(boost::copy_range<std::string>(sr));
+	}
+	return reader;
+}
+
+/**
+ * Convenience typedef for the exception type the factory throws
+ */
+typedef Loki::DefaultFactoryError<
+	std::string, TokenReader
+>::Exception
+TokenReaderFactoryException;
+
+} /* end ns detail */
+
+
+
+template <typename T>
+bool TokenReader::register_reader(const std::string& class_id,
+		const std::string& help)
+{
+	bool ret = detail::TokenReaderFactorySingleton::Instance().path_factory.Register(
+			class_id, detail::path_reader_creator<T>);
+	bool ret2 = detail::TokenReaderFactorySingleton::Instance().stream_factory.Register(
+			class_id, detail::stream_reader_creator<T>);
+	if (ret || ret2) {
+		detail::TokenReaderFactorySingleton::Instance().help[class_id] = help;
+	}
+	return ret;
+}
+
+template <typename T>
+bool TokenReader::register_path_reader(const std::string& class_id,
+		const std::string& help)
+{
+	bool ret = detail::TokenReaderFactorySingleton::Instance().path_factory.Register(
+			class_id, detail::path_reader_creator<T>);
+	if (ret) {
+		detail::TokenReaderFactorySingleton::Instance().help[class_id] = help;
+	}
+	return ret;
+}
+
 
 /**
  * Convenience class for readers that keep a buffer of chunks. Sentence

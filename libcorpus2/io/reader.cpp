@@ -16,6 +16,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/reader.h>
 #include <boost/make_shared.hpp>
+#include <boost/algorithm/string.hpp>
+#include <sstream>
 
 namespace Corpus2 {
 
@@ -26,6 +28,83 @@ TokenReader::TokenReader(const Tagset& tagset)
 
 TokenReader::~TokenReader()
 {
+}
+
+boost::shared_ptr<TokenReader> TokenReader::create_path_reader(
+	const std::string& class_id_params,
+	const Tagset& tagset,
+	const std::string& path)
+{
+	string_range_vector params;
+	boost::algorithm::split(params, class_id_params,
+							boost::is_any_of(std::string(",")));
+	std::string class_id = boost::copy_range<std::string>(params[0]);
+	params.erase(params.begin(), params.begin() + 1);
+	try {
+		return boost::shared_ptr<TokenReader>(
+		detail::TokenReaderFactorySingleton::Instance().path_factory.CreateObject(
+			class_id, tagset, path, params));
+	} catch (detail::TokenReaderFactoryException& e) {
+		throw Corpus2Error("Reader class not found: " + class_id);
+	}
+}
+
+boost::shared_ptr<TokenReader> TokenReader::create_stream_reader(
+	const std::string& class_id_params,
+	const Tagset& tagset,
+	std::istream& stream)
+{
+	string_range_vector params;
+	boost::algorithm::split(params, class_id_params,
+							boost::is_any_of(std::string(",")));
+	std::string class_id = boost::copy_range<std::string>(params[0]);
+	params.erase(params.begin(), params.begin() + 1);
+	try {
+		return boost::shared_ptr<TokenReader>(
+		detail::TokenReaderFactorySingleton::Instance().stream_factory.CreateObject(
+			class_id, tagset, stream, params));
+	} catch (detail::TokenReaderFactoryException& e) {
+		std::vector<std::string> ids;
+		ids = detail::TokenReaderFactorySingleton::Instance().path_factory.RegisteredIds();
+		if (std::find(ids.begin(), ids.end(), class_id) == ids.end()) {
+			throw Corpus2Error("Reader class not found: " + class_id);
+		} else {
+			throw Corpus2Error("This reader does not support stream mode: " + class_id);
+		}
+	}
+}
+
+std::vector<std::string> TokenReader::available_reader_types()
+{
+	return detail::TokenReaderFactorySingleton::Instance().path_factory.RegisteredIds();
+}
+
+std::string TokenReader::reader_help(const std::string& class_id)
+{
+	std::map<std::string, std::string>::const_iterator c;
+	c = detail::TokenReaderFactorySingleton::Instance().help.find(class_id);
+	if (c != detail::TokenReaderFactorySingleton::Instance().help.end()) {
+		return c->second;
+	} else {
+		return "";
+	}
+}
+
+std::vector<std::string> TokenReader::available_reader_types_help()
+{
+	std::vector<std::string> v = available_reader_types();
+	foreach (std::string& id, v) {
+		std::stringstream ss;
+		std::map<std::string, std::string>::const_iterator c;
+		c = detail::TokenReaderFactorySingleton::Instance().help.find(id);
+		if (c != detail::TokenReaderFactorySingleton::Instance().help.end()) {
+			ss << id << "[";
+			ss << c->second;
+			ss << "]";
+		}
+		id = ss.str();
+	}
+	return v;
 }
 
 BufferedChunkReader::BufferedChunkReader(const Tagset& tagset)

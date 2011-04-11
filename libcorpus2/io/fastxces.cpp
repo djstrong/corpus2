@@ -5,6 +5,9 @@
 
 namespace Corpus2 {
 
+bool FastXcesReader::registered = TokenReader::register_reader<FastXcesReader>("xces-fast",
+	"");
+
 class FastXcesReaderImpl
 {
 public:
@@ -159,6 +162,11 @@ FastXcesReader::~FastXcesReader()
 
 void FastXcesReader::set_option(const std::string& /*option*/)
 {
+}
+
+std::string FastXcesReader::get_option(const std::string& option)
+{
+	return BufferedChunkReader::get_option(option);
 }
 
 FastXcesReader::FastXcesReader(const Tagset &tagset, const std::string &filename)

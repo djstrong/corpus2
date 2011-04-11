@@ -35,25 +35,20 @@ public:
 
 	virtual ~XmlReader();
 
-	void set_disamb_only(bool v) {
-		disamb_only_ = v;
-	}
+	bool get_disamb_only() const { return disamb_only_; }
+	void set_disamb_only(bool v) { disamb_only_ = v; }
 
-	void set_disamb_sh(bool v) {
-		disamb_sh_ = v;
-	}
+	bool get_disamb_sh() const { return disamb_sh_; }
+	void set_disamb_sh(bool v) { disamb_sh_ = v; }
 
-	void set_warn_on_inconsistent(bool v) {
-		warn_on_inconsistent_ = v;
-	}
+	bool get_warn_on_unexpected() const { return warn_on_unexpected_; }
+	void set_warn_on_unexpected(bool v) { warn_on_unexpected_ = v; }
 
-	void set_warn_on_unexpected(bool v) {
-		warn_on_unexpected_ = v;
-	}
+	bool get_warn_on_inconsistent() const { return warn_on_inconsistent_; }
+	void set_warn_on_inconsistent(bool v) { warn_on_inconsistent_ = v; }
 
-	void set_loose_tag_parsing(bool v) {
-		loose_tag_parsing_ = v;
-	}
+	bool get_loose_tag_parsing() const { return loose_tag_parsing_; }
+	void set_loose_tag_parsing(bool v) { loose_tag_parsing_ = v; }
 
 protected:
 	std::string get_type_from_attributes(const AttributeList& attributes) const;
