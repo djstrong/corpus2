@@ -29,20 +29,30 @@ Sentence::Ptr AnnotatedSentence::clone_shared() const
 boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence(
 	const boost::shared_ptr<Sentence>& s)
 {
-	boost::shared_ptr<AnnotatedSentence> a = boost::make_shared<AnnotatedSentence>();
-	foreach (Token* t, s->tokens()) {
-		a->append(t);
+	boost::shared_ptr<AnnotatedSentence> a;
+	a = boost::dynamic_pointer_cast<AnnotatedSentence>(s);
+	if (!a) {
+		a = boost::make_shared<AnnotatedSentence>();
+		foreach (Token* t, s->tokens()) {
+			a->append(t);
+		}
+		s->release_tokens();
 	}
-	s->release_tokens();
 	return a;
 }
 
 boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence_clone(
 	const boost::shared_ptr<Sentence>& s)
 {
-	boost::shared_ptr<AnnotatedSentence> a = boost::make_shared<AnnotatedSentence>();
-	foreach (Token* t, s->tokens()) {
-		a->append(t->clone());
+	boost::shared_ptr<AnnotatedSentence> a;
+	a = boost::dynamic_pointer_cast<AnnotatedSentence>(s);
+	if (!a) {
+		a = boost::make_shared<AnnotatedSentence>();
+		foreach (Token* t, s->tokens()) {
+			a->append(t->clone());
+		}
+	} else {
+		a = boost::dynamic_pointer_cast<AnnotatedSentence>(a->clone_shared());
 	}
 	return a;
 }
