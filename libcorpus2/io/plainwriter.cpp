@@ -19,7 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
-bool PlainWriter::registered = PlainWriter::register_writer<PlainWriter>(
+bool PlainWriter::registered = TokenWriter::register_writer<PlainWriter>(
 	"plain");
 
 PlainWriter::PlainWriter(std::ostream& os, const Tagset& tagset,

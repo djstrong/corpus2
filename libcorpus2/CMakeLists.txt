@@ -58,12 +58,14 @@ SET(libcorpus2_STAT_SRC
 	io/cclreader.cpp
 	io/cclwriter.cpp
 	io/fastxces.cpp
+	io/nonewriter.cpp
 	io/orthwriter.cpp
 	io/plainwriter.cpp
 	io/premorphwriter.cpp
 	io/reader.cpp
 	io/rft.cpp
 	io/sax.cpp
+	io/statwriter.cpp
 	io/writer.cpp
 	io/xces.cpp
 	io/xcescommon.cpp
