@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <boost/bind.hpp>
 #include <sstream>
+#include <iostream>
 #include <set>
 
 namespace Corpus2 {
@@ -75,6 +76,19 @@ int AnnotationChannel::renumber_segments()
 		}
 	}
 	return next;
+}
+int AnnotationChannel::get_new_segment_index() const
+{
+	//cache this?
+	std::vector<bool> used(segments_.size() + 1);
+	foreach (size_t sid, segments_) {
+		if (sid < used.size()) {
+			used[sid] = true;
+		}
+	}
+	int first = 1;
+	while ((first < static_cast<int>(used.size())) && used[first]) ++first;
+	return first;
 }
 
 int AnnotationChannel::get_segment_at(int idx) const
@@ -184,6 +198,27 @@ std::string AnnotationChannel::dump_heads() const
 	std::stringstream ss;
 	foreach (bool b, heads_) {
 		ss << (b ? "H" : " ");
+	}
+	return ss.str();
+}
+
+std::string AnnotationChannel::dump_alpha() const
+{
+	std::stringstream ss;
+	for (int i = 0; i < size(); ++i) {
+		if (segments_[i] == 0) {
+			if (heads_[i]) {
+				ss << '#';
+			} else {
+				ss << '_';
+			}
+		} else {
+			if (heads_[i]) {
+				ss << static_cast<unsigned char>('A' - 1 + segments_[i]);
+			} else {
+				ss << static_cast<unsigned char>('a' - 1 + segments_[i]);
+			}
+		}
 	}
 	return ss.str();
 }

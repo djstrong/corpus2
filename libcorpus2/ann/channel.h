@@ -74,6 +74,11 @@ public:
 	 */
 	int renumber_segments();
 
+	/**
+	 * Figure out an index for a new segment
+	 */
+	int get_new_segment_index() const;
+
 	enum AnnotationVectorMode
 	{
 		O_DISJOINT_EXCLUSIVE = 0,
@@ -148,14 +153,21 @@ public:
 	std::string dump_iob() const;
 
 	/**
-	 * Compose a string consisting of all segment indices in order.
+	 * Compose a string consisting of all segment indices in order, e.g. "01102"
 	 */
 	std::string dump_segments() const;
 
 	/**
-	 * Compose a string consisting of all head flags in order
+	 * Compose a string consisting of all head flags in order, e.g. " H  H"
 	 */
 	std::string dump_heads() const;
+
+	/**
+	 * Compose a string consisting of segment/head info in alphabetic format
+	 * where capital letters denote the head flag, and underscore indicates
+	 * no segment, so e.g. "_Aa_B"
+	 */
+	std::string dump_alpha() const;
 
 	void do_counts(int& annotations, int& disjoint, int& unannotated) const;
 
