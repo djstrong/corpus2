@@ -6,14 +6,14 @@
 namespace Corpus2 {
 
 bool FastXcesReader::registered = TokenReader::register_reader<FastXcesReader>("xces-fast",
-	"");
+	"ign,loose,strict");
 
 class FastXcesReaderImpl
 {
 public:
-	FastXcesReaderImpl(const Tagset& tagset,
+	FastXcesReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf)
-		: tagset_(tagset), obuf_(obuf)
+		: base_reader_(base_reader), obuf_(obuf)
 	{
 		tok_ = new Token();
 		sent_ = boost::make_shared<Sentence>();
@@ -85,7 +85,7 @@ public:
 		finish_all();
 	}
 private:
-	const Tagset& tagset_;
+	const TokenReader& base_reader_;
 
 	/// Token being constructed
 	Token* tok_;
@@ -135,7 +135,7 @@ private:
 	}
 
 	void ctag(const std::string& base, const std::string& ctag, bool disamb) {
-		Tag tag = tagset_.parse_simple_tag(ctag);
+		Tag tag = base_reader_.parse_tag(ctag);
 		Lexeme lex(UnicodeString::fromUTF8(base), tag);
 		lex.set_disamb(disamb);
 		tok_->add_lexeme(lex);
@@ -150,7 +150,7 @@ private:
 
 FastXcesReader::FastXcesReader(const Tagset &tagset, std::istream &is)
 	: BufferedChunkReader(tagset),
-	impl_(new FastXcesReaderImpl(tagset, chunk_buf_))
+	impl_(new FastXcesReaderImpl(*this, chunk_buf_))
 {
 	this->is_ = &is;
 }
@@ -171,7 +171,7 @@ std::string FastXcesReader::get_option(const std::string& option)
 
 FastXcesReader::FastXcesReader(const Tagset &tagset, const std::string &filename)
 	: BufferedChunkReader(tagset),
-	impl_(new FastXcesReaderImpl(tagset, chunk_buf_))
+	impl_(new FastXcesReaderImpl(*this, chunk_buf_))
 {
 	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
 

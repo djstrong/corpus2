@@ -30,7 +30,7 @@ namespace Corpus2 {
 class XmlReader : public BasicSaxParser
 {
 public:
-	XmlReader(const Tagset& tagset,
+	XmlReader(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf);
 
 	virtual ~XmlReader();
@@ -46,9 +46,6 @@ public:
 
 	bool get_warn_on_inconsistent() const { return warn_on_inconsistent_; }
 	void set_warn_on_inconsistent(bool v) { warn_on_inconsistent_ = v; }
-
-	bool get_loose_tag_parsing() const { return loose_tag_parsing_; }
-	void set_loose_tag_parsing(bool v) { loose_tag_parsing_ = v; }
 
 protected:
 	std::string get_type_from_attributes(const AttributeList& attributes) const;
@@ -77,7 +74,7 @@ protected:
 
 	virtual void finish_token();
 
-	const Tagset& tagset_;
+	const TokenReader& base_reader_;
 
 	static const int STATE_NONE = 0;
 	static const int STATE_CHUNK = 1;
@@ -124,14 +121,11 @@ protected:
 	/// Flag to control warning messages on state errors
 	bool warn_on_inconsistent_;
 
-	/// Floag to control warning messages on unknown tags
+	/// Floag to control warning messages on unknown XML tags
 	bool warn_on_unexpected_;
 
 	/// Tag name for sentence objects, customized in child class ctors
 	std::string sentence_tag_name_;
-
-	/// Flag to disable strict tag correctness checking
-	bool loose_tag_parsing_;
 };
 
 } /* end ns Corpus2 */

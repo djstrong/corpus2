@@ -91,21 +91,18 @@ public:
 	/**
 	 * General option setter.
 	 */
-	virtual void set_option(const std::string& /*option*/) {
-	}
+	virtual void set_option(const std::string& option);
 
 	/**
 	 * Option inspector. Should echo the option if it is set, return
 	 * an empty string otheriwse, and "unknown" if the option is invalid.
 	 */
-	virtual std::string get_option(const std::string& /*option*/) {
-		return "unknown";
-	}
+	virtual std::string get_option(const std::string& option);
 
 	/**
 	 * Tagset accesor
 	 */
-	const Tagset& tagset() {
+	const Tagset& tagset() const {
 		return tagset_;
 	}
 
@@ -140,9 +137,27 @@ public:
 	static bool register_path_reader(const std::string& class_id,
 			const std::string& help = "");
 
+	/// Convenience function to parse a tag string with options of this reader
+	Tag parse_tag(const std::string& tag_string) const {
+		return tagset().parse_simple_tag(tag_string, tag_parse_mode_);
+	}
+
+	/// tag parse mode getter
+	Tagset::ParseMode tag_parse_mode() const {
+		return tag_parse_mode_;
+	}
+
+	/// tag parse mode setter
+	void set_tag_parse_mode(Tagset::ParseMode mode) {
+		tag_parse_mode_ = mode;
+	}
+
 private:
 	/// Tagset used by the Reader
 	const Tagset& tagset_;
+
+	/// Tag parse mode
+	Tagset::ParseMode tag_parse_mode_;
 };
 
 namespace detail {

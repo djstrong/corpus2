@@ -36,10 +36,10 @@ RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "nowarn") {
 			warn_on_no_lexemes_ = false;
-		}
-		else if (p == "mbt") {
+		} else if (p == "mbt") {
 			mbt_dialect_ = true;
 		}
+
 	}
 }
 
@@ -79,7 +79,7 @@ void RftWriter::write_chunk(const Chunk& c)
 }
 
 bool RftReader::registered = TokenReader::register_reader<RftReader>("rft",
-	"set_disamb,mbt");
+	"ign,loose,strict,set_disamb,mbt");
 
 
 RftReader::RftReader(const Tagset& tagset, std::istream& is, bool disamb,
@@ -122,7 +122,7 @@ Sentence::Ptr RftReader::actual_next_sentence()
 				if (!mbt_dialect_) {
 					boost::algorithm::replace_all(tag_string, ".", ":");
 				}
-				Tag tag = tagset().parse_simple_tag(tag_string);
+				Tag tag = parse_tag(tag_string);
 				Token* t = new Token();
 				t->set_orth(UnicodeString::fromUTF8(orth));
 				t->set_wa(PwrNlp::Whitespace::Space);
@@ -147,6 +147,8 @@ void RftReader::set_option(const std::string &option)
 		mbt_dialect_ = true;
 	} else if (option == "set_disamb") {
 		disamb_ = true;
+	} else {
+		BufferedSentenceReader::set_option(option);
 	}
 }
 

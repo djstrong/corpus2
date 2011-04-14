@@ -25,12 +25,12 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 bool XcesReader::registered = TokenReader::register_reader<XcesReader>("xces",
-	"disamb_only,sh,loose,strict,no_warn_inconsistent");
+	"ign,loose,strict,disamb_only,sh,no_warn_inconsistent");
 
 class XcesReaderImpl : public XmlReader
 {
 public:
-	XcesReaderImpl(const Tagset& tagset,
+	XcesReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
 		bool disamb_only, bool disamb_sh);
 
@@ -42,14 +42,14 @@ protected:
 XcesReader::XcesReader(const Tagset& tagset, std::istream& is,
 		bool disamb_only, bool disamb_sh)
 	: BufferedChunkReader(tagset),
-	impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only, disamb_sh))
+	impl_(new XcesReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
 {
 	this->is_ = &is;
 }
 
 XcesReader::XcesReader(const Tagset& tagset, const std::string& filename, bool disamb_only, bool disamb_sh)
 	: BufferedChunkReader(tagset),
-	impl_(new XcesReaderImpl(tagset, chunk_buf_, disamb_only, disamb_sh))
+	impl_(new XcesReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
 {
 	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
 
@@ -78,10 +78,10 @@ void XcesReader::ensure_more()
 	}
 }
 
-XcesReaderImpl::XcesReaderImpl(const Tagset& tagset,
+XcesReaderImpl::XcesReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
 		bool disamb_only, bool disamb_sh)
-	: XmlReader(tagset, obuf)
+	: XmlReader(base_reader, obuf)
 {
 	XmlReader::set_disamb_only(disamb_only);
 	XmlReader::set_disamb_sh(disamb_sh);
@@ -94,16 +94,14 @@ XcesReaderImpl::~XcesReaderImpl()
 
 void XcesReader::set_option(const std::string& option)
 {
-	if (option == "loose") {
-		impl_->set_loose_tag_parsing(true);
-	} else if (option == "strict") {
-		impl_->set_loose_tag_parsing(false);
-	} else if (option == "no_warn_inconsistent") {
+	if (option == "no_warn_inconsistent") {
 		impl_->set_warn_on_inconsistent(false);
 	} else if (option == "sh") {
 		impl_->set_disamb_sh(true);
 	} else if (option == "disamb_only") {
 		impl_->set_disamb_only(true);
+	} else {
+		BufferedChunkReader::set_option(option);
 	}
 }
 
@@ -113,10 +111,8 @@ std::string XcesReader::get_option(const std::string& option)
 		return impl_->get_disamb_sh() ? option : "";
 	} else if (option == "disamb_only") {
 		return impl_->get_disamb_only() ? option : "";
-	} else if (option == "loose") {
-		return impl_->get_loose_tag_parsing() ? option : "";
-	} else if (option == "strict") {
-		return !impl_->get_loose_tag_parsing() ? option : "";
+	} else if (option == "no_warn_inconsistent") {
+		return impl_->get_warn_on_inconsistent() ? option : "";
 	}
 	return BufferedChunkReader::get_option(option);
 }

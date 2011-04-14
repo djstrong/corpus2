@@ -22,12 +22,43 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 TokenReader::TokenReader(const Tagset& tagset)
-	: tagset_(tagset)
+	: tagset_(tagset), tag_parse_mode_(Tagset::ParseDefault)
 {
 }
 
 TokenReader::~TokenReader()
 {
+}
+
+void TokenReader::set_option(const std::string &option)
+{
+	if (option == "ign") {
+		tag_parse_mode_ = static_cast<Tagset::ParseMode>(
+			tag_parse_mode_ | Tagset::ParseFailWithIgn);
+	} else if (option == "loose") {
+		tag_parse_mode_ = static_cast<Tagset::ParseMode>(
+			Tagset::ParseLoose | (tag_parse_mode_ & Tagset::ParseFailWithIgn));
+	} else if (option == "strict") {
+		tag_parse_mode_ = static_cast<Tagset::ParseMode>(
+			Tagset::ParseDefault | (tag_parse_mode_ & Tagset::ParseFailWithIgn));
+	} else {
+		throw Corpus2Error("Unknown option passed to reader: " + option);
+	}
+}
+
+std::string TokenReader::get_option(const std::string &option)
+{
+	if (option == "ign") {
+		return tag_parse_mode_ & Tagset::ParseFailWithIgn ? option : "";
+	} else if (option == "loose") {
+		return (tag_parse_mode_ & ~Tagset::ParseFailWithIgn)
+			== Tagset::ParseLoose ? option : "";
+	} else if (option == "strict") {
+		return (tag_parse_mode_ & ~Tagset::ParseFailWithIgn)
+			== Tagset::ParseDefault ? option : "";
+	} else {
+		return "unknown";
+	}
 }
 
 boost::shared_ptr<TokenReader> TokenReader::create_path_reader(

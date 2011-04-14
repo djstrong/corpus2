@@ -79,11 +79,11 @@ protected:
 	std::istream* is_;
 	boost::scoped_ptr<std::istream> is_owned_;
 
-
+	/// Whether to mark all incoming tags as disambiguated
 	bool disamb_;
+
 	/// Whether using TiMBL/MBT variant (slightly different than RFT per se).
 	bool mbt_dialect_;
-
 };
 
 } /* end ns Corpus2 */
