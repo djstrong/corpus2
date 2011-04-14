@@ -29,7 +29,8 @@ struct F {
 			"A tag tog other a3 \n"
 			"B data thing tag-thing thang\n"
 			"C a b c \n"
-			"[POS]\n some A B [C]\n same A B \n P3 [A] [B]\n";
+			"[POS]\n some A B [C]\n same A B \n P3 [A] [B]\n"
+			"[IGN]\nP3\n";
 		tagset.reset(new Corpus2::Tagset());
 		*tagset = Corpus2::Tagset::from_data(tagset_string);
 	}

@@ -644,6 +644,9 @@ private:
 
 	/// Valid POS mask
 	mask_t valid_pos_mask_;
+
+	/// The ign tag
+	Tag ign_tag_;
 };
 
 /* implementation */

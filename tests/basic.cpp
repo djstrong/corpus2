@@ -22,6 +22,7 @@ const char tagsetstr1[] = "[ATTR]\n"
 	"A tag tog other a3 \n"
 	"B data thing tag-thing thang\n"
 	"C a b c \n"
+	"ign\n"
 	"[POS]\n some A B [C]\n";
 
 BOOST_AUTO_TEST_CASE( token )

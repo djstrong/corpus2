@@ -19,6 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libpwrutils/foreach.h>
 #include <libcorpus2/tagsetparser.h>
 #include <libcorpus2/tagsetmanager.h>
+#include <libcorpus2/util/settings.h>
 #include <iostream>
 
 BOOST_AUTO_TEST_SUITE( tagset_parse );
@@ -31,7 +32,7 @@ Corpus2::Tagset parse(const char* s)
 }
 
 #define PRE "[ATTR]\n"
-#define POSA "[POS]\n POS1\n"
+#define POSA "[POS]\n ign\n"
 
 BOOST_AUTO_TEST_CASE( empty )
 {
@@ -54,7 +55,7 @@ BOOST_AUTO_TEST_CASE( minimal_nonewline )
 {
 	Corpus2::Tagset t;
 	try {
-		t = parse(PRE "[POS]\n POS1");
+		t = parse(PRE "[POS]\n ign");
 	} catch (Corpus2::TagsetParseError& e) {
 		BOOST_FAIL(e.info());
 	}
@@ -147,6 +148,8 @@ BOOST_AUTO_TEST_CASE( size6 )
 
 BOOST_AUTO_TEST_CASE( load_named )
 {
+	PwrNlp::ConfigPathSetter ps(Corpus2::Path::Instance(),
+		LIBCORPUS2_TEST_DATA_DIR);
 	BOOST_CHECK_NO_THROW(
 		try {
 			Corpus2::get_named_tagset("test");

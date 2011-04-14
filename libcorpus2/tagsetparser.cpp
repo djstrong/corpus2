@@ -128,6 +128,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 		boost::algorithm::trim(line);
 		++line_no;
 		if (!line.empty() && line[0] != '#') {
+			if (line[0] == '[') break;
 			std::deque<std::string> v;
 			boost::algorithm::split(v, line, boost::is_any_of(sep),
 					boost::algorithm::token_compress_on);
@@ -155,7 +156,18 @@ Tagset TagsetParser::load_ini(std::istream &is)
 				req_mask[a] = required;
 			}
 		}
+	}
 
+	std::string ign_tag_string = "ign";
+	if (line != "[IGN]") {
+		while (std::getline(is, line)) {
+			if (line == "[IGN]") break;
+		}
+	}
+	if (line == "[IGN]") {
+		if (std::getline(is, line)) {
+			ign_tag_string = line;
+		}
 	}
 
 	vec.clear();
@@ -189,7 +201,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 		tagset.original_pos_indices_.insert(std::make_pair(p,i));
 		tagset.valid_pos_mask_ |= (mask_t(1) << i);
 	}
-
+	tagset.ign_tag_ = tagset.parse_simple_tag(ign_tag_string);
 	return tagset;
 }
 

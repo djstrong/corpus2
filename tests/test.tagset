@@ -9,3 +9,6 @@ P1 = a b c
 P2 = 
 P3 = a b [c]
 P4 = [a] [b] [c]
+
+[IGN]
+P4

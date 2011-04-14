@@ -338,6 +338,7 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values,
 						if (mode & ParseFailWithIgn) {
 							return make_ign_tag();
 						}
+						std::cerr << mode << "\n";
 						throw TagParseError("Required attribute missing",
 							tag_to_string(Tag(get_pos_mask(pos_idx), values)),
 							get_attribute_name(a), id_string());
@@ -381,11 +382,7 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values,
 
 Tag Tagset::make_ign_tag() const
 {
-
-	static const std::string ign("ign");
-	mask_t ign_pos_mask = get_pos_mask(ign);
-	assert(ign_pos_mask.any());
-	return Tag(ign_pos_mask);
+	return ign_tag_;
 }
 
 bool Tagset::validate_tag(const Tag &t, ParseMode mode /* = ParseDefault*/,
