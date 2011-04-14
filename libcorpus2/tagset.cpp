@@ -338,7 +338,6 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values,
 						if (mode & ParseFailWithIgn) {
 							return make_ign_tag();
 						}
-						std::cerr << mode << "\n";
 						throw TagParseError("Required attribute missing",
 							tag_to_string(Tag(get_pos_mask(pos_idx), values)),
 							get_attribute_name(a), id_string());
