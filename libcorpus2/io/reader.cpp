@@ -46,7 +46,7 @@ void TokenReader::set_option(const std::string &option)
 	}
 }
 
-std::string TokenReader::get_option(const std::string &option)
+std::string TokenReader::get_option(const std::string &option) const
 {
 	if (option == "ign") {
 		return tag_parse_mode_ & Tagset::ParseFailWithIgn ? option : "";

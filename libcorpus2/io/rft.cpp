@@ -152,7 +152,7 @@ void RftReader::set_option(const std::string &option)
 	}
 }
 
-std::string RftReader::get_option(const std::string &option)
+std::string RftReader::get_option(const std::string &option) const
 {
 	if (option == "mbt") {
 		return mbt_dialect_ ? option : "";

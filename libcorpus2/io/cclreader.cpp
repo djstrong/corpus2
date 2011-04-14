@@ -220,7 +220,7 @@ void CclReader::set_option(const std::string& option)
 	}
 }
 
-std::string CclReader::get_option(const std::string& option)
+std::string CclReader::get_option(const std::string& option) const
 {
 	if (option == "disamb_only") {
 		return impl_->get_disamb_only() ? option : "";

@@ -105,7 +105,7 @@ void XcesReader::set_option(const std::string& option)
 	}
 }
 
-std::string XcesReader::get_option(const std::string& option)
+std::string XcesReader::get_option(const std::string& option) const
 {
 	if (option == "sh") {
 		return impl_->get_disamb_sh() ? option : "";

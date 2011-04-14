@@ -68,7 +68,7 @@ public:
 
 	void set_option(const std::string& option);
 
-	std::string get_option(const std::string& option);
+	std::string get_option(const std::string& option) const;
 
 	static bool registered;
 

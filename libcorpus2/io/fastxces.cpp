@@ -164,7 +164,7 @@ void FastXcesReader::set_option(const std::string& /*option*/)
 {
 }
 
-std::string FastXcesReader::get_option(const std::string& option)
+std::string FastXcesReader::get_option(const std::string& option) const
 {
 	return BufferedChunkReader::get_option(option);
 }

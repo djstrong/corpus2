@@ -97,7 +97,7 @@ public:
 	 * Option inspector. Should echo the option if it is set, return
 	 * an empty string otheriwse, and "unknown" if the option is invalid.
 	 */
-	virtual std::string get_option(const std::string& option);
+	virtual std::string get_option(const std::string& option) const;
 
 	/**
 	 * Tagset accesor
@@ -291,6 +291,14 @@ public:
 
 	boost::shared_ptr<Chunk> get_next_chunk();
 
+	void set_option(const std::string& option) {
+		TokenReader::set_option(option);
+	}
+
+	std::string get_option(const std::string& option) const {
+		return TokenReader::get_option(option);
+	}
+
 protected:
 	virtual void ensure_more() = 0;
 
@@ -319,6 +327,14 @@ public:
 	Sentence::Ptr get_next_sentence();
 
 	boost::shared_ptr<Chunk> get_next_chunk();
+
+	void set_option(const std::string& option) {
+		TokenReader::set_option(option);
+	}
+
+	std::string get_option(const std::string& option) const {
+		return TokenReader::get_option(option);
+	}
 
 protected:
 	virtual Sentence::Ptr actual_next_sentence() = 0;
