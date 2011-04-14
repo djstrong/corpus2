@@ -176,10 +176,18 @@ void Tagset::parse_tag(const string_range_vector &fields,
 		ParseMode mode /* = ParseDefault*/) const
 {
 	if (fields.empty()) {
+		if (mode & ParseFailWithIgn) {
+			sink(make_ign_tag());
+			return;
+		}
 		throw TagParseError("No POS", "", "", id_string());
 	}
 	idx_t pos_idx = get_pos_index(fields[0]);
 	if (pos_idx < 0) {
+		if (mode & ParseFailWithIgn) {
+			sink(make_ign_tag());
+			return;
+		}
 		throw TagParseError("Invalid POS",
 				boost::copy_range<std::string>(fields[0]), "",
 				id_string());
@@ -202,11 +210,19 @@ void Tagset::parse_tag(const string_range_vector &fields,
 				if (amask.none()) {
 					amask = curr;
 				} else if (amask != curr) {
+					if (mode & ParseFailWithIgn) {
+						sink(make_ign_tag());
+						return;
+					}
 					throw TagParseError("Values from two attributes split by dot",
 							boost::copy_range<std::string>(r), "",
 							id_string());
 				}
 				if (v.none()) {
+					if (mode & ParseFailWithIgn) {
+						sink(make_ign_tag());
+						return;
+					}
 					throw TagParseError("Unknown attribute value",
 							boost::copy_range<std::string>(r), "",
 							id_string());
@@ -216,6 +232,10 @@ void Tagset::parse_tag(const string_range_vector &fields,
 			append_to_multi_tag(all_variants, values, amask);
 		} else if (!r.empty()) { // underscore handling
 			if (fi - 1 >= pos_attributes_[pos_idx].size()) {
+				if (mode & ParseFailWithIgn) {
+					sink(make_ign_tag());
+					return;
+				}
 				throw TagParseError(
 						"Underscore beyond last attribute for this POS",
 						"", "", id_string());
@@ -260,11 +280,17 @@ Tag Tagset::parse_simple_tag(const string_range_vector &ts,
 		ParseMode mode /* = ParseDefault*/) const
 {
 	if (ts.empty()) {
+		if (mode & ParseFailWithIgn) {
+			return make_ign_tag();
+		}
 		throw TagParseError("Empty POS+attribute list", "", "",
 				id_string());
 	}
 	idx_t pos_idx = get_pos_index(ts[0]);
 	if (pos_idx < 0) {
+		if (mode & ParseFailWithIgn) {
+			return make_ign_tag();
+		}
 		throw TagParseError("Invalid POS",
 				boost::copy_range<std::string>(ts[0]), "", id_string());
 	}
@@ -277,6 +303,9 @@ Tag Tagset::parse_simple_tag(const string_range_vector &ts,
 				if (a.any()) {
 					values &= (~a);
 				} else {
+					if (mode & ParseFailWithIgn) {
+						return make_ign_tag();
+					}
 					throw TagParseError("Unknown attribute value",
 							boost::copy_range<std::string>(ts[i]), "",
 							id_string());
@@ -306,11 +335,17 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values,
 				if (pos_requires_attribute(pos_idx, a)) {
 					mask_t amask = get_attribute_mask(a);
 					if ((values & amask).none()) {
+						if (mode & ParseFailWithIgn) {
+							return make_ign_tag();
+						}
 						throw TagParseError("Required attribute missing",
 							tag_to_string(Tag(get_pos_mask(pos_idx), values)),
 							get_attribute_name(a), id_string());
 					}
 				}
+			}
+			if (mode & ParseFailWithIgn) {
+				return make_ign_tag();
 			}
 			throw TagParseError("Required attribute missing",
 					tag_to_string(Tag(get_pos_mask(pos_idx), values)),
@@ -321,6 +356,9 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values,
 		mask_t valid_values = get_pos_value_mask(pos_idx);
 		mask_t invalid = values & ~valid_values;
 		if (invalid.any()) {
+			if (mode & ParseFailWithIgn) {
+				return make_ign_tag();
+			}
 			mask_t first_invalid = PwrNlp::lowest_bit(invalid);
 			throw TagParseError("Attribute not valid for this POS",
 					get_value_name(first_invalid),
@@ -330,6 +368,9 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values,
 	Tag tag(get_pos_mask(pos_idx), values);
 	if (mode & ParseCheckSingular) {
 		if (!tag_is_singular(tag)) {
+			if (mode & ParseFailWithIgn) {
+				return make_ign_tag();
+			}
 			throw TagParseError("Parsed tag not singular",
 					tag_to_symbol_string(tag, false),
 					get_pos_name(pos_idx), id_string());

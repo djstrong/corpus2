@@ -127,6 +127,7 @@ public:
 		ParseCheckRequired = 1, /// Check for presence of required attributes
 		ParseAllowExtra = 2, /// Allow extra attributes
 		ParseCheckSingular = 4, /// Check tag singularity
+		ParseFailWithIgn = 8, /// Parsing error results in an ign tag, not an exception
 
 		ParseDefault = ParseCheckRequired, /// Default mode
 		ParseRequiredWithExtra = ParseCheckRequired | ParseAllowExtra,
