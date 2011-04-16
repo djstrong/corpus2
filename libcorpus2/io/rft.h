@@ -45,12 +45,25 @@ public:
 
 	void write_chunk(const Chunk &p);
 
+	void write_tag(const Tag& tag);
+
 	static bool registered;
 
 private:
 	bool warn_on_no_lexemes_;
+
 	/// Whether using TiMBL/MBT variant (slightly different than RFT per se).
 	bool mbt_dialect_;
+
+	/// Dialect flag: keep colons in tags, do not replace with dots
+	bool colon_;
+
+	/// Dialect flag: keep missing optional attributes as empty, do not
+	/// replace with attribute name dummy
+	bool opt_;
+
+	/// Dialect flag: output all lexemes, not just the preferred one
+	bool alltags_;
 };
 
 class RftReader : public BufferedSentenceReader

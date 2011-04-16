@@ -25,12 +25,12 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 bool RftWriter::registered = TokenWriter::register_writer<RftWriter>(
-		"rft", "mbt,nowarn");
+		"rft", "mbt,nowarn,colon,alltags,opt");
 
 RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
 	: TokenWriter(os, tagset, params), warn_on_no_lexemes_(true)
-	, mbt_dialect_(false)
+	, mbt_dialect_(false), colon_(false), opt_(false), alltags_(false)
 {
 	foreach (const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
@@ -38,6 +38,14 @@ RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 			warn_on_no_lexemes_ = false;
 		} else if (p == "mbt") {
 			mbt_dialect_ = true;
+			colon_ = true;
+			opt_ = false;
+		} else if (p == "alltags") {
+			alltags_ = true;
+		} else if (p == "opt") {
+			opt_ = true;
+		} else if (p == "colon") {
+			colon_ = true;
 		}
 
 	}
@@ -45,17 +53,21 @@ RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 
 void RftWriter::write_token(const Token& t)
 {
-	os() << t.orth_utf8() << "\t";
+	os() << t.orth_utf8();
 	if (t.lexemes().empty()) {
 		if (warn_on_no_lexemes_) {
 			std::cerr << "No lexemes for token!";
 		}
+	} else if (alltags_) {
+		foreach (const Lexeme& lex, t.lexemes()) {
+			os() << "\t";
+			write_tag(lex.tag());
+		}
 	} else {
 		const Lexeme& pref = t.get_preferred_lexeme(tagset());
+		os() << "\t";
+		write_tag(pref.tag());
 		std::string tag_str = tagset().tag_to_no_opt_string(pref.tag());
-		os () << (mbt_dialect_
-			? tag_str // when MBT-compliant, suppress colon substitution
-			: boost::algorithm::replace_all_copy(tag_str, ":", "."));
 	}
 	os() << "\n";
 }
@@ -76,6 +88,15 @@ void RftWriter::write_chunk(const Chunk& c)
 	foreach (const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence(*s);
 	}
+}
+
+void RftWriter::write_tag(const Tag& tag)
+{
+	std::string tag_str = opt_ ?
+		tagset().tag_to_string(tag) : tagset().tag_to_no_opt_string(tag);
+	os() << (colon_
+			 ? tag_str // when MBT-compliant, suppress colon substitution
+			 : boost::algorithm::replace_all_copy(tag_str, ":", "."));
 }
 
 bool RftReader::registered = TokenReader::register_reader<RftReader>("rft",
