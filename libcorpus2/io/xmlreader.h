@@ -84,6 +84,8 @@ protected:
 	static const int STATE_LEX = 5;
 	static const int STATE_LEMMA = 6;
 	static const int STATE_TAG = 7;
+	static const int STATE_LEX_SKIP = 8;
+
 
 	/// The state of the parser
 	int state_;

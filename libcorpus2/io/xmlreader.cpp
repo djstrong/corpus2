@@ -77,6 +77,8 @@ void XmlReader::on_start_element(const Glib::ustring &name,
 		state_ = STATE_TAG;
 		grab_characters_ = true;
 		clear_buf();
+	} else if (state_ == STATE_LEX_SKIP && name == "lex" || name == "base" || name == "ctag") {
+		//nop
 	} else if (name == "ns") {
 		wa_ = PwrNlp::Whitespace::None;
 	} else if (state_ == STATE_NONE && name == "tok") {
@@ -175,6 +177,8 @@ void XmlReader::start_lexeme(const AttributeList &attributes)
 		tok_->add_lexeme(Lexeme());
 		tok_->lexemes().back().set_disamb(is_disamb);
 		state_ = STATE_LEX;
+	} else {
+		state_ = STATE_LEX_SKIP;
 	}
 }
 
@@ -225,7 +229,7 @@ void XmlReader::on_end_element(const Glib::ustring &name)
 		tok_->lexemes().back().set_tag(tag);
 		grab_characters_ = false;
 		state_ = STATE_LEX;
-	} else if (state_ == STATE_LEX && name == "lex") {
+	} else if ((state_ == STATE_LEX || state_ == STATE_LEX_SKIP) && name == "lex") {
 		state_ = STATE_TOK;
 	} else if (state_ == STATE_TOK && name == "tok") {
 		finish_token();
