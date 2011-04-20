@@ -77,7 +77,8 @@ void XmlReader::on_start_element(const Glib::ustring &name,
 		state_ = STATE_TAG;
 		grab_characters_ = true;
 		clear_buf();
-	} else if (state_ == STATE_LEX_SKIP && name == "lex" || name == "base" || name == "ctag") {
+	} else if (state_ == STATE_LEX_SKIP &&
+		(name == "lex" || name == "base" || name == "ctag")) {
 		//nop
 	} else if (name == "ns") {
 		wa_ = PwrNlp::Whitespace::None;
