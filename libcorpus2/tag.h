@@ -152,7 +152,7 @@ public:
 	 * Boost seralization support. Users must include appropriate boost headers.
 	 */
 	template<class Archive>
-	void serialize(Archive & ar,const unsigned int version)
+	void serialize(Archive & ar, const unsigned int version)
 	{
 		ar & pos_;
 		ar & values_;
