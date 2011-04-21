@@ -144,7 +144,7 @@ void XmlReader::start_sentence(const AttributeList &attributes)
 	if (type != "s") {
 		throw XcesError("Sub level <chunk> not type=\"s\"");
 	}
-	sent_ = boost::make_shared<Corpus2::Sentence>();
+	sent_ = base_reader_.make_sentence();
 	state_ = STATE_SENTENCE;
 }
 

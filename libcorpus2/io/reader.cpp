@@ -17,12 +17,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/io/reader.h>
 #include <boost/make_shared.hpp>
 #include <boost/algorithm/string.hpp>
+#include <libcorpus2/ann/annotatedsentence.h>
 #include <sstream>
 
 namespace Corpus2 {
 
 TokenReader::TokenReader(const Tagset& tagset)
-	: tagset_(tagset), tag_parse_mode_(Tagset::ParseDefault)
+	: tagset_(tagset), tag_parse_mode_(Tagset::ParseDefault),
+	use_annotated_sentences_(false)
 {
 }
 
@@ -41,6 +43,8 @@ void TokenReader::set_option(const std::string &option)
 	} else if (option == "strict") {
 		tag_parse_mode_ = static_cast<Tagset::ParseMode>(
 			Tagset::ParseDefault | (tag_parse_mode_ & Tagset::ParseFailWithIgn));
+	} else if (option == "ann") {
+		use_annotated_sentences_ = true;
 	} else {
 		throw Corpus2Error("Unknown option passed to reader: " + option);
 	}
@@ -56,8 +60,19 @@ std::string TokenReader::get_option(const std::string &option) const
 	} else if (option == "strict") {
 		return (tag_parse_mode_ & ~Tagset::ParseFailWithIgn)
 			== Tagset::ParseDefault ? option : "";
+	} else if (option == "ann") {
+		return use_annotated_sentences_ ? option : "";
 	} else {
 		return "unknown";
+	}
+}
+
+boost::shared_ptr<Sentence> TokenReader::make_sentence() const
+{
+	if (use_annotated_sentences_) {
+		return boost::make_shared<AnnotatedSentence>();
+	} else {
+		return boost::make_shared<Sentence>();
 	}
 }
 

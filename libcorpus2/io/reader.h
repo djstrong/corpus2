@@ -152,12 +152,17 @@ public:
 		tag_parse_mode_ = mode;
 	}
 
+	boost::shared_ptr<Sentence> make_sentence() const;
+
 private:
 	/// Tagset used by the Reader
 	const Tagset& tagset_;
 
 	/// Tag parse mode
 	Tagset::ParseMode tag_parse_mode_;
+
+	/// Flag to force creation of sentences as AnnotatedSentences
+	bool use_annotated_sentences_;
 };
 
 namespace detail {

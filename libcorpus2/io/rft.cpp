@@ -148,7 +148,7 @@ Sentence::Ptr RftReader::actual_next_sentence()
 				t->set_orth(UnicodeString::fromUTF8(orth));
 				t->set_wa(PwrNlp::Whitespace::Space);
 				if (!s) {
-					s = boost::make_shared<Sentence>();
+					s = make_sentence();
 					t->set_wa(PwrNlp::Whitespace::Newline);
 				}
 				t->add_lexeme(Lexeme(t->orth(), tag));

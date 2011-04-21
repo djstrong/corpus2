@@ -104,7 +104,7 @@ private:
 			if (!sent_->empty()) {
 				chunk_->append(sent_);
 			}
-			sent_ = boost::make_shared<Sentence>();
+			sent_ = base_reader_.make_sentence();
 			tok_->set_wa(PwrNlp::Whitespace::Newline);
 		} else {
 			if (!chunk_->empty()) {
