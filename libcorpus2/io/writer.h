@@ -69,7 +69,7 @@ public:
 	 * @param os the output stream to pass to the writer's constructor
 	 * @param tagset the tagset to pass to the writer's constructor
 	 */
-	static TokenWriter* create(const std::string class_id,
+	static boost::shared_ptr<TokenWriter> create_stream_writer(const std::string& class_id,
 			std::ostream& os,
 			const Tagset& tagset,
 			const string_range_vector& params);
@@ -81,8 +81,38 @@ public:
 	 * is called. Parameters are expected to be comma-separated from the
 	 * class id.
 	 */
-	static TokenWriter* create(const std::string class_id_params,
+	static boost::shared_ptr<TokenWriter> create_stream_writer(const std::string& class_id_params,
 			std::ostream& os,
+			const Tagset& tagset);
+
+	/**
+	 * Factory interface for creating writers from string identifiers
+	 *
+	 * Mostly a convenience function to avoid having client code refer
+	 * directly to the factory instance.
+	 *
+	 * This is the file path (as opposed to output stream) version.
+	 *
+	 * @param class_id the unique class identifier
+	 * @param path file to write to
+	 * @param tagset the tagset to pass to the writer's constructor
+	 */
+	static boost::shared_ptr<TokenWriter> create_path_writer(const std::string& class_id,
+			const std::string& path,
+			const Tagset& tagset,
+			const string_range_vector& params);
+
+	/**
+	 * Factory interface for creating writers from string identifiers.
+	 *
+	 * Params are split from the class id and then the more general version
+	 * is called. Parameters are expected to be comma-separated from the
+	 * class id.
+	 *
+	 * This is the file path (as opposed to output stream) version.
+	 */
+	static boost::shared_ptr<TokenWriter> create_path_writer(const std::string& class_id_params,
+			const std::string& path,
 			const Tagset& tagset);
 
 	/**
@@ -132,6 +162,8 @@ private:
 	int indent_;
 };
 
+namespace detail {
+
 typedef Loki::Factory<
 	TokenWriter, // The base class for objects created in the factory
 	std::string, // Identifier type
@@ -179,14 +211,17 @@ T* writer_creator(std::ostream& os, const Tagset& tagset,
 	return new T(os, tagset, params);
 }
 
+} /* end ns detail */
+
+
 template <typename T>
 bool TokenWriter::register_writer(const std::string& class_id,
 		const std::string& help)
 {
-	bool ret = TokenWriterFactorySingleton::Instance().factory.Register(
-			class_id, writer_creator<T>);
+	bool ret = detail::TokenWriterFactorySingleton::Instance().factory.Register(
+			class_id, detail::writer_creator<T>);
 	if (ret) {
-		TokenWriterFactorySingleton::Instance().help[class_id] = help;
+		detail::TokenWriterFactorySingleton::Instance().help[class_id] = help;
 	}
 	return ret;
 }

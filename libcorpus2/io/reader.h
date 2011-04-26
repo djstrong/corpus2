@@ -248,7 +248,6 @@ TokenReaderFactoryException;
 } /* end ns detail */
 
 
-
 template <typename T>
 bool TokenReader::register_reader(const std::string& class_id,
 		const std::string& help)

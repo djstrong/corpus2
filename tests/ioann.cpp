@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE( iobase )
 	boost::shared_ptr<Corpus2::Chunk> chunk = xr.get_next_chunk();
 	BOOST_REQUIRE(chunk);
 	std::stringstream ss;
-	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create("xces,flat", ss, tagset));
+	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create_stream_writer("xces,flat", ss, tagset));
 	//boost::shared_ptr<Corpus2::TokenWriter> wann(Corpus2::TokenWriter::create("ccl", std::cerr, tagset));
 	//wann->write_chunk(*chunk);
 	//wann->finish();

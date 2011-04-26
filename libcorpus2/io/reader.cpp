@@ -90,7 +90,7 @@ boost::shared_ptr<TokenReader> TokenReader::create_path_reader(
 		return boost::shared_ptr<TokenReader>(
 		detail::TokenReaderFactorySingleton::Instance().path_factory.CreateObject(
 			class_id, tagset, path, params));
-	} catch (detail::TokenReaderFactoryException& e) {
+	} catch (detail::TokenReaderFactoryException&) {
 		throw Corpus2Error("Reader class not found: " + class_id);
 	}
 }

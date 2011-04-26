@@ -3,7 +3,7 @@ PROJECT(corpus2)
 
 set(corpus2_ver_major "1")
 set(corpus2_ver_minor "0")
-set(corpus2_ver_patch "6")
+set(corpus2_ver_patch "8")
 
 
 if(NOT LIBCORPUS2_SRC_DATA_DIR)
@@ -60,6 +60,7 @@ SET(libcorpus2_STAT_SRC
 	io/fastxces.cpp
 	io/nonewriter.cpp
 	io/orthwriter.cpp
+	io/pathwriter.cpp
 	io/plainwriter.cpp
 	io/premorphwriter.cpp
 	io/reader.cpp
