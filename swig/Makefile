@@ -15,32 +15,38 @@ CPPFLAGS=-fPIC -O2
 
 CBIN=libcorpustag.o \
 		 libcorpustagset.o \
-		 libcorpustagsetmanager.o 
+		 libcorpustagsetmanager.o \
+		 libcorpuslexeme.o
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
 				_libcorpustagset.so \
-				_libcorpustagsetmanager.so
+				_libcorpustagsetmanager.so \
+				_libcorpuslexeme.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
 			libcorpustagset_wrap.cxx \
-			libcorpustagsetmanager_wrap.cxx
+			libcorpustagsetmanager_wrap.cxx \
+			libcorpuslexeme_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
 				 libcorpustagset_wrap.o \
-				 libcorpustagsetmanager_wrap.o
+				 libcorpustagsetmanager_wrap.o \
+				 libcorpuslexeme_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
 					libcorpustagset.py \
-					libcorpustagsetmanager.py
+					libcorpustagsetmanager.py \
+					libcorpuslexeme.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
 			 libcorpustagset.pyc \
-			 libcorpustagsetmanager.pyc
+			 libcorpustagsetmanager.pyc \
+			 libcorpuslexeme.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -80,6 +86,13 @@ libcorpustagsetmanager.o:
 	$(CPP) -c libcorpustagsetmanager_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpustagsetmanager_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpustagsetmanager.so
+
+# Lexeme
+libcorpuslexeme.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpuslexeme.i
+	$(CPP) -c libcorpuslexeme_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpuslexeme_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpuslexeme.so
 
 # -----------------------------------------------------------------------------
 clean:
