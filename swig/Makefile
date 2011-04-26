@@ -14,27 +14,33 @@ ANTLRLIB=/usr/lib/libantlr-pic.a
 CPPFLAGS=-fPIC -O2
 
 CBIN=libcorpustag.o \
-		 libcorpustagset.o
+		 libcorpustagset.o \
+		 libcorpustagsetmanager.o 
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
-				_libcorpustagset.so
+				_libcorpustagset.so \
+				_libcorpustagsetmanager.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
-			libcorpustagset_wrap.cxx
+			libcorpustagset_wrap.cxx \
+			libcorpustagsetmanager_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
-				 libcorpustagset_wrap.o
+				 libcorpustagset_wrap.o \
+				 libcorpustagsetmanager_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
-					libcorpustagset.py
+					libcorpustagset.py \
+					libcorpustagsetmanager.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
-			 libcorpustagset.pyc
+			 libcorpustagset.pyc \
+			 libcorpustagsetmanager.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -67,6 +73,13 @@ libcorpustagset.o:
 	$(CPP) -c libcorpustagset_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpustagset_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpustagset.so
+
+# TagsetManager
+libcorpustagsetmanager.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpustagsetmanager.i
+	$(CPP) -c libcorpustagsetmanager_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpustagsetmanager_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpustagsetmanager.so
 
 # -----------------------------------------------------------------------------
 clean:
