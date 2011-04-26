@@ -36,6 +36,8 @@ namespace Corpus2 {
 class TokenReader : public TokenSource
 {
 public:
+	typedef boost::shared_ptr<TokenReader> TokenReaderPtr;
+
 	/// Constructor --- only a Tagset is needed
 	explicit TokenReader(const Tagset& tagset);
 
@@ -46,7 +48,7 @@ public:
 	 *
 	 * Any files open will be closed by the reader.
 	 */
-	static boost::shared_ptr<TokenReader> create_path_reader(
+	static TokenReaderPtr create_path_reader(
 		const std::string& class_id,
 		const Tagset& tagset,
 		const std::string& path);
@@ -59,7 +61,7 @@ public:
 	 * which is beyond what this interface allows). Attempting to create a
 	 * reader that can not read a stream will result in an exception.
 	 */
-	static boost::shared_ptr<TokenReader> create_stream_reader(
+	static TokenReaderPtr create_stream_reader(
 		const std::string& class_id,
 		const Tagset& tagset,
 		std::istream& stream);
