@@ -17,8 +17,11 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/io/writer.h>
 #include <libpwrutils/foreach.h>
 #include <boost/algorithm/string.hpp>
-
+#include <libcorpus2/exception.h>
+#include <libcorpus2/io/pathwriter.h>
+#include <boost/make_shared.hpp>
 #include <sstream>
+#include <fstream>
 
 namespace Corpus2 {
 
@@ -65,16 +68,22 @@ void TokenWriter::write_token_dispose(Token* t)
 }
 
 
-TokenWriter* TokenWriter::create(const std::string class_id,
+boost::shared_ptr<TokenWriter> TokenWriter::create_stream_writer(const std::string& class_id,
 		std::ostream& os,
 		const Tagset& tagset,
 		const string_range_vector& params)
 {
-	return TokenWriterFactorySingleton::Instance().factory.CreateObject(
-			class_id, os, tagset, params);
+	try {
+		return boost::shared_ptr<TokenWriter>(
+			detail::TokenWriterFactorySingleton::Instance().factory.CreateObject(
+				class_id, os, tagset, params));
+	} catch (detail::TokenWriterFactoryException&) {
+		throw Corpus2Error("Writer class not found: " + class_id);
+	}
 }
 
-TokenWriter* TokenWriter::create(const std::string class_id_params,
+boost::shared_ptr<TokenWriter> TokenWriter::create_stream_writer(
+		const std::string& class_id_params,
 		std::ostream& os,
 		const Tagset& tagset)
 {
@@ -83,20 +92,49 @@ TokenWriter* TokenWriter::create(const std::string class_id_params,
 							boost::is_any_of(std::string(",")));
 	std::string class_id = boost::copy_range<std::string>(params[0]);
 	params.erase(params.begin(), params.begin() + 1);
-	return TokenWriterFactorySingleton::Instance().factory.CreateObject(
-			class_id, os, tagset, params);
+	return create_stream_writer(class_id, os, tagset, params);
+}
+
+boost::shared_ptr<TokenWriter> TokenWriter::create_path_writer(const std::string& class_id,
+		const std::string& path,
+		const Tagset& tagset,
+		const string_range_vector& params)
+{
+	boost::shared_ptr<std::ofstream> ofs = boost::make_shared<std::ofstream>(path.c_str());
+	if (!ofs->good()) {
+		throw Corpus2::FileNotFound(path, "", "writer creation");
+	}
+	boost::shared_ptr<TokenWriter> underlying = create_stream_writer(
+			class_id, *ofs, tagset, params);
+	assert(underlying);
+	boost::shared_ptr<TokenWriter> wrapped = boost::make_shared<PathWriter>(
+			underlying, ofs);
+	return wrapped;
+}
+
+boost::shared_ptr<TokenWriter> TokenWriter::create_path_writer(
+		const std::string& class_id_params,
+		const std::string& path,
+		const Tagset& tagset)
+{
+	string_range_vector params;
+	boost::algorithm::split(params, class_id_params,
+							boost::is_any_of(std::string(",")));
+	std::string class_id = boost::copy_range<std::string>(params[0]);
+	params.erase(params.begin(), params.begin() + 1);
+	return create_path_writer(class_id, path, tagset, params);
 }
 
 std::vector<std::string> TokenWriter::available_writer_types()
 {
-	return TokenWriterFactorySingleton::Instance().factory.RegisteredIds();
+	return detail::TokenWriterFactorySingleton::Instance().factory.RegisteredIds();
 }
 
 std::string TokenWriter::writer_help(const std::string& class_id)
 {
 	std::map<std::string, std::string>::const_iterator c;
-	c = TokenWriterFactorySingleton::Instance().help.find(class_id);
-	if (c != TokenWriterFactorySingleton::Instance().help.end()) {
+	c = detail::TokenWriterFactorySingleton::Instance().help.find(class_id);
+	if (c != detail::TokenWriterFactorySingleton::Instance().help.end()) {
 		return c->second;
 	} else {
 		return "";
@@ -109,8 +147,8 @@ std::vector<std::string> TokenWriter::available_writer_types_help()
 	foreach (std::string& id, v) {
 		std::stringstream ss;
 		std::map<std::string, std::string>::const_iterator c;
-		c = TokenWriterFactorySingleton::Instance().help.find(id);
-		if (c != TokenWriterFactorySingleton::Instance().help.end()) {
+		c = detail::TokenWriterFactorySingleton::Instance().help.find(id);
+		if (c != detail::TokenWriterFactorySingleton::Instance().help.end()) {
 			ss << id << "[";
 			ss << c->second;
 			ss << "]";

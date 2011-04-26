@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE( iobase )
 	Corpus2::XcesReader xr(tagset, ssin);
 	boost::shared_ptr<Corpus2::Chunk> chunk = xr.get_next_chunk();
 	std::stringstream ss;
-	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create("xces,flat", ss, tagset));
+	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create_stream_writer("xces,flat", ss, tagset));
 	w->write_chunk(*chunk);
 	w->finish();
 	BOOST_CHECK_EQUAL(ss.str(), swiatopoglad);
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE( fast )
 	Corpus2::FastXcesReader xr(tagset, ssin);
 	boost::shared_ptr<Corpus2::Chunk> chunk = xr.get_next_chunk();
 	std::stringstream ss;
-	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create("xces,flat", ss, tagset));
+	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create_stream_writer("xces,flat", ss, tagset));
 	w->write_chunk(*chunk);
 	w->finish();
 	BOOST_CHECK_EQUAL(ss.str(), swiatopoglad_noid);
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE( io_oo )
 	xr.set_option("no_warn_inconsistent");
 	boost::shared_ptr<Corpus2::Chunk> chunk = xr.get_next_chunk();
 	std::stringstream ss;
-	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create("xces,flat", ss, tagset));
+	boost::shared_ptr<Corpus2::TokenWriter> w(Corpus2::TokenWriter::create_stream_writer("xces,flat", ss, tagset));
 	w->write_chunk(*chunk);
 	w->finish();
 	BOOST_CHECK_EQUAL(ss.str(), swiatopoglad);
