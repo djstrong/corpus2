@@ -30,6 +30,7 @@ namespace Corpus2 {
 class TokenWriter
 {
 public:
+	typedef boost::shared_ptr<TokenWriter> TokenWriterPtr;
 	/**
 	 * Constructor. A TokenWriter operates within a tagset, outputs data
 	 * to a stream and may have some options passed.
@@ -69,7 +70,7 @@ public:
 	 * @param os the output stream to pass to the writer's constructor
 	 * @param tagset the tagset to pass to the writer's constructor
 	 */
-	static boost::shared_ptr<TokenWriter> create_stream_writer(const std::string& class_id,
+	static TokenWriterPtr create_stream_writer(const std::string& class_id,
 			std::ostream& os,
 			const Tagset& tagset,
 			const string_range_vector& params);
@@ -81,7 +82,7 @@ public:
 	 * is called. Parameters are expected to be comma-separated from the
 	 * class id.
 	 */
-	static boost::shared_ptr<TokenWriter> create_stream_writer(const std::string& class_id_params,
+	static TokenWriterPtr create_stream_writer(const std::string& class_id_params,
 			std::ostream& os,
 			const Tagset& tagset);
 
@@ -97,7 +98,7 @@ public:
 	 * @param path file to write to
 	 * @param tagset the tagset to pass to the writer's constructor
 	 */
-	static boost::shared_ptr<TokenWriter> create_path_writer(const std::string& class_id,
+	static TokenWriterPtr create_path_writer(const std::string& class_id,
 			const std::string& path,
 			const Tagset& tagset,
 			const string_range_vector& params);
@@ -111,7 +112,7 @@ public:
 	 *
 	 * This is the file path (as opposed to output stream) version.
 	 */
-	static boost::shared_ptr<TokenWriter> create_path_writer(const std::string& class_id_params,
+	static TokenWriterPtr create_path_writer(const std::string& class_id_params,
 			const std::string& path,
 			const Tagset& tagset);
 
