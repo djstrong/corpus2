@@ -22,31 +22,36 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
 				_libcorpustagset.so \
 				_libcorpustagsetmanager.so \
-				_libcorpuslexeme.so
+				_libcorpuslexeme.so \
+				_libcorpustoken.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
 			libcorpustagset_wrap.cxx \
 			libcorpustagsetmanager_wrap.cxx \
-			libcorpuslexeme_wrap.cxx
+			libcorpuslexeme_wrap.cxx \
+			libcorpustoken_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
 				 libcorpustagset_wrap.o \
 				 libcorpustagsetmanager_wrap.o \
-				 libcorpuslexeme_wrap.o
+				 libcorpuslexeme_wrap.o \
+				 libcorpustoken_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
 					libcorpustagset.py \
 					libcorpustagsetmanager.py \
-					libcorpuslexeme.py
+					libcorpuslexeme.py \
+					libcorpustoken.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
 			 libcorpustagset.pyc \
 			 libcorpustagsetmanager.pyc \
-			 libcorpuslexeme.pyc
+			 libcorpuslexeme.pyc \
+			 libcorpustoken.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
