@@ -22,9 +22,7 @@ CclWriter::~CclWriter()
 
 void CclWriter::write_sentence(const Sentence& s)
 {
-	paragraph_head();
 	const AnnotatedSentence* ann = dynamic_cast<const AnnotatedSentence*>(&s);
-	if (use_indent_) indent_more();
 	osi() << "<sentence>\n";
 	if (use_indent_) indent_more();
 	for (size_t idx = 0; idx < s.size(); ++idx) {
@@ -48,9 +46,8 @@ void CclWriter::write_sentence(const Sentence& s)
 			XmlWriter::write_token(*t);
 		}
 	}
-	if (use_indent_) indent_less();	osi() << "</sentence>\n";
 	if (use_indent_) indent_less();
-	osi() << "</chunk>\n";
+	osi() << "</sentence>\n";
 }
 
 void CclWriter::write_chunk(const Chunk &c)
