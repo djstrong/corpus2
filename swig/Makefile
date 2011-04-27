@@ -17,7 +17,8 @@ CBIN=libcorpustag.o \
 		 libcorpustagset.o \
 		 libcorpustagsetmanager.o \
 		 libcorpuslexeme.o \
-		 libcorpussentence.o
+		 libcorpussentence.o \
+		 libcorpuschunk.o
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
@@ -25,7 +26,8 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpustagsetmanager.so \
 				_libcorpuslexeme.so \
 				_libcorpustoken.so \
-				_libcorpussentence.so
+				_libcorpussentence.so \
+				_libcorpuschunk.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
@@ -33,7 +35,8 @@ CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustagsetmanager_wrap.cxx \
 			libcorpuslexeme_wrap.cxx \
 			libcorpustoken_wrap.cxx \
-			libcorpussentence_wrap.cxx
+			libcorpussentence_wrap.cxx \
+			libcorpuschunk_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
@@ -41,7 +44,8 @@ CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustagsetmanager_wrap.o \
 				 libcorpuslexeme_wrap.o \
 				 libcorpustoken_wrap.o \
-				 libcorpussentence_wrap.o
+				 libcorpussentence_wrap.o \
+				 libcorpuschunk_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
@@ -49,7 +53,8 @@ PYMODULES=boost_shared_ptr.py \
 					libcorpustagsetmanager.py \
 					libcorpuslexeme.py \
 					libcorpustoken.py \
-					libcorpussentence.py
+					libcorpussentence.py \
+					libcorpuschunk.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
@@ -57,7 +62,8 @@ PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustagsetmanager.pyc \
 			 libcorpuslexeme.pyc \
 			 libcorpustoken.pyc \
-			 libcorpussentence.pyc
+			 libcorpussentence.pyc \
+			 libcorpuschunk.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -104,6 +110,13 @@ libcorpuslexeme.o:
 	$(CPP) -c libcorpuslexeme_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpuslexeme_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpuslexeme.so
+
+# Chunk
+libcorpuschunk.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpuschunk.i
+	$(CPP) -c libcorpuschunk_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpuschunk_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpuschunk.so
 
 # Sentence
 libcorpussentence.o:
