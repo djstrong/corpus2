@@ -18,7 +18,8 @@ CBIN=libcorpustag.o \
 		 libcorpustagsetmanager.o \
 		 libcorpuslexeme.o \
 		 libcorpussentence.o \
-		 libcorpuschunk.o
+		 libcorpuschunk.o \
+		 libcorpustokenwriter.o
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
@@ -27,7 +28,8 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpuslexeme.so \
 				_libcorpustoken.so \
 				_libcorpussentence.so \
-				_libcorpuschunk.so
+				_libcorpuschunk.so \
+				_libcorpustokenwriter.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
@@ -36,7 +38,8 @@ CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpuslexeme_wrap.cxx \
 			libcorpustoken_wrap.cxx \
 			libcorpussentence_wrap.cxx \
-			libcorpuschunk_wrap.cxx
+			libcorpuschunk_wrap.cxx \
+			libcorpustokenwriter_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
@@ -45,7 +48,8 @@ CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpuslexeme_wrap.o \
 				 libcorpustoken_wrap.o \
 				 libcorpussentence_wrap.o \
-				 libcorpuschunk_wrap.o
+				 libcorpuschunk_wrap.o \
+				 libcorpustokenwriter_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
@@ -54,7 +58,8 @@ PYMODULES=boost_shared_ptr.py \
 					libcorpuslexeme.py \
 					libcorpustoken.py \
 					libcorpussentence.py \
-					libcorpuschunk.py
+					libcorpuschunk.py \
+					libcorpustokenwriter.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
@@ -63,7 +68,8 @@ PYCBIN=boost_shared_ptr.pyc \
 			 libcorpuslexeme.pyc \
 			 libcorpustoken.pyc \
 			 libcorpussentence.pyc \
-			 libcorpuschunk.pyc
+			 libcorpuschunk.pyc \
+			 libcorpustokenwriter.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -124,6 +130,13 @@ libcorpussentence.o:
 	$(CPP) -c libcorpussentence_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpussentence_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpussentence.so
+
+# TokenWriter
+libcorpustokenwriter.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpustokenwriter.i
+	$(CPP) -c libcorpustokenwriter_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpustokenwriter_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpustokenwriter.so
 
 # -----------------------------------------------------------------------------
 clean:
