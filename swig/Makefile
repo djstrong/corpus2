@@ -16,42 +16,48 @@ CPPFLAGS=-fPIC -O2
 CBIN=libcorpustag.o \
 		 libcorpustagset.o \
 		 libcorpustagsetmanager.o \
-		 libcorpuslexeme.o
+		 libcorpuslexeme.o \
+		 libcorpussentence.o
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
 				_libcorpustagset.so \
 				_libcorpustagsetmanager.so \
 				_libcorpuslexeme.so \
-				_libcorpustoken.so
+				_libcorpustoken.so \
+				_libcorpussentence.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
 			libcorpustagset_wrap.cxx \
 			libcorpustagsetmanager_wrap.cxx \
 			libcorpuslexeme_wrap.cxx \
-			libcorpustoken_wrap.cxx
+			libcorpustoken_wrap.cxx \
+			libcorpussentence_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
 				 libcorpustagset_wrap.o \
 				 libcorpustagsetmanager_wrap.o \
 				 libcorpuslexeme_wrap.o \
-				 libcorpustoken_wrap.o
+				 libcorpustoken_wrap.o \
+				 libcorpussentence_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
 					libcorpustagset.py \
 					libcorpustagsetmanager.py \
 					libcorpuslexeme.py \
-					libcorpustoken.py
+					libcorpustoken.py \
+					libcorpussentence.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
 			 libcorpustagset.pyc \
 			 libcorpustagsetmanager.pyc \
 			 libcorpuslexeme.pyc \
-			 libcorpustoken.pyc
+			 libcorpustoken.pyc \
+			 libcorpussentence.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -98,6 +104,13 @@ libcorpuslexeme.o:
 	$(CPP) -c libcorpuslexeme_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpuslexeme_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpuslexeme.so
+
+# Sentence
+libcorpussentence.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpussentence.i
+	$(CPP) -c libcorpussentence_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpussentence_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpussentence.so
 
 # -----------------------------------------------------------------------------
 clean:
