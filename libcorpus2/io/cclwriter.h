@@ -20,6 +20,8 @@ public:
 	static bool registered;
 
 protected:
+	void write_sentence_int(const Sentence &s);
+
 	void do_header();
 
 	void do_footer();

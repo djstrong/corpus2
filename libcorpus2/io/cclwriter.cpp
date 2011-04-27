@@ -22,6 +22,15 @@ CclWriter::~CclWriter()
 
 void CclWriter::write_sentence(const Sentence& s)
 {
+	paragraph_head();
+	if (use_indent_) indent_more();
+	write_sentence_int(s);
+	if (use_indent_) indent_less();
+	osi() << "</chunk>\n";
+}
+
+void CclWriter::write_sentence_int(const Sentence &s)
+{
 	const AnnotatedSentence* ann = dynamic_cast<const AnnotatedSentence*>(&s);
 	osi() << "<sentence>\n";
 	if (use_indent_) indent_more();
@@ -46,8 +55,7 @@ void CclWriter::write_sentence(const Sentence& s)
 			XmlWriter::write_token(*t);
 		}
 	}
-	if (use_indent_) indent_less();
-	osi() << "</sentence>\n";
+	if (use_indent_) indent_less();	osi() << "</sentence>\n";
 }
 
 void CclWriter::write_chunk(const Chunk &c)
@@ -55,7 +63,7 @@ void CclWriter::write_chunk(const Chunk &c)
 	paragraph_head(c);
 	if (use_indent_) indent_more();
 	foreach (const Sentence::ConstPtr& s, c.sentences()) {
-		write_sentence(*s);
+		write_sentence_int(*s);
 	}
 	if (use_indent_) indent_less();
 	osi() << "</chunk>\n";
