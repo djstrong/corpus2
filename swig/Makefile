@@ -19,7 +19,8 @@ CBIN=libcorpustag.o \
 		 libcorpuslexeme.o \
 		 libcorpussentence.o \
 		 libcorpuschunk.o \
-		 libcorpustokenwriter.o
+		 libcorpustokenwriter.o \
+		 libcorpustokenreader.o
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
@@ -29,7 +30,8 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpustoken.so \
 				_libcorpussentence.so \
 				_libcorpuschunk.so \
-				_libcorpustokenwriter.so
+				_libcorpustokenwriter.so \
+				_libcorpustokenreader.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
@@ -39,7 +41,8 @@ CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustoken_wrap.cxx \
 			libcorpussentence_wrap.cxx \
 			libcorpuschunk_wrap.cxx \
-			libcorpustokenwriter_wrap.cxx
+			libcorpustokenwriter_wrap.cxx \
+			libcorpustokenreader_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
@@ -49,7 +52,8 @@ CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustoken_wrap.o \
 				 libcorpussentence_wrap.o \
 				 libcorpuschunk_wrap.o \
-				 libcorpustokenwriter_wrap.o
+				 libcorpustokenwriter_wrap.o \
+				 libcorpustokenreader_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
@@ -59,7 +63,8 @@ PYMODULES=boost_shared_ptr.py \
 					libcorpustoken.py \
 					libcorpussentence.py \
 					libcorpuschunk.py \
-					libcorpustokenwriter.py
+					libcorpustokenwriter.py \
+					libcorpustokenreader.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
@@ -69,7 +74,8 @@ PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustoken.pyc \
 			 libcorpussentence.pyc \
 			 libcorpuschunk.pyc \
-			 libcorpustokenwriter.pyc
+			 libcorpustokenwriter.pyc \
+			 libcorpustokenreader.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -137,6 +143,13 @@ libcorpustokenwriter.o:
 	$(CPP) -c libcorpustokenwriter_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpustokenwriter_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpustokenwriter.so
+
+# TokenReader
+libcorpustokenreader.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpustokenreader.i
+	$(CPP) -c libcorpustokenreader_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpustokenreader_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpustokenreader.so
 
 # -----------------------------------------------------------------------------
 clean:
