@@ -17,6 +17,8 @@
 
 %nodefaultctor Corpus2::TokenReader;
 %template(TokenReaderPtr) boost::shared_ptr<Corpus2::TokenReader>;
+// %template(StdStringVector) std::vector<std::string>;
+// %template(ChunkPtr) boost::shared_ptr<Corpus2::Chunk>;
 
 namespace Corpus2 {
   class TokenReader {

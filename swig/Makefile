@@ -19,6 +19,7 @@ CBIN=libcorpustag.o \
 		 libcorpuslexeme.o \
 		 libcorpussentence.o \
 		 libcorpuschunk.o \
+		 libcorpustoken.o \
 		 libcorpustokenwriter.o \
 		 libcorpustokenreader.o \
 		 libcorpusiob.o \
@@ -141,6 +142,13 @@ libcorpuschunk.o:
 	$(CPP) -c libcorpuschunk_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpuschunk_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpuschunk.so
+
+# Token
+libcorpustoken.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpustoken.i
+	$(CPP) -c libcorpustoken_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpustoken_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpustoken.so
 
 # Sentence
 libcorpussentence.o:

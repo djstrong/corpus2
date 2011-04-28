@@ -10,15 +10,15 @@
 %include "libcorpuslexeme.i"
 %include "libcorpustagset.i"
 
-%include "std_pair.i"
 %include "std_string.i"
 %include "std_vector.i"
 
+
 %feature("notabstract") Corpus2::Token;
 
-%rename(__op_eq__) Corpus2::Token::operator==(const Token& other) const;
+%rename(__op_eq__) Corpus2::Token::operator==(const Corpus2::Token& other) const;
 
-%template(lexemeVector) std::vector<Lexeme>;
+%template(LexemeVector) std::vector<Corpus2::Lexeme>;
 
 namespace Corpus2 {
   class Token {

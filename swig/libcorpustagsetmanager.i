@@ -10,8 +10,10 @@
 
 %include "std_string.i"
 %include "std_vector.i"
+%include "boost_shared_ptr.i"
 
 %feature("notabstract") Corpus2::TagsetManager;
+%template(TagsetPtr) boost::shared_ptr<Tagset>;
 
 namespace Corpus2 {
   class TagsetManager {
@@ -21,8 +23,7 @@ namespace Corpus2 {
 
     /* --------------------------------------------------------------------- */
     const Tagset& get_tagset(const std::string& name);
-
-    // boost::shared_ptr<Tagset> get_cache_entry(const std::string& name);
+    boost::shared_ptr<Tagset> get_cache_entry(const std::string& name);
 
     /* --------------------------------------------------------------------- */
   };

@@ -13,6 +13,9 @@
 
 %feature("notabstract") Corpus2::Tagset;
 
+%template(TagVector) std::vector<Corpus2::Tag>;
+%template(StdStringVector) std::vector<std::string>;
+
 namespace Corpus2 {
   class Tagset {
   public:

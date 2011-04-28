@@ -12,6 +12,7 @@
 
 %template(Ptr) boost::shared_ptr<Corpus2::Sentence>;
 %template(ConstPtr) boost::shared_ptr<const Corpus2::Sentence>;
+%template(TokenPtrVector) std::vector<Corpus2::Token*>;
 
 namespace Corpus2 {
   class Sentence {
