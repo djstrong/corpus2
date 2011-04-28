@@ -20,7 +20,8 @@ CBIN=libcorpustag.o \
 		 libcorpussentence.o \
 		 libcorpuschunk.o \
 		 libcorpustokenwriter.o \
-		 libcorpustokenreader.o
+		 libcorpustokenreader.o \
+		 libcorpusiob.o
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
@@ -31,7 +32,8 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpussentence.so \
 				_libcorpuschunk.so \
 				_libcorpustokenwriter.so \
-				_libcorpustokenreader.so
+				_libcorpustokenreader.so \
+				_libcorpusiob.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
@@ -42,7 +44,8 @@ CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpussentence_wrap.cxx \
 			libcorpuschunk_wrap.cxx \
 			libcorpustokenwriter_wrap.cxx \
-			libcorpustokenreader_wrap.cxx
+			libcorpustokenreader_wrap.cxx \
+			libcorpusiob_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
@@ -53,7 +56,8 @@ CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpussentence_wrap.o \
 				 libcorpuschunk_wrap.o \
 				 libcorpustokenwriter_wrap.o \
-				 libcorpustokenreader_wrap.o
+				 libcorpustokenreader_wrap.o \
+				 libcorpusiob_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
@@ -64,7 +68,8 @@ PYMODULES=boost_shared_ptr.py \
 					libcorpussentence.py \
 					libcorpuschunk.py \
 					libcorpustokenwriter.py \
-					libcorpustokenreader.py
+					libcorpustokenreader.py \
+					libcorpusiob.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
@@ -75,7 +80,8 @@ PYCBIN=boost_shared_ptr.pyc \
 			 libcorpussentence.pyc \
 			 libcorpuschunk.pyc \
 			 libcorpustokenwriter.pyc \
-			 libcorpustokenreader.pyc
+			 libcorpustokenreader.pyc \
+			 libcorpusiob.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -150,6 +156,13 @@ libcorpustokenreader.o:
 	$(CPP) -c libcorpustokenreader_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpustokenreader_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpustokenreader.so
+
+# IOB
+libcorpusiob.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpusiob.i
+	$(CPP) -c libcorpusiob_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpusiob_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpusiob.so
 
 # -----------------------------------------------------------------------------
 clean:
