@@ -21,7 +21,8 @@ CBIN=libcorpustag.o \
 		 libcorpuschunk.o \
 		 libcorpustokenwriter.o \
 		 libcorpustokenreader.o \
-		 libcorpusiob.o
+		 libcorpusiob.o \
+		 libcorpusannotationchannel.o
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
@@ -33,7 +34,8 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpuschunk.so \
 				_libcorpustokenwriter.so \
 				_libcorpustokenreader.so \
-				_libcorpusiob.so
+				_libcorpusiob.so \
+				_libcorpusannotationchannel.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
@@ -45,7 +47,8 @@ CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpuschunk_wrap.cxx \
 			libcorpustokenwriter_wrap.cxx \
 			libcorpustokenreader_wrap.cxx \
-			libcorpusiob_wrap.cxx
+			libcorpusiob_wrap.cxx \
+			libcorpusannotationchannel_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
@@ -57,7 +60,8 @@ CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpuschunk_wrap.o \
 				 libcorpustokenwriter_wrap.o \
 				 libcorpustokenreader_wrap.o \
-				 libcorpusiob_wrap.o
+				 libcorpusiob_wrap.o \
+				 libcorpusannotationchannel_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
@@ -69,7 +73,8 @@ PYMODULES=boost_shared_ptr.py \
 					libcorpuschunk.py \
 					libcorpustokenwriter.py \
 					libcorpustokenreader.py \
-					libcorpusiob.py
+					libcorpusiob.py \
+					libcorpusannotationchannel.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
@@ -81,7 +86,8 @@ PYCBIN=boost_shared_ptr.pyc \
 			 libcorpuschunk.pyc \
 			 libcorpustokenwriter.pyc \
 			 libcorpustokenreader.pyc \
-			 libcorpusiob.pyc
+			 libcorpusiob.pyc \
+			 libcorpusannotationchannel.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -163,6 +169,13 @@ libcorpusiob.o:
 	$(CPP) -c libcorpusiob_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpusiob_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpusiob.so
+
+# AnnotationChannel
+libcorpusannotationchannel.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpusannotationchannel.i
+	$(CPP) -c libcorpusannotationchannel_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpusannotationchannel_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpusannotationchannel.so
 
 # -----------------------------------------------------------------------------
 clean:
