@@ -24,7 +24,8 @@ CBIN=libcorpustag.o \
 		 libcorpustokenreader.o \
 		 libcorpusiob.o \
 		 libcorpusannotationchannel.o \
-		 libcorpusannotatedsentence.o
+		 libcorpusannotatedsentence.o \
+		 libcorpusannotationview.o
 
 CBINOUT=_boost_shared_ptr.so \
 				_libcorpustag.so \
@@ -38,7 +39,8 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpustokenreader.so \
 				_libcorpusiob.so \
 				_libcorpusannotationchannel.so \
-				_libcorpusannotatedsentence.so
+				_libcorpusannotatedsentence.so \
+				_libcorpusannotationview.so
 
 CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
@@ -52,7 +54,8 @@ CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpustokenreader_wrap.cxx \
 			libcorpusiob_wrap.cxx \
 			libcorpusannotationchannel_wrap.cxx \
-			libcorpusannotatedsentence_wrap.cxx
+			libcorpusannotatedsentence_wrap.cxx \
+			libcorpusannotationview_wrap.cxx
 
 CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
@@ -66,7 +69,8 @@ CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpustokenreader_wrap.o \
 				 libcorpusiob_wrap.o \
 				 libcorpusannotationchannel_wrap.o \
-				 libcorpusannotatedsentence_wrap.o
+				 libcorpusannotatedsentence_wrap.o \
+				 libcorpusannotationview_wrap.o
 
 PYMODULES=boost_shared_ptr.py \
 					libcorpustag.py \
@@ -80,7 +84,8 @@ PYMODULES=boost_shared_ptr.py \
 					libcorpustokenreader.py \
 					libcorpusiob.py \
 					libcorpusannotationchannel.py \
-					libcorpusannotatedsentence.py
+					libcorpusannotatedsentence.py \
+					libcorpusannotationview.py
 
 PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
@@ -94,7 +99,8 @@ PYCBIN=boost_shared_ptr.pyc \
 			 libcorpustokenreader.pyc \
 			 libcorpusiob.pyc \
 			 libcorpusannotationchannel.pyc \
-			 libcorpusannotatedsentence.pyc
+			 libcorpusannotatedsentence.pyc \
+			 libcorpusannotationview.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -197,6 +203,13 @@ libcorpusannotatedsentence.o:
 	$(CPP) -c libcorpusannotatedsentence_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpusannotatedsentence_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpusannotatedsentence.so
+
+# AnnotationView
+libcorpusannotationview.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpusannotationview.i
+	$(CPP) -c libcorpusannotationview_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpusannotationview_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpusannotationview.so
 
 # -----------------------------------------------------------------------------
 clean:
