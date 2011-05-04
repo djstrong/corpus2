@@ -53,6 +53,9 @@ public:
 	/// Helper creation function
 	static Lexeme create(const UnicodeString& lemma, const Tag& tag);
 
+	/// Helper creation function, UTF-8 variant
+	static Lexeme create_utf8(const std::string& lemma_utf8, const Tag& tag);
+
 	/// Lemma accessor
 	const UnicodeString& lemma() const {
 		return lemma_;
@@ -61,6 +64,11 @@ public:
 	/// Lemma setter
 	void set_lemma(const UnicodeString& l) {
 		lemma_ = l;
+	}
+
+	/// Lemma setter, UTF-8 variant
+	void set_lemma_utf8(const std::string& lemma_utf8) {
+		lemma_ = UnicodeString::fromUTF8(lemma_utf8);
 	}
 
 	/// UTF-8 lemma convenience accessor

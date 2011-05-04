@@ -54,6 +54,10 @@ public:
 	/// Create a Token with the given orth and whitespace amount
 	Token(const UnicodeString& orth, PwrNlp::Whitespace::Enum wa);
 
+	/// Token creation, UTF-8
+	static Token* create_utf8(const std::string& orth_utf8,
+		PwrNlp::Whitespace::Enum wa = PwrNlp::Whitespace::Space);
+
 	/// Create a duplicate Token
 	Token* clone() const;
 
@@ -70,6 +74,11 @@ public:
 	/// Orth setter
 	void set_orth(const UnicodeString& orth) {
 		orth_ = orth;
+	}
+
+	/// Orth setter (UTF-8)
+	void set_orth_utf8(const std::string& orth_utf8) {
+		orth_ = UnicodeString::fromUTF8(orth_utf8);
 	}
 
 	/// WA getter

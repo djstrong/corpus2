@@ -24,13 +24,13 @@ namespace Corpus2 {
     Lexeme(const UnicodeString& lemma, const Tag& tag);
 
     static Lexeme create(const UnicodeString& lemma, const Tag& tag);
-    // static Lexeme create_utf8(const std::string& lemma, const Tag& tag);
+    static Lexeme create_utf8(const std::string& lemma, const Tag& tag);
 
     const UnicodeString& lemma() const;
     const std::string lemma_utf8() const;
 
     void set_lemma(const UnicodeString& l);
-    // void set_lemma_utf8(const std::string& l);
+    void set_lemma_utf8(const std::string& l);
 
     const Tag& tag() const;
     void set_tag(const Tag& tag);
