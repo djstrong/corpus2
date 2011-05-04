@@ -47,6 +47,7 @@ namespace Corpus2 {
 }
 
 using namespace std;
+using namespace boost;
 using namespace Corpus2;
 
 #endif /* SWIG_LIBCORPUS2_SENTENCE_I */
