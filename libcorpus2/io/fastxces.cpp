@@ -175,7 +175,7 @@ FastXcesReader::FastXcesReader(const Tagset &tagset, const std::string &filename
 {
 	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
 
-	if (this->is_owned_->bad()) {
+	if (!this->is_owned_->good()) {
 		throw Corpus2Error("File not found!");
 	}
 	else {
