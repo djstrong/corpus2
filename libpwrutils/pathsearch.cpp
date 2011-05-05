@@ -72,7 +72,7 @@ const std::string& PathSearcherBase::get_path_separator() const
 }
 
 std::string PathSearcherBase::find_file(const std::string& filename,
-		const std::string& info)
+		const std::string& info) const
 {
 	boost::filesystem::path i(filename);
 	if (i.is_complete()) {
@@ -101,7 +101,7 @@ std::string PathSearcherBase::find_file(const std::string& filename,
 }
 
 bool PathSearcherBase::open_stream(const std::string& filename,
-		std::ifstream& ifs, const std::string& info)
+		std::ifstream& ifs, const std::string& info) const
 {
 	std::string f = find_file(filename, info);
 	if (!f.empty()) {
