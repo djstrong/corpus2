@@ -6,6 +6,7 @@
   #include <libpwrutils/exception.h>
 %} 
 
+%include "std_string.i"
 %include "std_except.i"
 
 %nodefaultctor PwrNlp::PwrNlpError;
