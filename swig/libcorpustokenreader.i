@@ -30,11 +30,27 @@ namespace Corpus2 {
     virtual ~TokenReader();
     
     /* --------------------------------------------------------------------- */
+    %exception {
+      try {
+        $action
+      } catch (PwrNlp::PwrNlpError &e) {
+        PyErr_SetString(PyExc_IndexError, e.info().c_str());
+        return NULL;
+      }
+    }
     static TokenReaderPtr create_path_reader(
       const std::string& class_id,
       const Tagset& tagset,
       const std::string& path);
 
+    %exception {
+      try {
+        $action
+      } catch (PwrNlp::PwrNlpError &e) {
+        PyErr_SetString(PyExc_IndexError, e.info().c_str());
+        return NULL;
+      }
+    }
     static TokenReaderPtr create_stream_reader(
       const std::string& class_id,
       const Tagset& tagset,

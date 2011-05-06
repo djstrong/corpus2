@@ -39,11 +39,27 @@ namespace Corpus2 {
     void finish();
     
     /* --------------------------------------------------------------------- */
+    %exception {
+      try {
+        $action
+      } catch (PwrNlp::PwrNlpError &e) {
+        PyErr_SetString(PyExc_IndexError, e.info().c_str());
+        return NULL;
+      }
+    }
     static TokenWriterPtr create_stream_writer(
       const std::string& class_id_params, 
       std::ostream& os, const Tagset& 
       tagset);
 
+    %exception {
+      try {
+        $action
+      } catch (PwrNlp::PwrNlpError &e) {
+        PyErr_SetString(PyExc_IndexError, e.info().c_str());
+        return NULL;
+      }
+    }
     static TokenWriterPtr create_path_writer(
       const std::string& class_id_params,
       const std::string& path,
