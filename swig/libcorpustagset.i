@@ -7,6 +7,7 @@
 %}
 
 %include "libcorpustag.i"
+%include "libcorpus2exception.i"
 
 %include "std_string.i"
 %include "std_vector.i"
@@ -17,6 +18,36 @@
 %template(StdStringVector) std::vector<std::string>;
 
 namespace Corpus2 {
+  class Tagset;
+  class TagParseError : public Corpus2Error {
+  public:
+    TagParseError(const std::string &what, const std::string& val,
+        const std::string& tag, const std::string& tagset);
+
+    ~TagParseError() throw() {}
+
+    /* --------------------------------------------------------------------- */
+    std::string info() const;
+    std::string val, tag, tagset;
+  }; // TagParseError
+
+  class TagsetMismatch : public Corpus2Error {
+  public:
+    TagsetMismatch(const std::string& where, const Tagset& expected,
+        const Tagset& actual);
+
+    // TagsetMismatch(const std::string& where, tagset_idx_t expected,
+    //    tagset_idx_t actual);
+
+    ~TagsetMismatch() throw() {}
+
+    /* --------------------------------------------------------------------- */
+    std::string info() const;
+
+    /* --------------------------------------------------------------------- */
+    // tagset_idx_t expected_id, actual_id;
+  }; // TagsetMismatch
+
   class Tagset {
   public:
 
