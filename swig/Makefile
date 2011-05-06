@@ -14,6 +14,7 @@ ANTLRLIB=/usr/lib/libantlr-pic.a
 CPPFLAGS=-fPIC -O2
 
 CBIN=libpwrnlperror.o \
+		 libcorpus2exception.o \
 		 libcorpustag.o \
 		 libcorpustagset.o \
 		 libcorpustagsetmanager.o \
@@ -29,6 +30,7 @@ CBIN=libpwrnlperror.o \
 		 libcorpusannotationview.o
 
 CBINOUT=_libpwrnlperror.so \
+				_libcorpus2exception.so \
 				_boost_shared_ptr.so \
 				_libcorpustag.so \
 				_libcorpustagset.so \
@@ -45,6 +47,7 @@ CBINOUT=_libpwrnlperror.so \
 				_libcorpusannotationview.so
 
 CWRAP=libpwrnlperror_wrap.cxx \
+			libcorpus2exception_wrap.cxx \
 			boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
 			libcorpustagset_wrap.cxx \
@@ -61,6 +64,7 @@ CWRAP=libpwrnlperror_wrap.cxx \
 			libcorpusannotationview_wrap.cxx
 
 CWRAPBIN=libpwrnlperror_wrap.o \
+				 libcorpus2exception_wrap.o \
 				 boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
 				 libcorpustagset_wrap.o \
@@ -77,6 +81,7 @@ CWRAPBIN=libpwrnlperror_wrap.o \
 				 libcorpusannotationview_wrap.o
 
 PYMODULES=libpwrnlperror.py \
+					libcorpus2exception.py \
 					boost_shared_ptr.py \
 					libcorpustag.py \
 					libcorpustagset.py \
@@ -93,6 +98,7 @@ PYMODULES=libpwrnlperror.py \
 					libcorpusannotationview.py
 
 PYCBIN=libpwrnlperror.pyc \
+			 libcorpus2exception.pyc \
 			 boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
 			 libcorpustagset.pyc \
@@ -134,6 +140,13 @@ libpwrnlperror.o:
 # -----------------------------------------------------------------------------
 #  Corpus2 Wrappers
 # -----------------------------------------------------------------------------
+
+libcorpus2exception.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpus2exception.i
+	$(CPP) -c libcorpus2exception_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpus2exception_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpus2exception.so
+
 # Tag
 libcorpustag.o:
 	$(SWIG) $(SWIGOPTS_LANG) libcorpustag.i
