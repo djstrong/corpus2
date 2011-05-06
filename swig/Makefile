@@ -13,7 +13,8 @@ ANTLRLIB=/usr/lib/libantlr-pic.a
 
 CPPFLAGS=-fPIC -O2
 
-CBIN=libcorpustag.o \
+CBIN=libpwrnlperror.o \
+		 libcorpustag.o \
 		 libcorpustagset.o \
 		 libcorpustagsetmanager.o \
 		 libcorpuslexeme.o \
@@ -27,7 +28,8 @@ CBIN=libcorpustag.o \
 		 libcorpusannotatedsentence.o \
 		 libcorpusannotationview.o
 
-CBINOUT=_boost_shared_ptr.so \
+CBINOUT=_libpwrnlperror.so \
+				_boost_shared_ptr.so \
 				_libcorpustag.so \
 				_libcorpustagset.so \
 				_libcorpustagsetmanager.so \
@@ -42,7 +44,8 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpusannotatedsentence.so \
 				_libcorpusannotationview.so
 
-CWRAP=boost_shared_ptr_wrap.cxx \
+CWRAP=libpwrnlperror_wrap.cxx \
+			boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
 			libcorpustagset_wrap.cxx \
 			libcorpustagsetmanager_wrap.cxx \
@@ -57,7 +60,8 @@ CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpusannotatedsentence_wrap.cxx \
 			libcorpusannotationview_wrap.cxx
 
-CWRAPBIN=boost_shared_ptr_wrap.o \
+CWRAPBIN=libpwrnlperror_wrap.o \
+				 boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
 				 libcorpustagset_wrap.o \
 				 libcorpustagsetmanager_wrap.o \
@@ -72,7 +76,8 @@ CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpusannotatedsentence_wrap.o \
 				 libcorpusannotationview_wrap.o
 
-PYMODULES=boost_shared_ptr.py \
+PYMODULES=libpwrnlperror.py \
+					boost_shared_ptr.py \
 					libcorpustag.py \
 					libcorpustagset.py \
 					libcorpustagsetmanager.py \
@@ -87,7 +92,8 @@ PYMODULES=boost_shared_ptr.py \
 					libcorpusannotatedsentence.py \
 					libcorpusannotationview.py
 
-PYCBIN=boost_shared_ptr.pyc \
+PYCBIN=libpwrnlperror.pyc \
+			 boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
 			 libcorpustagset.pyc \
 			 libcorpustagsetmanager.pyc \
@@ -116,6 +122,14 @@ boost_shared_ptr.o:
 	$(CPP) -c boost_shared_ptr_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared boost_shared_ptr_wrap.o -o _boost_shared_ptr.so
 
+# -----------------------------------------------------------------------------
+#  PwrNlpError wprapper
+# -----------------------------------------------------------------------------
+# PwrNlpError
+libpwrnlperror.o:
+	$(SWIG) $(SWIGOPTS_LANG) libpwrnlperror.i
+	$(CPP) -c libpwrnlperror_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libpwrnlperror_wrap.o -o _libpwrnlperror.so
 
 # -----------------------------------------------------------------------------
 #  Corpus2 Wrappers
