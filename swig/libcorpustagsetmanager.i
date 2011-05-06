@@ -17,6 +17,18 @@
 %template(TagsetPtr) boost::shared_ptr<Tagset>;
 
 namespace Corpus2 {
+  class TagsetNotFound : public Corpus2Error {
+  public:
+    // explicit TagsetNotFound(const tagset_idx_t id);
+    ~TagsetNotFound() throw() {}
+
+    /* --------------------------------------------------------------------- */
+    std::string info() const;
+
+    /* --------------------------------------------------------------------- */
+    // tagset_idx_t id;
+  };
+
   class TagsetManager {
   public:
     TagsetManager();
