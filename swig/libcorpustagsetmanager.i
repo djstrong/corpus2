@@ -41,6 +41,18 @@ namespace Corpus2 {
     /* --------------------------------------------------------------------- */
   };
 
+
+  %exception {
+    try {
+      $action
+    } catch (Corpus2::TagsetNotFound &e) {
+      PyErr_SetString(PyExc_IndexError, e.info().c_str());
+      return NULL;
+    } catch (PwrNlp::PwrNlpError &e) {
+      PyErr_SetString(PyExc_IndexError, e.info().c_str());
+      return NULL;
+    }
+  }
   inline const Tagset& get_named_tagset(const std::string& name);
 }
 
