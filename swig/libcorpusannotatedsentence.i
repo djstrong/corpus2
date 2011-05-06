@@ -8,6 +8,7 @@
 
 %include "libcorpustoken.i"
 %include "libcorpussentence.i"
+%include "libcorpus2exception.i"
 %include "libcorpusannotationchannel.i"
 
 %include "boost_shared_ptr.i"
@@ -21,6 +22,12 @@
 %template(AnnotatedSentencePtr) boost::shared_ptr<Corpus2::AnnotatedSentence>;
 
 namespace Corpus2 {
+  class MissingAnnotationChannel : public Corpus2Error {
+  public:
+    MissingAnnotationChannel(const std::string& name);
+    ~MissingAnnotationChannel() throw();
+  }; // MissingAnnotationChannel
+
   class AnnotatedSentence : public Corpus2::Sentence {
   public:
     typedef std::map<std::string, AnnotationChannel> chan_map_t;
