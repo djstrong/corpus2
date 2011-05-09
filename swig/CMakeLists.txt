@@ -192,7 +192,8 @@ install(
 )
 
 install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/libcorpus2exception.py
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/libpwrnlperror.py
+	${CMAKE_CURRENT_BINARY_DIR}/libcorpus2exception.py
 	${CMAKE_CURRENT_BINARY_DIR}/libcorpus2exception.py
 	${CMAKE_CURRENT_BINARY_DIR}/libcorpustag.py
 	${CMAKE_CURRENT_BINARY_DIR}/libcorpustagset.py
@@ -216,7 +217,8 @@ install(
 # -----------------------------------------------------------------------------
 
 install(
-	FILES libcorpus2exception.i
+	FILES libpwrnlperror.i
+	libcorpus2exception.i
 	libcorpus2exception.i
 	libcorpustag.i
 	libcorpustagset.i
