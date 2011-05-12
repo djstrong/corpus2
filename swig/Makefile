@@ -13,7 +13,9 @@ ANTLRLIB=/usr/lib/libantlr-pic.a
 
 CPPFLAGS=-fPIC -O2
 
-CBIN=libcorpustag.o \
+CBIN=libpwrnlperror.o \
+		 libcorpus2exception.o \
+		 libcorpustag.o \
 		 libcorpustagset.o \
 		 libcorpustagsetmanager.o \
 		 libcorpuslexeme.o \
@@ -25,9 +27,12 @@ CBIN=libcorpustag.o \
 		 libcorpusiob.o \
 		 libcorpusannotationchannel.o \
 		 libcorpusannotatedsentence.o \
-		 libcorpusannotationview.o
+		 libcorpusannotationview.o \
+		 corpus2.o
 
-CBINOUT=_boost_shared_ptr.so \
+CBINOUT=_libpwrnlperror.so \
+				_libcorpus2exception.so \
+				_boost_shared_ptr.so \
 				_libcorpustag.so \
 				_libcorpustagset.so \
 				_libcorpustagsetmanager.so \
@@ -40,9 +45,12 @@ CBINOUT=_boost_shared_ptr.so \
 				_libcorpusiob.so \
 				_libcorpusannotationchannel.so \
 				_libcorpusannotatedsentence.so \
-				_libcorpusannotationview.so
+				_libcorpusannotationview.so \
+				_corpus2.so
 
-CWRAP=boost_shared_ptr_wrap.cxx \
+CWRAP=libpwrnlperror_wrap.cxx \
+			libcorpus2exception_wrap.cxx \
+			boost_shared_ptr_wrap.cxx \
 			libcorpustag_wrap.cxx \
 			libcorpustagset_wrap.cxx \
 			libcorpustagsetmanager_wrap.cxx \
@@ -55,9 +63,12 @@ CWRAP=boost_shared_ptr_wrap.cxx \
 			libcorpusiob_wrap.cxx \
 			libcorpusannotationchannel_wrap.cxx \
 			libcorpusannotatedsentence_wrap.cxx \
-			libcorpusannotationview_wrap.cxx
+			libcorpusannotationview_wrap.cxx \
+			corpus2_wrap.cxx
 
-CWRAPBIN=boost_shared_ptr_wrap.o \
+CWRAPBIN=libpwrnlperror_wrap.o \
+				 libcorpus2exception_wrap.o \
+				 boost_shared_ptr_wrap.o \
 				 libcorpustag_wrap.o \
 				 libcorpustagset_wrap.o \
 				 libcorpustagsetmanager_wrap.o \
@@ -70,9 +81,12 @@ CWRAPBIN=boost_shared_ptr_wrap.o \
 				 libcorpusiob_wrap.o \
 				 libcorpusannotationchannel_wrap.o \
 				 libcorpusannotatedsentence_wrap.o \
-				 libcorpusannotationview_wrap.o
+				 libcorpusannotationview_wrap.o \
+				 corpus2_wrap.o
 
-PYMODULES=boost_shared_ptr.py \
+PYMODULES=libpwrnlperror.py \
+					libcorpus2exception.py \
+					boost_shared_ptr.py \
 					libcorpustag.py \
 					libcorpustagset.py \
 					libcorpustagsetmanager.py \
@@ -85,9 +99,12 @@ PYMODULES=boost_shared_ptr.py \
 					libcorpusiob.py \
 					libcorpusannotationchannel.py \
 					libcorpusannotatedsentence.py \
-					libcorpusannotationview.py
+					libcorpusannotationview.py \
+					corpus2.py
 
-PYCBIN=boost_shared_ptr.pyc \
+PYCBIN=libpwrnlperror.pyc \
+			 libcorpus2exception.pyc \
+			 boost_shared_ptr.pyc \
 			 libcorpustag.pyc \
 			 libcorpustagset.pyc \
 			 libcorpustagsetmanager.pyc \
@@ -100,7 +117,8 @@ PYCBIN=boost_shared_ptr.pyc \
 			 libcorpusiob.pyc \
 			 libcorpusannotationchannel.pyc \
 			 libcorpusannotatedsentence.pyc \
-			 libcorpusannotationview.pyc
+			 libcorpusannotationview.pyc \
+			 corpus2.pyc
 
 # -----------------------------------------------------------------------------
 all:boost_shared_ptr.o $(CBIN)
@@ -116,10 +134,25 @@ boost_shared_ptr.o:
 	$(CPP) -c boost_shared_ptr_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared boost_shared_ptr_wrap.o -o _boost_shared_ptr.so
 
+# -----------------------------------------------------------------------------
+#  PwrNlpError wprapper
+# -----------------------------------------------------------------------------
+# PwrNlpError
+libpwrnlperror.o:
+	$(SWIG) $(SWIGOPTS_LANG) libpwrnlperror.i
+	$(CPP) -c libpwrnlperror_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libpwrnlperror_wrap.o -o _libpwrnlperror.so
 
 # -----------------------------------------------------------------------------
 #  Corpus2 Wrappers
 # -----------------------------------------------------------------------------
+
+libcorpus2exception.o:
+	$(SWIG) $(SWIGOPTS_LANG) libcorpus2exception.i
+	$(CPP) -c libcorpus2exception_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared libcorpus2exception_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpus2exception.so
+
 # Tag
 libcorpustag.o:
 	$(SWIG) $(SWIGOPTS_LANG) libcorpustag.i
@@ -210,6 +243,15 @@ libcorpusannotationview.o:
 	$(CPP) -c libcorpusannotationview_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
 	$(CPP) -shared libcorpusannotationview_wrap.o \
 		$(PWRUTILBIN) $(CORPUS2BIN) -o _libcorpusannotationview.so
+
+# -----------------------------------------------------------------------------
+
+# Corpus2
+corpus2.o:
+	$(SWIG) $(SWIGOPTS_LANG) corpus2.i
+	$(CPP) -c corpus2_wrap.cxx -I$(PYTHONDIR) $(CPPFLAGS)
+	$(CPP) -shared corpus2_wrap.o \
+		$(PWRUTILBIN) $(CORPUS2BIN) -o _corpus2.so
 
 # -----------------------------------------------------------------------------
 clean:

@@ -73,7 +73,7 @@ public:
 	 *             is on. Empty info string suppreses loading info.
 	 */
 	std::string find_file(const std::string& filename,
-			const std::string& info = "");
+			const std::string& info = "") const;
 
 	/**
 	 * Open a file stream for a file in the library search path
@@ -83,7 +83,22 @@ public:
 	 *             is on. Empty info string suppreses loading info.
 	 */
 	bool open_stream(const std::string& filename, std::ifstream& ifs,
-			const std::string& info = "");
+			const std::string& info = "") const;
+
+	/**
+	 * Convenience wrapper around find_file to throw an exception
+	 * when the file is not found.
+	 * Virtual, as it throws the exception defined by the child class.
+	 */
+	virtual std::string find_file_or_throw(const std::string& filename,
+			const std::string& where) const = 0;
+
+	/**
+	 * Wrapper around open_stream to throw an exception when the file is not
+	 * found. Virtual, as it throws the exception defined by the child class.
+	 */
+	virtual void open_stream_or_throw(const std::string& filename,
+			std::ifstream& ifs, const std::string& where) const = 0;
 
 	/**
 	 * Look for files matching a condition.
@@ -122,14 +137,14 @@ public:
 	 * when the file is not found.
 	 */
 	std::string find_file_or_throw(const std::string& filename,
-			const std::string& where);
+			const std::string& where) const;
 
 	/**
 	 * Convenience template wrapper around open_stream to throw an
 	 * exception when the file is not found.
 	 */
 	void open_stream_or_throw(const std::string& filename,
-			std::ifstream& ifs, const std::string& where);
+			std::ifstream& ifs, const std::string& where) const;
 
 };
 
@@ -158,7 +173,7 @@ private:
 
 template<class E>
 std::string PathSearcher<E>::find_file_or_throw(
-		const std::string& filename, const std::string& info)
+		const std::string& filename, const std::string& info) const
 {
 	std::string fn = find_file(filename, info);
 	if (fn.empty()) {
@@ -169,7 +184,7 @@ std::string PathSearcher<E>::find_file_or_throw(
 
 template<class E>
 void PathSearcher<E>::open_stream_or_throw(const std::string& filename,
-		std::ifstream& ifs, const std::string& info)
+		std::ifstream& ifs, const std::string& info) const
 {
 	if (!open_stream(filename, ifs, info)) {
 		throw E(filename, get_search_path_string(), info);

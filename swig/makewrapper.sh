@@ -2,7 +2,7 @@
 
 if [ ${#} -eq 0 ]
 then
-	echo "Usage: $0 corpus2class"
+	echo -e "\e[1;31mUsage: $0 corpus2class\e[0m"
 	exit 1
 fi
 

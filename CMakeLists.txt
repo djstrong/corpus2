@@ -67,4 +67,5 @@ add_subdirectory(libpwrutils)
 add_subdirectory(libcorpus2)
 add_subdirectory(tagset-tool)
 add_subdirectory(tests)
+# add_subdirectory(swig)
 

@@ -72,13 +72,24 @@ const std::string& PathSearcherBase::get_path_separator() const
 }
 
 std::string PathSearcherBase::find_file(const std::string& filename,
-		const std::string& info)
+		const std::string& info) const
 {
 	boost::filesystem::path i(filename);
+	if (i.is_complete()) {
+		if (boost::filesystem::exists(i) &&
+				!boost::filesystem::is_directory(i)) {
+			if (verbose_loading_) {
+				std::cerr << "Found " << info << " file: "
+						<< i.string() << "\n";
+			}
+			return i.string();
+		}
+		return "";
+	}
 	foreach (const std::string& s, paths_) {
 		boost::filesystem::path pi = s / i;
 		if (boost::filesystem::exists(pi) &&
-				boost::filesystem::is_regular(pi)) {
+				!boost::filesystem::is_directory(pi)) {
 			if (verbose_loading_) {
 				std::cerr << "Found " << info << " file: "
 						<< pi.string() << "\n";
@@ -90,7 +101,7 @@ std::string PathSearcherBase::find_file(const std::string& filename,
 }
 
 bool PathSearcherBase::open_stream(const std::string& filename,
-		std::ifstream& ifs, const std::string& info)
+		std::ifstream& ifs, const std::string& info) const
 {
 	std::string f = find_file(filename, info);
 	if (!f.empty()) {

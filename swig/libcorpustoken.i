@@ -26,12 +26,14 @@ namespace Corpus2 {
     Token();
     Token(const UnicodeString& orth, PwrNlp::Whitespace::Enum wa);
     Token* clone() const;
+
+    Token* create_utf8(const std::string& orth_utf8, PwrNlp::Whitespace::Enum wa = PwrNlp::Whitespace::Space);
     
     const UnicodeString& orth() const;
     std::string orth_utf8() const;
 
     void set_orth(const UnicodeString& orth);
-    // void set_orth_utf8(const std::string& orth);
+    void set_orth_utf8(const std::string& orth);
 
     const PwrNlp::Whitespace::Enum& wa() const;
     void set_wa(const PwrNlp::Whitespace::Enum& wa);

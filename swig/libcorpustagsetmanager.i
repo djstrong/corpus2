@@ -7,6 +7,7 @@
 %}
 
 %include "libcorpustagset.i"
+%include "libcorpus2exception.i"
 
 %include "std_string.i"
 %include "std_vector.i"
@@ -16,6 +17,18 @@
 %template(TagsetPtr) boost::shared_ptr<Tagset>;
 
 namespace Corpus2 {
+  class TagsetNotFound : public Corpus2Error {
+  public:
+    // explicit TagsetNotFound(const tagset_idx_t id);
+    ~TagsetNotFound() throw() {}
+
+    /* --------------------------------------------------------------------- */
+    std::string info() const;
+
+    /* --------------------------------------------------------------------- */
+    // tagset_idx_t id;
+  };
+
   class TagsetManager {
   public:
     TagsetManager();
@@ -28,6 +41,18 @@ namespace Corpus2 {
     /* --------------------------------------------------------------------- */
   };
 
+
+  %exception {
+    try {
+      $action
+    } catch (Corpus2::TagsetNotFound &e) {
+      PyErr_SetString(PyExc_IndexError, e.info().c_str());
+      return NULL;
+    } catch (PwrNlp::PwrNlpError &e) {
+      PyErr_SetString(PyExc_IndexError, e.info().c_str());
+      return NULL;
+    }
+  }
   inline const Tagset& get_named_tagset(const std::string& name);
 }
 

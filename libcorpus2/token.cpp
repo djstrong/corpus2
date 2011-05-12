@@ -32,6 +32,12 @@ Token::Token(const UnicodeString &orth, PwrNlp::Whitespace::Enum wa)
 {
 }
 
+Token* Token::create_utf8(const std::string& orth_utf8,
+		PwrNlp::Whitespace::Enum wa /*= PwrNlp::Whitespace::Space*/)
+{
+	return new Token(UnicodeString::fromUTF8(orth_utf8), wa);
+}
+
 Token* Token::clone() const
 {
 	Token* t = new Token();

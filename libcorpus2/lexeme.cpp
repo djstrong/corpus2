@@ -33,6 +33,12 @@ Lexeme Lexeme::create(const UnicodeString& lemma, const Tag& tag)
 	return Lexeme(lemma, tag);
 }
 
+Lexeme Lexeme::create_utf8(const std::string& lemma_utf8, const Tag& tag)
+{
+	return Lexeme(UnicodeString::fromUTF8(lemma_utf8), tag);
+}
+
+
 bool Lexeme::is_null() const
 {
 	return lemma().length() == 0 || tag().is_null();

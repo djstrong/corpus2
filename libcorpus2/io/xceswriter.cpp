@@ -71,7 +71,10 @@ void XcesWriter::write_chunk(const Chunk &c)
 		}
 		write_sentence(*s);
 	}
-	if (use_indent_) indent_less();
+	if (new_chunk) { //no sentences in chunk
+		paragraph_head(c);
+	}
+	if (use_indent_ && !new_chunk) indent_less();
 	osi() << "</chunk>\n";
 }
 
