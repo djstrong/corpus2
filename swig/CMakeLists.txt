@@ -2,11 +2,11 @@
 
 PROJECT(corpus2SwigWrap)
 
-find_package(Corpus2 1.0.8 REQUIRED)
-set(CORPUS2_LIBS ${Corpus2_LIBRARY})
+#find_package(Corpus2 1.0.8 REQUIRED)
+set(CORPUS2_LIBS corpus2)
 
-find_package(PwrUtils 1.0.1 REQUIRED)
-set(PWRUTILS_LIBS ${PwrUtils_LIBRARY})
+#find_package(PwrUtils 1.0.1 REQUIRED)
+set(PWRUTILS_LIBS pwrutils)
 set(CORPUS2_PWR_LIBS ${CORPUS2_LIBS} ${PWRUTILS_LIBS})
 
 include_directories (${Libcorpus2_SOURCE_DIR} "../libcorpus2")
