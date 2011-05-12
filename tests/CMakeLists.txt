@@ -2,7 +2,7 @@ PROJECT( test )
 
 include_directories( ${CMAKE_SOURCE_DIR} )
 
-add_definitions(-DLIBCORPUS2_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/")
+add_definitions(-DLIBWCCL_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/")
 
 add_executable( tests
 	main.cpp
