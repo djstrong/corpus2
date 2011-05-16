@@ -75,6 +75,7 @@ SET(libcorpus2_STAT_SRC
 	io/xceswriter.cpp
 	io/xmlreader.cpp
 	io/xmlwriter.cpp
+	util/ioformat-options.cpp
 	util/settings.cpp
 	util/symboldictionary.cpp
 	util/tokentimer.cpp
