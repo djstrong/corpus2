@@ -4,6 +4,7 @@
 %module libcorpustokenreader
 %{
   #include <libcorpus2/io/reader.h>
+  #include <libcorpus2/io/helpers.h>
 %}
 
 %include "libcorpustag.i"
@@ -73,6 +74,10 @@ namespace Corpus2 {
     static std::string reader_help(const std::string& class_id);
     static std::vector<std::string> available_reader_types_help();
   };
+
+  std::vector<boost::shared_ptr<Chunk> > read_chunks_from_utf8_string(
+    const std::string& data, const Tagset& tagset, const std::string& format);
+ 
 }
 
 using namespace std;

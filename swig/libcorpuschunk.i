@@ -46,6 +46,7 @@ namespace Corpus2 {
   };
 }
 
+%template(ChunkPtrVector) std::vector<boost::shared_ptr<Chunk> >;
 using namespace std;
 using namespace Corpus2;
 
