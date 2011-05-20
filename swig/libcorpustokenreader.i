@@ -63,7 +63,6 @@ namespace Corpus2 {
     /* virtual Token* get_next_token() = 0; */
     virtual Sentence::Ptr get_next_sentence() = 0;
     virtual boost::shared_ptr<Chunk> get_next_chunk() = 0;
-    virtual bool has_more() = 0;
 
     /* --------------------------------------------------------------------- */
     virtual void set_option(const std::string& option);

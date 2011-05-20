@@ -64,6 +64,9 @@ private:
 
 	/// Dialect flag: output all lexemes, not just the preferred one
 	bool alltags_;
+
+	/// Dialect flag: use non-utf8 encoding
+	std::string encoding_;
 };
 
 class RftReader : public BufferedSentenceReader

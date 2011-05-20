@@ -25,7 +25,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 bool RftWriter::registered = TokenWriter::register_writer<RftWriter>(
-		"rft", "mbt,nowarn,colon,alltags,opt");
+		"rft", "mbt,nowarn,colon,alltags,opt,latin2");
 
 RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
@@ -46,6 +46,8 @@ RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 			opt_ = true;
 		} else if (p == "colon") {
 			colon_ = true;
+		} else if (p == "latin2") {
+			encoding_ = p;
 		}
 
 	}
@@ -53,7 +55,18 @@ RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 
 void RftWriter::write_token(const Token& t)
 {
-	os() << t.orth_utf8();
+	if (encoding_.empty()) {
+		os() << t.orth_utf8();
+	} else {
+		char buf[256];
+		int len = t.orth().extract(0, t.orth().length(), buf, 255, encoding_.c_str());
+		if (len < 256) {
+			os() << buf;
+		} else {
+			std::cerr << "Characetr encoding error in codepage rft output\n";
+			os() << "???";
+		}
+	}
 	if (t.lexemes().empty()) {
 		if (warn_on_no_lexemes_) {
 			std::cerr << "No lexemes for token!";
