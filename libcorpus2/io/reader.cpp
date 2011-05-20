@@ -222,6 +222,22 @@ boost::shared_ptr<Chunk> BufferedChunkReader::get_next_chunk()
 	}
 }
 
+bool BufferedChunkReader::has_more()
+{
+	ensure_more();
+	return !chunk_buf_.empty();
+}
+
+bool BufferedSentenceReader::has_more()
+{
+	if (sentence_buf_ != NULL) {
+		return true;
+	}
+	sentence_buf_ = actual_next_sentence();
+	return (sentence_buf_ != NULL);
+}
+
+
 BufferedSentenceReader::BufferedSentenceReader(const Tagset& tagset)
 	: TokenReader(tagset), chunkify_(true)
 	, sentence_buf_(), token_buf_()
