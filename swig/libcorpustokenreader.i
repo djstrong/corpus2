@@ -39,6 +39,7 @@ namespace Corpus2 {
         return NULL;
       }
     }
+    %feature("autodoc", "1");
     static TokenReaderPtr create_path_reader(
       const std::string& class_id,
       const Tagset& tagset,
@@ -52,6 +53,7 @@ namespace Corpus2 {
         return NULL;
       }
     }
+    %feature("autodoc", "1");
     static TokenReaderPtr create_stream_reader(
       const std::string& class_id,
       const Tagset& tagset,
@@ -75,6 +77,7 @@ namespace Corpus2 {
     static std::vector<std::string> available_reader_types_help();
   };
 
+  %feature("autodoc", "1");
   std::vector<boost::shared_ptr<Chunk> > read_chunks_from_utf8_string(
     const std::string& data, const Tagset& tagset, const std::string& format);
  
