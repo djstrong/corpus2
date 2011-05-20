@@ -90,6 +90,13 @@ public:
 	 */
 	virtual boost::shared_ptr<Chunk> get_next_chunk() = 0;
 
+
+	/**
+	 * Checks if there is anything left to be returned. Non-const because it
+	 * might read ahead and fill the buffer.
+	 */
+	virtual bool has_more() = 0;
+
 	/**
 	 * General option setter.
 	 */
@@ -297,6 +304,8 @@ public:
 
 	boost::shared_ptr<Chunk> get_next_chunk();
 
+	bool has_more();
+
 	void set_option(const std::string& option) {
 		TokenReader::set_option(option);
 	}
@@ -331,6 +340,8 @@ public:
 	Token* get_next_token();
 
 	Sentence::Ptr get_next_sentence();
+
+	bool has_more();
 
 	boost::shared_ptr<Chunk> get_next_chunk();
 
