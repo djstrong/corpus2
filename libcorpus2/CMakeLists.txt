@@ -58,6 +58,7 @@ SET(libcorpus2_STAT_SRC
 	io/cclreader.cpp
 	io/cclwriter.cpp
 	io/fastxces.cpp
+	io/iob-chan.cpp
 	io/nonewriter.cpp
 	io/orthwriter.cpp
 	io/pathwriter.cpp

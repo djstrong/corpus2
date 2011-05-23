@@ -130,7 +130,7 @@ public:
 	/**
 	 * IOB getter, returns IOB::O if idx is out of range.
 	 */
-	IOB::Enum get_iob_at(int idx);
+	IOB::Enum get_iob_at(int idx) const;
 
 	/**
 	 * IOB setter, out of range indices are not processed.
