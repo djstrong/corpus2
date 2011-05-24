@@ -12,15 +12,15 @@ include_directories( ${CMAKE_SOURCE_DIR} )
 add_executable( tagset-tool tagset-tool.cpp )
 target_link_libraries ( tagset-tool corpus2 pwrutils ${Boost_LIBRARIES} ${LIBS})
 
-add_executable( corpus-get corpus-get.cpp )
-target_link_libraries ( corpus-get corpus2 pwrutils ${Boost_LIBRARIES} ${LIBS})
-
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 if(UNIX)
 
-	install(TARGETS tagset-tool corpus-get
+	install(TARGETS tagset-tool
 		RUNTIME DESTINATION bin)
-
+	install(FILES corpus-get
+		DESTINATION bin
+		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+		GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endif(UNIX)
