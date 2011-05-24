@@ -54,7 +54,7 @@ public:
 		return os_;
 	}
 
-	const Tagset& tagset() {
+	const Tagset& tagset() const {
 		return tagset_;
 	}
 
