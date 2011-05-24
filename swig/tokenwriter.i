@@ -69,6 +69,19 @@ namespace Corpus2 {
   };
 
 %extend TokenWriter {
+    %exception {
+      try {
+        $action
+      } catch (PwrNlp::PwrNlpError &e) {
+        PyErr_SetString(PyExc_IndexError, e.info().c_str());
+        return NULL;
+      }
+    }
+	%feature("autodoc", "1");
+	static TokenWriterPtr create_stdout_writer(
+			const std::string& class_id_params, const Tagset& tagset) {
+		return Corpus2::TokenWriter::create_stream_writer(class_id_params, std::cout, tagset);
+	}
 
 	void write_token(boost::shared_ptr<Corpus2::Token> t) {
 		self->write_token(*t);
