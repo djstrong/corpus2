@@ -65,12 +65,13 @@ struct preferred_lexeme_cmp
 	const Tagset* tagset;
 
 	bool operator()(const Lexeme& l1, const Lexeme& l2) const {
-		return (!l1.is_disamb() && l2.is_disamb())
-				|| (l1.is_disamb() == l2.is_disamb()
-				&& (tagset->get_original_pos_index(l1.tag().get_pos_index()) >
+		return
+		 (!l1.is_disamb() && l2.is_disamb())
+		 || (l1.is_disamb() == l2.is_disamb()
+		  && (tagset->get_original_pos_index(l1.tag().get_pos_index()) >
 					tagset->get_original_pos_index(l2.tag().get_pos_index())
-				|| (l1.tag().get_pos() == l2.tag().get_pos()
-				&& l1 < l2)));
+		  || (l1.tag().get_pos() == l2.tag().get_pos()
+			&& l1 < l2)));
 	}
 };
 
