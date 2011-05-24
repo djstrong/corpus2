@@ -47,6 +47,7 @@ namespace Corpus2 {
         return NULL;
       }
     }
+    %feature("autodoc", "1");
     static TokenWriterPtr create_stream_writer(
       const std::string& class_id_params, 
       std::ostream& os, const Tagset& 
@@ -60,12 +61,27 @@ namespace Corpus2 {
         return NULL;
       }
     }
+    %feature("autodoc", "1");
     static TokenWriterPtr create_path_writer(
       const std::string& class_id_params,
       const std::string& path,
       const Tagset& tagset);
   };
+
+%extend TokenWriter {
+
+	void write_token(boost::shared_ptr<Corpus2::Token> t) {
+		self->write_token(*t);
+	}
+	void write_sentence(boost::shared_ptr<Corpus2::Sentence> s) {
+		self->write_sentence(*s);
+	}
+	void write_chunk(boost::shared_ptr<Corpus2::Chunk> c) {
+		self->write_chunk(*c);
+	}
 }
+}
+
 
 using namespace std;
 using namespace Corpus2;
