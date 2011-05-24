@@ -38,7 +38,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 # -----------------------------------------------------------------------------
 
 SET(CMAKE_SWIG_FLAGS "")
-SET(SWIG_SRC_DIR ${SWIG_DIR}/libcorpus)
+SET(SWIG_SRC_DIR ${SWIG_DIR}/libcorpus2)
 
 # -----------------------------------------------------------------------------
 # corous2
@@ -106,6 +106,8 @@ install(
 	libcorpusannotatedsentence.i
 	libcorpusannotationview.i
 	corpus2.i
+	boost_shared_ptr.i
+	unicodestring.i
 	DESTINATION ${SWIG_SRC_DIR}
 	PERMISSIONS ${PERM_SCRIPTS}
 )
