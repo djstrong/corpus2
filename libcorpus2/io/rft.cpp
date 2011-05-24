@@ -80,7 +80,6 @@ void RftWriter::write_token(const Token& t)
 		const Lexeme& pref = t.get_preferred_lexeme(tagset());
 		os() << "\t";
 		write_tag(pref.tag());
-		std::string tag_str = tagset().tag_to_no_opt_string(pref.tag());
 	}
 	os() << "\n";
 }
