@@ -73,10 +73,9 @@ void CclWriter::do_header()
 {
 	XmlWriter::do_header();
 	os() << "<!DOCTYPE cesAna SYSTEM \"xcesAnaIPI.dtd\">\n";
-	os() << "<cesAna";
+	os() << "<chunkList";
 	os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
-	os() << " version=\"1.0\" type=\"lex disamb\">\n";
-	os() << "<chunkList>\n";
+	os() << ">\n";
 	if (use_indent_) indent_more();
 }
 
@@ -84,7 +83,6 @@ void CclWriter::do_footer()
 {
 	if (use_indent_) indent_less();
 	os() << "</chunkList>\n";
-	os() << "</cesAna>\n";
 }
 
 void CclWriter::paragraph_head()
