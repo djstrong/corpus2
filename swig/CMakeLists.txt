@@ -2,15 +2,12 @@
 
 PROJECT(corpus2SwigWrap)
 
-find_package(Corpus2 1.0.8 REQUIRED)
-set(CORPUS2_LIBS ${Corpus2_LIBRARY})
-
-find_package(PwrUtils 1.0.1 REQUIRED)
-set(PWRUTILS_LIBS ${PwrUtils_LIBRARY})
+set(CORPUS2_LIBS corpus2)
+set(PWRUTILS_LIBS pwrutils)
 set(CORPUS2_PWR_LIBS ${CORPUS2_LIBS} ${PWRUTILS_LIBS})
 
-include_directories (${Libcorpus2_SOURCE_DIR} "../libcorpus2")
-include_directories (${Libpwrutils_SOURCE_DIR} "../libpwrutils")
+include_directories (${corpus2_SOURCE_DIR})
+include_directories (${pwrutils_SOURCE_DIR})
 
 link_directories(${Libcorpus2_BINARY_DIR})
 
@@ -30,6 +27,12 @@ message(STATUS "INFO: " "python lib: ${PYTHON_INSTDIR}" )
 
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+	set(CMAKE_CXX_FLAGS "-ansi $ENV{CXXFLAGS}")
+	set(CMAKE_CXX_FLAGS_DEBUG "-O0 -DDEBUG -ggdb3 -ansi $ENV{CXXFLAGS}")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -fno-omit-frame-pointer")
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 %module libcorpustokenreader
 %{
   #include <libcorpus2/io/reader.h>
+  #include <libcorpus2/io/helpers.h>
 %}
 
 %include "libcorpustag.i"
@@ -17,13 +18,15 @@
 
 %nodefaultctor Corpus2::TokenReader;
 %template(TokenReaderPtr) boost::shared_ptr<Corpus2::TokenReader>;
+%template(TokenPtr) boost::shared_ptr<Corpus2::Token>;
 // %template(StdStringVector) std::vector<std::string>;
 // %template(ChunkPtr) boost::shared_ptr<Corpus2::Chunk>;
-
+typedef boost::shared_ptr<Corpus2::Token> TokenPtr;
 namespace Corpus2 {
   class TokenReader {
   public:
     typedef boost::shared_ptr<TokenReader> TokenReaderPtr;
+    //typedef boost::shared_ptr<Token> TokenPtr;
 
     /* --------------------------------------------------------------------- */
     explicit TokenReader(const Tagset& tagset);
@@ -38,6 +41,7 @@ namespace Corpus2 {
         return NULL;
       }
     }
+    %feature("autodoc", "1");
     static TokenReaderPtr create_path_reader(
       const std::string& class_id,
       const Tagset& tagset,
@@ -51,13 +55,14 @@ namespace Corpus2 {
         return NULL;
       }
     }
+    %feature("autodoc", "1");
     static TokenReaderPtr create_stream_reader(
       const std::string& class_id,
       const Tagset& tagset,
       std::istream& stream);
 
     /* --------------------------------------------------------------------- */
-    virtual Token* get_next_token() = 0;
+    /* virtual Token* get_next_token() = 0; */
     virtual Sentence::Ptr get_next_sentence() = 0;
     virtual boost::shared_ptr<Chunk> get_next_chunk() = 0;
 
@@ -73,6 +78,18 @@ namespace Corpus2 {
     static std::string reader_help(const std::string& class_id);
     static std::vector<std::string> available_reader_types_help();
   };
+
+  %extend TokenReader {
+    /* modfify the native get_next_token to wrap the tokens into shared_ptr */
+    boost::shared_ptr<Corpus2::Token> get_next_token() {
+      return boost::shared_ptr<Corpus2::Token>(self->get_next_token());
+    }
+  }
+
+%feature("autodoc", "1");
+  std::vector<boost::shared_ptr<Chunk> > read_chunks_from_utf8_string(
+    const std::string& data, const Tagset& tagset, const std::string& format);
+ 
 }
 
 using namespace std;

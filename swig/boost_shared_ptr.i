@@ -14,6 +14,14 @@ namespace boost {
     shared_ptr();
     shared_ptr(T * p);
     T* operator->();
+    T* get();
+
+%pythoncode %{
+  def __bool__(self):
+     return self.get() is not None
+  __nonzero__=__bool__
+%}
+
   private:
     T * px;
     int pn;
