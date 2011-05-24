@@ -121,7 +121,7 @@ std::vector<std::string> PathSearcherBase::list_files(const std::string& suffix)
 			for (directory_iterator i(p); i != directory_iterator(); ++i) {
 				boost::filesystem::path in = i->path();
 				if (in.extension() == suffix) {
-#if BOOST_FILESYSTEM_VERSION == 2
+#if !defined(BOOST_FILESYSTEM_VERSION) || BOOST_FILESYSTEM_VERSION == 2
 					out.push_back(in.stem());
 #else
 					out.push_back(in.stem().string());
