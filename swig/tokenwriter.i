@@ -37,7 +37,15 @@ namespace Corpus2 {
     // std::ostream& os();
     const Tagset& tagset();
     void finish();
-    
+
+    /* --------------------------------------------------------------------- */
+    const Tagset& tagset() const;
+    static std::vector<std::string> available_writer_types();
+
+    /* --------------------------------------------------------------------- */
+    static std::string writer_help(const std::string& class_id);
+    static std::vector<std::string> available_writer_types_help();
+
     /* --------------------------------------------------------------------- */
     %exception {
       try {
