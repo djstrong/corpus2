@@ -107,7 +107,7 @@ void AnnotationChannel::set_segment_at(int token_idx, int segment_idx)
 	}
 }
 
-IOB::Enum AnnotationChannel::get_iob_at(int idx)
+IOB::Enum AnnotationChannel::get_iob_at(int idx) const
 {
 	if (idx >= 0 && idx < static_cast<int>(iobs_.size())) {
 		return iobs_[idx];
