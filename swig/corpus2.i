@@ -4,6 +4,7 @@
 %module corpus2
 
 %include "boost_shared_ptr.i"
+%include "unicodestring.i"
 %include "libcorpus2exception.i"
 %include "libcorpusannotatedsentence.i"
 %include "libcorpusannotationchannel.i"
