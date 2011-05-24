@@ -8,7 +8,7 @@
 
 %include "std_string.i"
 %include "std_vector.i"
-%include "libcorpusiob.i"
+%include "iob.i"
 
 %template(IntVector) std::vector<int>;
 %template(IOBVector) std::vector<Corpus2::IOB::Enum>;

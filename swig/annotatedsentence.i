@@ -6,10 +6,10 @@
   #include <libcorpus2/ann/annotatedsentence.h>
 %}
 
-%include "libcorpustoken.i"
-%include "libcorpussentence.i"
-%include "libcorpus2exception.i"
-%include "libcorpusannotationchannel.i"
+%include "token.i"
+%include "sentence.i"
+%include "exception.i"
+%include "annotationchannel.i"
 
 %include "boost_shared_ptr.i"
 %include "std_map.i"

@@ -7,7 +7,7 @@
 %}
 
 %include "std_string.i"
-%include "libcorpustoken.i"
+%include "token.i"
 %include "boost_shared_ptr.i"
 
 %template(Ptr) boost::shared_ptr<Corpus2::Sentence>;

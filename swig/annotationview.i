@@ -6,9 +6,9 @@
   #include <libcorpus2/ann/view.h>
 %}
 
-%include "libcorpussentence.i"
-%include "libcorpusannotationchannel.i"
-%include "libcorpusannotatedsentence.i"
+%include "sentence.i"
+%include "annotationchannel.i"
+%include "annotatedsentence.i"
 
 %include "std_string.i"
 %include "boost_shared_ptr.i"

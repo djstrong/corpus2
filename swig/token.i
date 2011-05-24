@@ -7,8 +7,8 @@
   #include <libcorpus2/token.h>
 %}
 
-%include "libcorpuslexeme.i"
-%include "libcorpustagset.i"
+%include "lexeme.i"
+%include "tagset.i"
 
 %include "std_string.i"
 %include "std_vector.i"

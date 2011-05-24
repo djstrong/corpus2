@@ -1,7 +1,7 @@
 #ifndef SWIG_LIBCORPUS2_EXCEPTION_I
 #define SWIG_LIBCORPUS2_EXCEPTION_I
 
-%module libcorpus2exception
+%module libcorpusexception
 %{
   #include <libcorpus2/exception.h>
 %}

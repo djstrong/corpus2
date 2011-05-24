@@ -7,7 +7,7 @@
   #include <libcorpus2/lexeme.h>
 %}
 
-%include "libcorpustag.i"
+%include "tag.i"
 
 %include "std_string.i"
 %include "std_vector.i"

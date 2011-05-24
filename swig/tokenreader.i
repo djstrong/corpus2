@@ -7,11 +7,11 @@
   #include <libcorpus2/io/helpers.h>
 %}
 
-%include "libcorpustag.i"
-%include "libcorpustoken.i"
-%include "libcorpuschunk.i"
-%include "libcorpustagset.i"
-%include "libcorpussentence.i"
+%include "tag.i"
+%include "token.i"
+%include "chunk.i"
+%include "tagset.i"
+%include "sentence.i"
 %include "std_string.i"
 %include "std_vector.i"
 %include "boost_shared_ptr.i"

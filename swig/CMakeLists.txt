@@ -34,6 +34,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -fno-omit-frame-pointer")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
+file(GLOB_RECURSE I_FILES "*.i")
+
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 
@@ -44,10 +46,10 @@ SET(SWIG_SRC_DIR ${SWIG_DIR}/libcorpus2)
 # corous2
 SET_SOURCE_FILES_PROPERTIES(corpus2.i PROPERTIES CPLUSPLUS ON)
 SET_SOURCE_FILES_PROPERTIES(corpus2.i PROPERTIES SWIG_FLAGS "-includeall" )
+set(SWIG_MODULE_corpus2_EXTRA_DEPS ${I_FILES})
 SWIG_ADD_MODULE(corpus2 python corpus2.i )
 SWIG_LINK_LIBRARIES(corpus2 ${PYTHON_LIBRARIES} ${PWRUTILS_LIBS})
 SWIG_LINK_LIBRARIES(corpus2 ${PYTHON_LIBRARIES} ${CORPUS2_PWR_LIBS})
-
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 
@@ -89,25 +91,7 @@ install(
 # -----------------------------------------------------------------------------
 
 install(
-	FILES libpwrnlperror.i
-	libcorpus2exception.i
-	libcorpus2exception.i
-	libcorpustag.i
-	libcorpustagset.i
-	libcorpustagsetmanager.i
-	libcorpuslexeme.i
-	libcorpustoken.i
-	libcorpussentence.i
-	libcorpuschunk.i
-	libcorpustokenwriter.i
-	libcorpustokenreader.i
-	libcorpusiob.i
-	libcorpusannotationchannel.i
-	libcorpusannotatedsentence.i
-	libcorpusannotationview.i
-	corpus2.i
-	boost_shared_ptr.i
-	unicodestring.i
+	FILES ${I_FILES}
 	DESTINATION ${SWIG_SRC_DIR}
 	PERMISSIONS ${PERM_SCRIPTS}
 )

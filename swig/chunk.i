@@ -14,7 +14,7 @@
 %include "std_vector.i"
 %include "boost_shared_ptr.i"
 
-%include "libcorpussentence.i"
+%include "sentence.i"
 
 %template(ChunkPtr) boost::shared_ptr<Corpus2::Chunk>;
 %template(SentencePtrVector) std::vector<boost::shared_ptr<Sentence> >;
