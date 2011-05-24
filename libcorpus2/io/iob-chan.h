@@ -51,6 +51,8 @@ public:
 
 private:
 	bool warn_on_no_lexemes_;
+
+	bool force_;
 };
 
 class IobChanReader : public BufferedSentenceReader

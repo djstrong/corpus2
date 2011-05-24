@@ -26,16 +26,18 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 bool IobChanWriter::registered = TokenWriter::register_writer<IobChanWriter>(
-		"iob-chan", "nowarn");
+		"iob-chan", "nowarn,noforce");
 
 IobChanWriter::IobChanWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
-	: TokenWriter(os, tagset, params), warn_on_no_lexemes_(true)
+	: TokenWriter(os, tagset, params), warn_on_no_lexemes_(true), force_(true)
 {
 	foreach (const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "nowarn") {
 			warn_on_no_lexemes_ = false;
+		} else if (p == "noforce") {
+			force_ = false;
 		}
 	}
 }
@@ -58,6 +60,13 @@ void IobChanWriter::write_token(const Token& t)
 void IobChanWriter::write_sentence(const Sentence& s)
 {
 	const AnnotatedSentence* ann = dynamic_cast<const AnnotatedSentence*>(&s);
+	if (force_) {
+		// I sincerely apologize
+		AnnotatedSentence* hax = const_cast<AnnotatedSentence*>(ann);
+		foreach(const AnnotatedSentence::chan_map_t::value_type& v, hax->all_channels()) {
+			hax->get_channel(v.first).make_iob_from_segments();
+		}
+	}
 	for (size_t idx = 0; idx < s.size(); ++idx) {
 		const Token* t = s.tokens()[idx];
 		os() << t->orth_utf8();
@@ -68,7 +77,10 @@ void IobChanWriter::write_sentence(const Sentence& s)
 		} else {
 			const Lexeme& pref = t->get_preferred_lexeme(tagset());
 			os() << "\t";
+			os() << pref.lemma_utf8();
+			os() << "\t";
 			write_tag(pref.tag());
+			os() << "\t";
 		}
 		if (ann) {
 			bool first = true;
@@ -123,7 +135,7 @@ IobChanReader::IobChanReader(const Tagset& tagset, const std::string& filename)
 Sentence::Ptr IobChanReader::actual_next_sentence()
 {
 	std::string line;
-	AnnotatedSentence::Ptr s;
+	boost::shared_ptr<AnnotatedSentence> s;
 	typedef boost::split_iterator<std::string::const_iterator> string_split_iterator;
 
 	while (is().good()) {
@@ -137,8 +149,9 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 			std::cerr << "Invalid line: " << line << "\n";
 		} else {
 			const std::string& orth = spl[0];
-			const std::string& lemma = spl[0];
-			const std::string& tag_string = spl[1];
+			const std::string& lemma = spl[1];
+			const std::string& tag_string = spl[2];
+			const std::string& anns = spl[3];
 			Tag tag = parse_tag(tag_string);
 			Token* t = new Token();
 			t->set_orth(UnicodeString::fromUTF8(orth));
@@ -148,15 +161,33 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 				t->lexemes().back().set_disamb(true);
 			}
 			s->append(t);
-			const std::string& cline = line;
-			for (string_split_iterator value_it = boost::make_split_iterator(
-					cline, boost::token_finder(boost::is_any_of(",")));
-					value_it != string_split_iterator();
-					++value_it) {
-
+			std::vector<std::string> annsplit;
+			boost::algorithm::split(annsplit, anns, boost::is_any_of(","));
+			foreach (const std::string& a, annsplit) {
+				std::vector<std::string> one_ann_split;
+				boost::algorithm::split(one_ann_split, a, boost::is_any_of("-"));
+				if (one_ann_split.size() != 2) {
+					std::cerr << "Invalid annotation:" << a << "\n";
+				} else {
+					const std::string& aname = one_ann_split[0];
+					const std::string& aiob = one_ann_split[1];
+					Corpus2::IOB::Enum iob = Corpus2::IOB::from_string(aiob);
+					if (iob == Corpus2::IOB::PostLast) {
+						std::cerr << "Invalid IOB tag: " << aiob << "\n";
+					} else {
+						if (!s->has_channel(aname)) {
+							s->create_channel(aname);
+						}
+						s->get_channel(aname).set_iob_at(s->size() - 1, iob);
+					}
+				}
 			}
 		}
 	}
+	foreach (const AnnotatedSentence::chan_map_t::value_type& v, s->all_channels()) {
+		s->get_channel(v.first).make_segments_from_iob();
+	}
+
 	return s;
 }
 
