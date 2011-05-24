@@ -141,12 +141,12 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 	while (is().good()) {
 		std::getline(is(), line);
 		if (line.empty()) {
-			return s;
+			break;
 		}
 		std::vector<std::string> spl;
 		boost::algorithm::split(spl, line, boost::is_any_of("\t"));
 		if (spl.size() != 4) {
-			std::cerr << "Invalid line: " << line << "\n";
+			std::cerr << "Invalid line: " << line << "(" << spl.size() << ")\n";
 		} else {
 			const std::string& orth = spl[0];
 			const std::string& lemma = spl[1];
@@ -159,6 +159,10 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 			t->add_lexeme(Lexeme(UnicodeString::fromUTF8(lemma), tag));
 			if (disamb_) {
 				t->lexemes().back().set_disamb(true);
+			}
+			if (!s) {
+				s = boost::make_shared<AnnotatedSentence>();
+				t->set_wa(PwrNlp::Whitespace::Newline);
 			}
 			s->append(t);
 			std::vector<std::string> annsplit;
@@ -184,10 +188,11 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 			}
 		}
 	}
-	foreach (const AnnotatedSentence::chan_map_t::value_type& v, s->all_channels()) {
-		s->get_channel(v.first).make_segments_from_iob();
+	if (s) {
+		foreach (const AnnotatedSentence::chan_map_t::value_type& v, s->all_channels()) {
+			s->get_channel(v.first).make_segments_from_iob();
+		}
 	}
-
 	return s;
 }
 
