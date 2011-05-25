@@ -60,7 +60,7 @@ void IobChanWriter::write_token(const Token& t)
 void IobChanWriter::write_sentence(const Sentence& s)
 {
 	const AnnotatedSentence* ann = dynamic_cast<const AnnotatedSentence*>(&s);
-	if (force_) {
+	if (ann && force_) {
 		// I sincerely apologize
 		AnnotatedSentence* hax = const_cast<AnnotatedSentence*>(ann);
 		foreach(const AnnotatedSentence::chan_map_t::value_type& v, hax->all_channels()) {
