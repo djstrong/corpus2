@@ -20,38 +20,63 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 bool PlainWriter::registered = TokenWriter::register_writer<PlainWriter>(
-	"plain");
+	"plain", "nows,no_disamb_info,disamb_only,ds");
 
 PlainWriter::PlainWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
-	: TokenWriter(os, tagset, params)
+	: TokenWriter(os, tagset, params), ws_(true), disamb_(true)
+	, disamb_only_(false)
 {
+	foreach (const string_range& param, params) {
+		std::string p = boost::copy_range<std::string>(param);
+		if (p == "nows") {
+			ws_ = false;
+		} else if (p == "no_disamb_info") {
+			disamb_ = false;
+		} else if (p == "disamb_only") {
+			disamb_only_ = true;
+		} else if (p == "ds") {
+			disamb_ = false;
+			disamb_only_ = true;
+		}
+	}
 }
 
 void PlainWriter::write_token(const Token &t)
 {
-	os() << t.orth_utf8() << "\n";
+	os() << t.orth_utf8();
+	if (ws_) {
+		os() << "\t" << PwrNlp::Whitespace::to_string(t.wa());
+	}
+	os() << "\n";
 	foreach (const Lexeme& lex, t.lexemes()) {
-		os() << "\t" << lex.lemma_utf8() << "\t"
-			<< tagset().tag_to_string(lex.tag()) << "\n";
+		if (!disamb_only_ || lex.is_disamb()) {
+			os() << "\t" << lex.lemma_utf8() << "\t"
+				<< tagset().tag_to_string(lex.tag());
+			if (disamb_) {
+				if (lex.is_disamb()) {
+					os() << "\t";
+					os() << "disamb";
+				}
+			}
+			os() << "\n";
+		}
 	}
 }
 void PlainWriter::write_sentence(const Sentence &s)
 {
-	os() << "[[[\n";
 	foreach (const Token* t, s.tokens()) {
 		write_token(*t);
 	}
-	os() << "]]]\n";
+	os() << "\n";
 }
 
 void PlainWriter::write_chunk(const Chunk& c)
 {
-	os() << "[[[<<<\n\n";
 	foreach (const boost::shared_ptr<Sentence>& s, c.sentences()) {
 		write_sentence(*s);
 	}
-	os() << ">>>]]]\n\n";
+	os() << "\n";
 }
 
 } /* end ns Corpus2 */

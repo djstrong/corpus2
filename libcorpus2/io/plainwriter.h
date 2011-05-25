@@ -34,6 +34,13 @@ public:
 	void write_chunk(const Chunk& c);
 
 	static bool registered;
+
+private:
+	bool ws_;
+
+	bool disamb_;
+
+	bool disamb_only_;
 };
 
 } /* end ns Corpus2 */
