@@ -67,4 +67,6 @@ add_subdirectory(libcorpus2)
 add_subdirectory(corpus2tools)
 add_subdirectory(tests)
 add_subdirectory(swig)
+add_subdirectory(poliqarp-library)
+add_subdirectory(poliqarp)
 
