@@ -36,8 +36,7 @@ struct poliqarp_error {
 };
 
 static const struct poliqarp_error poliqarp_error_none = {
-   .message = NULL,
-   .malloced = false
+   NULL, false
 };
 
 const char *poliqarp_error_message_get(const struct poliqarp_error *);
