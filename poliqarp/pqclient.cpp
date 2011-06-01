@@ -1,1 +1,216 @@
 #include "pqclient.h"
+#include <boost/make_shared.hpp>
+
+extern "C" {
+	void async_notify_new_results(void* session)
+	{
+	}
+}
+
+namespace Corpus2
+{
+
+PoliqarpClient::PoliqarpClient(const Tagset& tagset, const std::string path)
+	: tagset_(tagset)
+{
+	query_compiled_ = false;
+	poliqarp_error error = poliqarp_error_none;
+	if (poliqarp_create("", &error) != 0) {
+		throw Corpus2Error(poliqarp_error_message_get(&error));
+	}
+	progress_init(&progress_);
+	count_so_far_ = 0;
+	err_ = 0;
+	if (poliqarp_open_corpus(&corpus_, path.c_str(), &progress_, &error) == -1) {
+		throw Corpus2Error(poliqarp_error_message_get(&error));
+	} else {
+		poliqarp_create_match_buffer(&buffer_, 1000);
+	}
+	poliqarp_corpus_info cinfo;
+	poliqarp_get_corpus_info(&corpus_, &cinfo);
+	corpus_size_ = cinfo.num_segments;
+	curr_chunk_doc_id_ = 0;
+}
+
+PoliqarpClient::~PoliqarpClient()
+{
+	poliqarp_close_corpus(&corpus_);
+	poliqarp_destroy_match_buffer(&buffer_);
+	if (query_compiled_) {
+		poliqarp_destroy_query(&query_);
+		query_compiled_ = false;
+	}
+	poliqarp_destroy();
+};
+
+void PoliqarpClient::compile_query(const std::string & q)
+{
+	count_so_far_ = 0;
+	last_query_ = q;
+	if (query_compiled_) {
+		poliqarp_destroy_query(&query_);
+		query_compiled_ = false;
+	}
+	poliqarp_error error = poliqarp_error_none;
+	if (q.empty()) {
+		throw Corpus2Error("EmptyQuery");
+	} else if (poliqarp_create_query(&query_, q.c_str(), &corpus_,
+			0, NULL, NULL, &error) == -1) {
+		throw Corpus2Error(std::string("QueryFailed: ") + poliqarp_error_message_get(&error));
+	} else {
+		query_compiled_ = true;
+	}
+}
+
+void PoliqarpClient::reset_query()
+{
+	compile_query(last_query_);
+}
+
+void PoliqarpClient::execute_query()
+{
+	if (query_compiled_) {
+		poliqarp_forget(&buffer_);
+		if (poliqarp_produce(&buffer_, 1000, &query_, &progress_,
+				NULL, 0, 1000)) {
+			throw Corpus2Error("query execution error");
+		}
+		if (poliqarp_get_match_buffer_info(&buffer_, &info_)) {
+			throw Corpus2Error("buffer read error");
+		}
+		count_so_far_ += buffer_.used;
+		buffer_pos_ = 0;
+	} else {
+		throw Corpus2Error("Query not compiled");
+	}
+}
+
+
+bool PoliqarpClient::next_match(poliqarp_match& match)
+{
+	if (info_.used > 0) {
+		if (buffer_pos_ < info_.used) {
+			poliqarp_get_match(&buffer_, &match, buffer_pos_++);
+			return true;
+		} else if (info_.used == buffer_.capacity) {
+			poliqarp_forget(&buffer_);
+			execute_query();
+			if (info_.used > 0) {
+				poliqarp_get_match(&buffer_, &match, buffer_pos_++);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+Token* PoliqarpClient::get_next_focus_token()
+{
+	poliqarp_match match;
+	if (next_match(match)) {
+		return get_token(match.focus);
+	} else {
+		return NULL;
+	}
+};
+
+Sentence::Ptr PoliqarpClient::get_next_match_sequence()
+{
+	poliqarp_match match;
+	if (next_match(match)) {
+		return get_token_range(match.start, match.end);
+	} else {
+		return Sentence::Ptr();
+	}
+}
+
+Token* PoliqarpClient::get_token(size_t pos)
+{
+	poliqarp_segment segment;
+	poliqarp_segment_info info;
+	poliqarp_interpretation_set set;
+	poliqarp_interpretation_set_info sinfo;
+	poliqarp_get_segment(&segment, &corpus_, pos);
+	poliqarp_get_segment_info(&segment, &info);
+	poliqarp_get_disambiguated_interpretations(&segment, &set);
+	poliqarp_get_interpretation_set_info(&set, &sinfo);
+
+	std::auto_ptr<Token> res(new Token());
+	if (!info.space_before) {
+		res->set_wa(PwrNlp::Whitespace::Space);
+	}
+	res->set_orth_utf8(info.text);
+	for (size_t i = 0; i < sinfo.size; i++) {
+		poliqarp_interpretation interp;
+		poliqarp_interpretation_info iinfo;
+		poliqarp_get_interpretation(&set, &interp, i);
+		poliqarp_get_interpretation_info(&interp, &iinfo);
+		Tag tag = tagset_.parse_simple_tag(iinfo.tag);
+		res->add_lexeme(Lexeme(UnicodeString::fromUTF8(iinfo.base), tag));
+	}
+	return res.release();
+}
+
+Sentence::Ptr PoliqarpClient::get_next_sequence(bool whole_sentence)
+{
+	Sentence::Ptr sentence;
+	if (info_.used > 0) {
+		if (buffer_pos_ < info_.used) {
+			struct poliqarp_match poli_match;
+			poliqarp_get_match(&buffer_, &poli_match, buffer_pos_++);
+			curr_chunk_doc_id_ = poli_match.document;
+			if (whole_sentence) {
+				//sentence = get_token_range(poli_match.withinStart, poli_match.withinEnd);
+			} else {
+				sentence = get_token_range(poli_match.start, poli_match.end);
+			}
+		} else {
+			execute_query();
+			sentence = get_next_sequence(whole_sentence);
+		}
+	}
+	return sentence;
+}
+
+Sentence::Ptr PoliqarpClient::get_token_range(size_t from, size_t to)
+{
+	Sentence::Ptr s = boost::make_shared<Sentence>();
+	for (size_t j = from; j < to; j++) {
+		s->append(get_token(j));
+	}
+	return s;
+}
+
+size_t PoliqarpClient::get_count_of_matches_so_far()
+{
+	return count_so_far_;
+}
+
+size_t PoliqarpClient::only_count_results()
+{
+	//countSoFar = 0;
+	if (query_compiled_) {
+		while (poliqarp_produce(&buffer_, 1000, &query_, &progress_, NULL, 0, 1000) &&
+				poliqarp_get_match_buffer_info(&buffer_, &info_)==0 &&
+				info_.used > 0) {
+			count_so_far_ += info_.used;
+			poliqarp_forget(&buffer_);
+		}
+	}
+	return count_so_far_;
+}
+
+size_t PoliqarpClient::get_corpus_size() const
+{
+	return corpus_size_;
+};
+
+size_t PoliqarpClient::get_corpus_pos() const
+{
+	if (query_compiled_) {
+		return query_.last_context.index;
+	} else {
+		return 0;
+	}
+};
+}
