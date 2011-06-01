@@ -77,7 +77,7 @@ poliqarp_backend_interp_fetch__disamb(
    const struct poliqarp_backend_interp *this, size_t key)
 {
    assert(key < this->dict__disamb.num_items);
-   return GET_ITEM(&this->dict__disamb, key);
+   return (struct poliqarp_binary_interp*) GET_ITEM(&this->dict__disamb, key);
 }
 
 /**
@@ -109,7 +109,7 @@ poliqarp_backend_interp_fetch__amb(
    const struct poliqarp_backend_interp *this, size_t key)
 {
    assert(key < this->dict__amb.num_items);
-   return GET_ITEM(&this->dict__amb, key);
+   return (struct poliqarp_binary_interp*) GET_ITEM(&this->dict__amb, key);
 }
 
 /**

@@ -70,14 +70,14 @@ static inline const char *poliqarp_backend_base_fetch__disamb(
    const struct poliqarp_backend_base *this, size_t key)
 {
    assert(key < this->dict_disamb.num_items);
-   return GET_ITEM(&this->dict_disamb, key);
+   return (const char*) GET_ITEM(&this->dict_disamb, key);
 }
 
 static inline const char *poliqarp_backend_base_fetch__amb(
    const struct poliqarp_backend_base *this, size_t key)
 {
    assert(key < this->dict_amb.num_items);
-   return GET_ITEM(&this->dict_amb, key);
+   return (const char*) GET_ITEM(&this->dict_amb, key);
 }
 
 static inline size_t poliqarp_backend_base_length__disamb(

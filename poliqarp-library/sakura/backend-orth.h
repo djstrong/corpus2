@@ -58,7 +58,7 @@ static inline const char *poliqarp_backend_orth_fetch(
    const struct poliqarp_backend_orth *this, size_t key)
 {
    assert(key < this->dict.num_items);
-   return GET_ITEM(&this->dict, key);
+   return (const char*) GET_ITEM(&this->dict, key);
 }
 
 static inline size_t poliqarp_backend_orth_length(

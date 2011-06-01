@@ -85,14 +85,14 @@ static inline const char *poliqarp_backend_meta_key_fetch(
    const struct poliqarp_backend_meta *this, size_t index)
 {
    assert(index < this->key.num_items);
-   return GET_ITEM(&this->key, index);
+   return (const char*) GET_ITEM(&this->key, index);
 }
 
 static inline const char *poliqarp_backend_meta_value_fetch(
    const struct poliqarp_backend_meta *this, size_t index)
 {
    assert(index < this->value.num_items);
-   return GET_ITEM(&this->value, index);
+   return (const char*) GET_ITEM(&this->value, index);
 }
 
 static inline struct poliqarp_binary_metadata poliqarp_backend_meta_fetch(

@@ -71,7 +71,7 @@ static inline const char *poliqarp_backend_tag_fetch(
    const struct poliqarp_backend_tag *this, size_t key)
 {
    assert(key < this->dict.num_items);
-   return GET_ITEM(&this->dict, key);
+   return (const char*) GET_ITEM(&this->dict, key);
 }
 
 static inline const struct poliqarp_parsed_tag *poliqarp_backend_parsed_tag_fetch(
