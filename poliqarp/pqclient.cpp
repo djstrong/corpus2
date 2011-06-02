@@ -1,5 +1,6 @@
 #include "pqclient.h"
 #include <boost/make_shared.hpp>
+#include <boost/lexical_cast.hpp>
 
 extern "C" {
 	void async_notify_new_results(void* session)
@@ -136,7 +137,7 @@ Token* PoliqarpClient::get_token(size_t pos)
 	poliqarp_get_interpretation_set_info(&set, &sinfo);
 
 	std::auto_ptr<Token> res(new Token());
-	if (!info.space_before) {
+	if (info.space_before) {
 		res->set_wa(PwrNlp::Whitespace::Space);
 	}
 	res->set_orth_utf8(info.text);
@@ -151,25 +152,25 @@ Token* PoliqarpClient::get_token(size_t pos)
 	return res.release();
 }
 
-Sentence::Ptr PoliqarpClient::get_next_sequence(bool whole_sentence)
+boost::shared_ptr<Chunk> PoliqarpClient::get_next_document()
 {
-	Sentence::Ptr sentence;
-	if (info_.used > 0) {
-		if (buffer_pos_ < info_.used) {
-			struct poliqarp_match poli_match;
-			poliqarp_get_match(&buffer_, &poli_match, buffer_pos_++);
-			curr_chunk_doc_id_ = poli_match.document;
-			if (whole_sentence) {
-				//sentence = get_token_range(poli_match.withinStart, poli_match.withinEnd);
+	poliqarp_match match;
+	boost::shared_ptr<Chunk> chunk;
+	if (next_match(match)) {
+		chunk = boost::make_shared<Chunk>();
+		size_t document_id = match.document;
+		chunk->set_attribute("id", "ch" + boost::lexical_cast<std::string>(document_id));
+		chunk->append(get_token_range(match.start, match.end));
+		while (next_match(match)) {
+			if (match.document == document_id) {
+				chunk->append(get_token_range(match.start, match.end));
 			} else {
-				sentence = get_token_range(poli_match.start, poli_match.end);
+				buffer_pos_--;
+				break;
 			}
-		} else {
-			execute_query();
-			sentence = get_next_sequence(whole_sentence);
 		}
 	}
-	return sentence;
+	return chunk;
 }
 
 Sentence::Ptr PoliqarpClient::get_token_range(size_t from, size_t to)

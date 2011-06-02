@@ -32,11 +32,10 @@ public:
 
 	Token* get_next_focus_token();
 	Sentence::Ptr get_next_match_sequence();
+	boost::shared_ptr<Chunk> get_next_document();
 
 	Token* get_token(size_t pos);
 	Sentence::Ptr get_token_range(size_t from, size_t to);
-
-	Sentence::Ptr get_next_sequence(bool whole_sentence);
 
 	size_t get_count_of_matches_so_far();
 	size_t only_count_results();

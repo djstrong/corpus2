@@ -68,7 +68,6 @@ add_subdirectory(libpwrutils)
 add_subdirectory(libcorpus2)
 add_subdirectory(corpus2tools)
 add_subdirectory(tests)
-
 if(CORPUS2_BUILD_POLIQARP)
 	add_subdirectory(poliqarp-library)
 	add_subdirectory(poliqarp)

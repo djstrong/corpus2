@@ -15,7 +15,10 @@ int main(int argc, char** argv)
 	pqc.execute_query();
 	boost::shared_ptr<Corpus2::TokenWriter> writer;
 	writer = Corpus2::TokenWriter::create_stream_writer("plain", std::cout, tagset);
-	while (Corpus2::Token* t = pqc.get_next_focus_token()) {
-		writer->write_token_dispose(t);
+	//while (Corpus2::Token* t = pqc.get_next_focus_token()) {
+	//	writer->write_token_dispose(t);
+	//}
+	while (Corpus2::Sentence::Ptr s = pqc.get_next_match_sequence()) {
+		writer->write_sentence(*s);
 	}
 }

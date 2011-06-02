@@ -1,15 +1,22 @@
 PROJECT(Corpus2Poliqarp)
 cmake_minimum_required(VERSION 2.8.0)
+set(c2pq_ver_major 1)
+set(c2pq_ver_minor 0)
 include_directories(${PoliqarpLibrary_SOURCE_DIR}/sakura)
 include_directories(${PoliqarpLibrary_SOURCE_DIR})
 include_directories(${PoliqarpLibrary_BINARY_DIR}/sakura)
 include_directories(${PoliqarpLibrary_BINARY_DIR})
-add_library(corpus2poliqarp SHARED pqclient.cpp)
+
+add_library(corpus2poliqarp SHARED pqclient.cpp pqreader.cpp)
+set_target_properties(corpus2poliqarp PROPERTIES
+	VERSION "${c2pq_ver_major}.${c2pq_ver_minor}"
+	SOVERSION ${c2pq_ver_major})
+target_link_libraries(corpus2poliqarp poliqarpc2 corpus2)
 
 add_executable(c2pqtest c2pqtest.cpp)
-target_link_libraries(corpus2poliqarp libpoliqarp corpus2)
-target_link_libraries(c2pqtest libpoliqarp corpus2poliqarp corpus2 pwrutils )
+target_link_libraries(c2pqtest poliqarpc2 corpus2poliqarp corpus2 pwrutils )
 
-
-
-
+if(UNIX)
+	install(TARGETS corpus2poliqarp LIBRARY DESTINATION lib)
+	install(TARGETS c2pqtest RUNTIME DESTINATION bin)
+endif(UNIX)

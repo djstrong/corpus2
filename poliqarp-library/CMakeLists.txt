@@ -1,6 +1,8 @@
 project (PoliqarpLibrary)
 cmake_minimum_required(VERSION 2.8.0)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeScripts)
+set(pqlib_ver_major 1)
+set(pqlib_ver_minor 0)
 
 INCLUDE (CheckIncludeFiles)
 INCLUDE (CheckLibraryExists)
@@ -136,14 +138,18 @@ set(poliqarpd_SRC
 	poliqarpd/utils.c
 )
 
-add_library(libpoliqarp SHARED ${foostring_SRC} ${progress_SRC} ${unibits_SRC} ${common_SRC} ${sakura_SRC} ${BF_SOURCES} ${PoliqarpLibrary_BINARY_DIR}/sakura/parser.h)
-add_dependencies(libpoliqarp ${PoliqarpLibrary_BINARY_DIR}/sakura/parser.ha)
+add_library(poliqarpc2 SHARED ${foostring_SRC} ${progress_SRC} ${unibits_SRC} ${common_SRC} ${sakura_SRC} ${BF_SOURCES} ${PoliqarpLibrary_BINARY_DIR}/sakura/parser.h)
+add_dependencies(poliqarpc2 ${PoliqarpLibrary_BINARY_DIR}/sakura/parser.ha)
+set_target_properties(poliqarpc2 PROPERTIES
+	VERSION "${pqlib_ver_major}.${pqlib_ver_minor}"
+	SOVERSION ${pqlib_ver_major})
+
 add_executable(poliqarpc-shared utils/poliqarpc.c)
-target_link_libraries(poliqarpc-shared libpoliqarp pthread)
+target_link_libraries(poliqarpc-shared poliqarpc2 pthread)
 add_executable(poliqarpd-shared ${poliqarpd_SRC})
-target_link_libraries(poliqarpd-shared libpoliqarp pthread)
+target_link_libraries(poliqarpd-shared poliqarpc2 pthread)
 if(UNIX)
-	install(TARGETS libpoliqarp LIBRARY DESTINATION lib)
+	install(TARGETS poliqarpc2 LIBRARY DESTINATION lib)
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/sakura DESTINATION include
 		FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/progress DESTINATION include/sakura

@@ -5,8 +5,8 @@
 
 namespace Corpus2 {
 
-bool FastXcesReader::registered = TokenReader::register_reader<FastXcesReader>("xces-fast",
-	"ign,loose,strict");
+bool FastXcesReader::registered = TokenReader::register_reader<FastXcesReader>(
+	"xces-fast","ign,loose,strict");
 
 class FastXcesReaderImpl
 {

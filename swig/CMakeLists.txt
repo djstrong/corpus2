@@ -2,9 +2,10 @@
 
 PROJECT(corpus2SwigWrap)
 
-set(CORPUS2_LIBS corpus2)
-set(PWRUTILS_LIBS pwrutils)
-set(CORPUS2_PWR_LIBS ${CORPUS2_LIBS} ${PWRUTILS_LIBS})
+set(LIBS "corpus2" "pwrutils")
+if (CORPUS2_BUILD_POLIQARP)
+	set(LIBS ${LIBS} "corpus2poliqarp")
+endif (CORPUS2_BUILD_POLIQARP)
 
 include_directories (${corpus2_SOURCE_DIR})
 include_directories (${pwrutils_SOURCE_DIR})
@@ -48,8 +49,7 @@ SET_SOURCE_FILES_PROPERTIES(corpus2.i PROPERTIES CPLUSPLUS ON)
 SET_SOURCE_FILES_PROPERTIES(corpus2.i PROPERTIES SWIG_FLAGS "-includeall" )
 set(SWIG_MODULE_corpus2_EXTRA_DEPS ${I_FILES})
 SWIG_ADD_MODULE(corpus2 python corpus2.i )
-SWIG_LINK_LIBRARIES(corpus2 ${PYTHON_LIBRARIES} ${PWRUTILS_LIBS})
-SWIG_LINK_LIBRARIES(corpus2 ${PYTHON_LIBRARIES} ${CORPUS2_PWR_LIBS})
+SWIG_LINK_LIBRARIES(corpus2 ${PYTHON_LIBRARIES} ${LIBS})
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 
