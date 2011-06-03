@@ -58,6 +58,10 @@ namespace Corpus2 {
     /* --------------------------------------------------------------------- */
     std::string annotation_info() const;
   };
+
+boost::shared_ptr<AnnotationView> create_view(
+        const boost::shared_ptr<AnnotatedSentence>& s,
+        const std::string& ann_name);
 }
 
 using namespace std;

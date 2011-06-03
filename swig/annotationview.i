@@ -13,7 +13,7 @@
 %include "std_string.i"
 %include "boost_shared_ptr.i"
 
-// %template(AnnotatedSentencePtr) boost::shared_ptr<AnnotatedSentence>;
+%template(AnnotationViewPtr) boost::shared_ptr<Corpus2::AnnotationView>;
 
 %nodefaultctor Corpus2::TokenWriter;
 
