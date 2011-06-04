@@ -133,7 +133,7 @@ Token* PoliqarpClient::get_token(size_t pos)
 	poliqarp_interpretation_set_info sinfo;
 	poliqarp_get_segment(&segment, &corpus_, pos);
 	poliqarp_get_segment_info(&segment, &info);
-	poliqarp_get_ambiguous_interpretations(&segment, &set);
+	poliqarp_get_disambiguated_interpretations(&segment, &set);
 	poliqarp_get_interpretation_set_info(&set, &sinfo);
 
 	std::auto_ptr<Token> res(new Token());
