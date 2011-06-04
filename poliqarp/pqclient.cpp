@@ -133,7 +133,7 @@ Token* PoliqarpClient::get_token(size_t pos)
 	poliqarp_interpretation_set_info sinfo;
 	poliqarp_get_segment(&segment, &corpus_, pos);
 	poliqarp_get_segment_info(&segment, &info);
-	poliqarp_get_disambiguated_interpretations(&segment, &set);
+	poliqarp_get_ambiguous_interpretations(&segment, &set);
 	poliqarp_get_interpretation_set_info(&set, &sinfo);
 
 	std::auto_ptr<Token> res(new Token());
@@ -147,7 +147,9 @@ Token* PoliqarpClient::get_token(size_t pos)
 		poliqarp_get_interpretation(&set, &interp, i);
 		poliqarp_get_interpretation_info(&interp, &iinfo);
 		Tag tag = tagset_.parse_simple_tag(iinfo.tag);
-		res->add_lexeme(Lexeme(UnicodeString::fromUTF8(iinfo.base), tag));
+		Lexeme lex = Lexeme(UnicodeString::fromUTF8(iinfo.base), tag);
+		lex.set_disamb(interp.disamb);
+		res->add_lexeme(lex);
 	}
 	return res.release();
 }
