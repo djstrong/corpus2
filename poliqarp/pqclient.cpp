@@ -147,7 +147,9 @@ Token* PoliqarpClient::get_token(size_t pos)
 		poliqarp_get_interpretation(&set, &interp, i);
 		poliqarp_get_interpretation_info(&interp, &iinfo);
 		Tag tag = tagset_.parse_simple_tag(iinfo.tag);
-		res->add_lexeme(Lexeme(UnicodeString::fromUTF8(iinfo.base), tag));
+		Lexeme lex = Lexeme(UnicodeString::fromUTF8(iinfo.base), tag);
+		lex.set_disamb(interp.disamb);
+		res->add_lexeme(lex);
 	}
 	return res.release();
 }

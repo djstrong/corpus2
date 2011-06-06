@@ -107,6 +107,11 @@ namespace Corpus2 {
 
     std::string id_string() const;
     std::string id_string(const Tag& tag) const;
+
+    const std::string& get_value_name(int index) const;
+    const std::string& get_attribute_name(int index) const;
+    const std::string& get_pos_name(int index) const;
+
   };
 }
 
