@@ -102,6 +102,12 @@ public:
 	virtual std::string get_option(const std::string& option) const;
 
 	/**
+	 * Check if the reader is valid, should throw if not. Called after
+	 * all set_options during factory reader creation.
+	 */
+	virtual void validate() {}
+
+	/**
 	 * Tagset accesor
 	 */
 	const Tagset& tagset() const {
@@ -221,6 +227,7 @@ T* stream_reader_creator(const Tagset& tagset, std::istream& is,
 	foreach (const string_range& sr, params) {
 		reader->set_option(boost::copy_range<std::string>(sr));
 	}
+	reader->validate();
 	return reader;
 }
 
@@ -236,6 +243,7 @@ T* path_reader_creator(const Tagset& tagset, const std::string& path,
 	foreach (const string_range& sr, params) {
 		reader->set_option(boost::copy_range<std::string>(sr));
 	}
+	reader->validate();
 	return reader;
 }
 
