@@ -48,9 +48,9 @@ include_directories(${PoliqarpLibrary_SOURCE_DIR} ${PoliqarpLibrary_BINARY_DIR})
 # ${PoliqarpLibrary_SOURCE_DIR}/sakura/commons ${PoliqarpLibrary_SOURCE_DIR}/foostring ${PoliqarpLibrary_SOURCE_DIR}/progress ${PoliqarpLibrary_SOURCE_DIR}/sakura ${PoliqarpLibrary_SOURCE_DIR}/unibits)
 find_package(Parsers REQUIRED)
 find_package(Threads)
-
-set(CMAKE_C_FLAGS "$ENV{CXXFLAGS}")
-set(CMAKE_C_FLAGS_DEBUG "-O0 -DDEBUG -ggdb3 $ENV{CXXFLAGS}")
+set(CFLAGS "$ENV{CFLAGS} -Wno-unused-parameter")
+set(CMAKE_C_FLAGS "${CFLAGS}")
+set(CMAKE_C_FLAGS_DEBUG "-O0 -DDEBUG -ggdb3 ${CFLAGS}")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g -fno-omit-frame-pointer")
 
 GENERATE_BISON_FLEX_SOURCES(
