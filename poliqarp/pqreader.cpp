@@ -1,6 +1,17 @@
 #include "pqreader.h"
 #include "pqclient.h"
 
+/*
+extern "C" {
+void pwrnlp_plugin_init()
+{
+	std::cerr << "PQINIT\n";
+	Corpus2::TokenReader::register_path_reader<Corpus2::PoliqarpReader>(
+		"poliqarp","token,chunk,sentence");
+}
+}
+*/
+
 namespace Corpus2 {
 
 bool PoliqarpReader::registered = TokenReader::register_path_reader<PoliqarpReader>(

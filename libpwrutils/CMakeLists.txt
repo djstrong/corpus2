@@ -29,6 +29,7 @@ SET(libpwrutils_STAT_SRC
 	exception.cpp
 	whitespace.cpp
 	pathsearch.cpp
+	plugin.cpp
 	plural.cpp
 	util.cpp
 )

@@ -19,8 +19,31 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/algorithm/string.hpp>
 #include <libcorpus2/ann/annotatedsentence.h>
 #include <sstream>
+#include <libpwrutils/plugin.h>
+#include <libcorpus2/util/settings.h>
 
 namespace Corpus2 {
+
+namespace detail {
+/**
+ * Declaration of the TokenWriter factory as a singleton Loki object
+ * factory. The factory instance can be accessed as
+ * TokenLayerFactory::Instance(). It is assumed that all derived classes
+ * have the same constructor signature.
+ */
+typedef Loki::SingletonHolder<
+	TokenReaderFactory,
+	Loki::CreateUsingNew, // default, needed to change the item below
+	Loki::LongevityLifetime::DieAsSmallObjectChild // per libloki docs
+>
+TokenReaderFactorySingleton;
+
+TokenReaderFactory& token_reader_factory()
+{
+	return TokenReaderFactorySingleton::Instance();
+}
+} /* ned ns detail */
+
 
 TokenReader::TokenReader(const Tagset& tagset)
 	: tagset_(tagset), tag_parse_mode_(Tagset::ParseDefault),
@@ -76,6 +99,17 @@ boost::shared_ptr<Sentence> TokenReader::make_sentence() const
 	}
 }
 
+namespace {
+std::string guess_plugin_name(const std::string& reader_class_id, int idx)
+{
+	switch (idx) {
+		case 0: return reader_class_id + "reader";
+		case 1: return reader_class_id;
+		default: return "";
+	}
+}
+}
+
 boost::shared_ptr<TokenReader> TokenReader::create_path_reader(
 	const std::string& class_id_params,
 	const Tagset& tagset,
@@ -86,13 +120,23 @@ boost::shared_ptr<TokenReader> TokenReader::create_path_reader(
 							boost::is_any_of(std::string(",")));
 	std::string class_id = boost::copy_range<std::string>(params[0]);
 	params.erase(params.begin(), params.begin() + 1);
-	try {
-		return boost::shared_ptr<TokenReader>(
-		detail::TokenReaderFactorySingleton::Instance().path_factory.CreateObject(
-			class_id, tagset, path, params));
-	} catch (detail::TokenReaderFactoryException&) {
-		throw Corpus2Error("Reader class not found: " + class_id);
+	int plugin_name_idx = 0;
+	while (plugin_name_idx >=0) {
+		try {
+			return boost::shared_ptr<TokenReader>(
+				detail::TokenReaderFactorySingleton::Instance().
+				path_factory.CreateObject(class_id, tagset, path, params));
+		} catch (detail::TokenReaderFactoryException&) {
+			std::string next_plugin = guess_plugin_name(class_id, plugin_name_idx);
+			if (!next_plugin.empty()) {
+				PwrNlp::Plugin::load("corpus2", next_plugin, !Path::Instance().get_verbose());
+				plugin_name_idx++;
+			} else {
+				plugin_name_idx = -1;
+			}
+		}
 	}
+	throw Corpus2Error("Reader class not found: " + class_id);
 }
 
 boost::shared_ptr<TokenReader> TokenReader::create_stream_reader(
@@ -105,18 +149,28 @@ boost::shared_ptr<TokenReader> TokenReader::create_stream_reader(
 							boost::is_any_of(std::string(",")));
 	std::string class_id = boost::copy_range<std::string>(params[0]);
 	params.erase(params.begin(), params.begin() + 1);
-	try {
-		return boost::shared_ptr<TokenReader>(
-		detail::TokenReaderFactorySingleton::Instance().stream_factory.CreateObject(
-			class_id, tagset, stream, params));
-	} catch (detail::TokenReaderFactoryException& e) {
-		std::vector<std::string> ids;
-		ids = detail::TokenReaderFactorySingleton::Instance().path_factory.RegisteredIds();
-		if (std::find(ids.begin(), ids.end(), class_id) == ids.end()) {
-			throw Corpus2Error("Reader class not found: " + class_id);
-		} else {
-			throw Corpus2Error("This reader does not support stream mode: " + class_id);
+	int plugin_name_idx = 0;
+	while (plugin_name_idx >=0) {
+		try {
+			return boost::shared_ptr<TokenReader>(
+			detail::TokenReaderFactorySingleton::Instance()
+			.stream_factory.CreateObject(class_id, tagset, stream, params));
+		} catch (detail::TokenReaderFactoryException&) {
+			std::string next_plugin = guess_plugin_name(class_id, plugin_name_idx);
+			if (!next_plugin.empty()) {
+				PwrNlp::Plugin::load("corpus2", next_plugin, !Path::Instance().get_verbose());
+				plugin_name_idx++;
+			} else {
+				plugin_name_idx = -1;
+			}
 		}
+	}
+	std::vector<std::string> ids;
+	ids = detail::TokenReaderFactorySingleton::Instance().path_factory.RegisteredIds();
+	if (std::find(ids.begin(), ids.end(), class_id) == ids.end()) {
+		throw Corpus2Error("Reader class not found: " + class_id);
+	} else {
+		throw Corpus2Error("This reader does not support stream mode: " + class_id);
 	}
 }
 

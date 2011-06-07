@@ -5,6 +5,11 @@
 #include <deque>
 #include <boost/scoped_ptr.hpp>
 
+/*
+extern "C" {
+void pwrnlp_plugin_init();
+}
+*/
 
 namespace Corpus2 {
 

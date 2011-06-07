@@ -203,17 +203,9 @@ struct TokenReaderFactory
 };
 
 /**
- * Declaration of the TokenWriter factory as a singleton Loki object
- * factory. The factory instance can be accessed as
- * TokenLayerFactory::Instance(). It is assumed that all derived classes
- * have the same constructor signature.
+ * Factory singleton accesor
  */
-typedef Loki::SingletonHolder<
-	TokenReaderFactory,
-	Loki::CreateUsingNew, // default, needed to change the item below
-	Loki::LongevityLifetime::DieAsSmallObjectChild // per libloki docs
->
-TokenReaderFactorySingleton;
+TokenReaderFactory& token_reader_factory();
 
 /**
  * Templated TokenReader creation function, stream variant
@@ -262,12 +254,12 @@ template <typename T>
 bool TokenReader::register_reader(const std::string& class_id,
 		const std::string& help)
 {
-	bool ret = detail::TokenReaderFactorySingleton::Instance().path_factory.Register(
+	bool ret = detail::token_reader_factory().path_factory.Register(
 			class_id, detail::path_reader_creator<T>);
-	bool ret2 = detail::TokenReaderFactorySingleton::Instance().stream_factory.Register(
+	bool ret2 = detail::token_reader_factory().stream_factory.Register(
 			class_id, detail::stream_reader_creator<T>);
 	if (ret || ret2) {
-		detail::TokenReaderFactorySingleton::Instance().help[class_id] = help;
+		detail::token_reader_factory().help[class_id] = help;
 	}
 	return ret;
 }
@@ -276,10 +268,10 @@ template <typename T>
 bool TokenReader::register_path_reader(const std::string& class_id,
 		const std::string& help)
 {
-	bool ret = detail::TokenReaderFactorySingleton::Instance().path_factory.Register(
+	bool ret = detail::token_reader_factory().path_factory.Register(
 			class_id, detail::path_reader_creator<T>);
 	if (ret) {
-		detail::TokenReaderFactorySingleton::Instance().help[class_id] = help;
+		detail::token_reader_factory().help[class_id] = help;
 	}
 	return ret;
 }
