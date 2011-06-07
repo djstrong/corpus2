@@ -41,7 +41,7 @@ bool load(const std::string &scope, const std::string &name, bool quiet)
 		}
 		return false;
 	}
-	// run plugin init function if it exiests
+	// run plugin init function if it exists
 	typedef void (*init_func_t)();
 	init_func_t init_func = reinterpret_cast<init_func_t>(
 			dlsym(handle, "pwrnlp_plugin_init"));
