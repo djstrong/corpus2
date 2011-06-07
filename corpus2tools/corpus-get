@@ -84,6 +84,7 @@ def go():
 	parser.add_option('-v', '--verbose', action='store_true',
 		dest='verbose', default=False,
 		help='verbose mode')
+	parser.add_option('--input-list', default=None, help='file with a list of input files')
 	(options, args) = parser.parse_args()
 	
 	if len(args) < 1:
