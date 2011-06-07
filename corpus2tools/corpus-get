@@ -111,7 +111,7 @@ def go():
 				return
 		else:
 			selection.update(izip(parse_range_info(arg), repeat(())))
-	maxsel = max(selection.keys())
+	maxsel = max(selection.keys()) if selection.keys() != [] else None
 	if selection == {}:
 		if options.chunks:
 			for chunk in chunks(reader):
@@ -129,7 +129,7 @@ def go():
 					else:
 						write_selected_sentences(chunk.sentences(), writer, selection[cid])
 				cid += 1
-				if cid > maxsel: break
+				if maxsel is not None and cid > maxsel: break
 		else:
 			write_selected_sentences(sentences(reader), writer, selection, maxsel)
 
