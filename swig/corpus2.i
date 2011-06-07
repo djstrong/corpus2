@@ -21,4 +21,12 @@
 %include "tokenwriter.i"
 %include "libpwrnlperror.i"
 
+%{
+#include <libcorpus2/util/settings.h>
+static void set_verbose(bool v) {
+        Corpus2::Path::Instance().set_verbose(v);
+}
+%}
+static void set_verbose(bool);
+
 #endif /* SWIG_CORPUS2_I */
