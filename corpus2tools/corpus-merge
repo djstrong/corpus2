@@ -1,0 +1,78 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import sys
+from optparse import OptionParser
+from collections import defaultdict as dd
+from itertools import repeat, izip
+import corpus2
+
+descr = """%prog [options] CORPUSFILES
+Reads corpus files and outputs everything.
+Available input formats: """ + ' '.join(corpus2.TokenReader.available_reader_types()) + """
+""" + ' '.join(corpus2.TokenReader.available_reader_types_help()) + """
+Available output formats: """ + ' '.join(corpus2.TokenWriter.available_writer_types()) + """
+""" + ' '.join(corpus2.TokenWriter.available_writer_types_help())
+
+
+def sentences(rdr):
+	"""Yields subsequent sentences from a reader."""
+	while True:
+		sent = rdr.get_next_sentence()
+		if not sent:
+			break
+		yield sent
+
+
+def chunks(rdr):
+	"""Yields subsequent sentences from a reader."""
+	while True:
+		chunk = rdr.get_next_chunk()
+		if not chunk:
+			break
+		yield chunk
+
+def go():
+	parser = OptionParser(usage=descr)
+	parser.add_option('-i', '--input-format', type='string', action='store',
+		dest='input_format', default='xces',
+		help='set the input format; default: xces-fast')
+	parser.add_option('-o', '--output-format', type='string', action='store',
+		dest='output_format', default='xces',
+		help='set the output format; default: xces')
+	parser.add_option('-t', '--tagset', type='string', action='store',
+		dest='tagset', default='kipi',
+		help='set the tagset used in input; default: kipi')
+	parser.add_option('-C', '--chunks', action='store_true',
+		dest='chunks', default=False,
+		help='Process chunks (select chunks/sentences, not tokens)')
+	parser.add_option('-v', '--verbose', action='store_true',
+		dest='verbose', default=False,
+		help='verbose mode')
+	parser.add_option('--input-list', default=None, help='file with a list of input files')
+	(options, args) = parser.parse_args()
+	
+	if options.input_list is not None:
+		with open(options.input_list) as listfile:
+			for line in listfile:
+				args.append(line.strip())
+
+	if len(args) < 1:
+		print 'You need to provide at least one input corpus.'
+		print 'See %s --help' % sys.argv[0]
+		sys.exit(1)
+	
+	inpath = args[0]
+	# load a tagset, create a reader
+	tagset = corpus2.get_named_tagset(options.tagset)
+	writer = corpus2.TokenWriter.create_stdout_writer(options.output_format, tagset)
+	for arg in args:
+		reader = corpus2.TokenReader.create_path_reader(options.input_format, tagset, arg)
+		if options.chunks:
+			for chunk in chunks(reader):
+				writer.write_chunk(chunk)
+		else:
+			for sent in sentences(reader):
+				writer.write_sentence(sent)
+
+if __name__ == '__main__':
+	go()
