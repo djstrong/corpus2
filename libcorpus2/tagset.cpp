@@ -528,7 +528,7 @@ size_t Tagset::tag_size(const Tag& tag) const
 
 bool Tagset::tag_is_singular(const Tag& tag) const
 {
-	if (PwrNlp::count_bits_set(tag.get_pos()) != 1) return false;
+	if (PwrNlp::count_bits_set(tag.get_pos()) > 1) return false;
 	foreach (mask_t attribute_mask, all_attribute_masks()) {
 		mask_t values = tag.get_values_for(attribute_mask);
 		if (PwrNlp::count_bits_set(values) > 1) return false;
