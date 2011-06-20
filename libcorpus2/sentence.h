@@ -23,23 +23,44 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
+/**
+ * A Sentence is the primary structure passed around in Corpus2,
+ * tokens are rarely processed outside of a Sentence.
+ *
+ * Sentences should always be kept as shared_ptrs and passed around
+ * as shared pointers or const references. Derived classes of
+ * Sentence may provide extra functionality.
+ *
+ * Tokens are kept as raw pointers. A Sentence owns the tokens 
+ * it contains and will delete them upon destruction. Sometimes 
+ * this is not desirable, in this case the release_tokens function 
+ * can be used (carefully).
+ */
 class Sentence : private boost::noncopyable
 {
 public:
+    /// Convenience typedef for a shared pointer to a Sentence
 	typedef boost::shared_ptr<Sentence> Ptr;
+
+    /// Convenience typedef for a shared pointer to a const Sentence
 	typedef boost::shared_ptr<const Sentence> ConstPtr;
 
-	/// Empty constructor
+	/// Empty constructor. Creates a Sentence with no tokens.
 	Sentence();
 
+    /// Sentence cloning. All the tokens are duplicated.
 	virtual Ptr clone_shared() const;
 
-	/// Destructor
+	/// Destructor. Deletes contained tokens.
 	virtual ~Sentence();
 
+    /// Releases ownership of all tokens, makes the sentence empty.
+    /// Warning: This will cause an obvious memory leak if the tokens are
+    /// not stored somewhere first (e.g. append()ed to another Sentence).
 	void release_tokens();
 
-	bool empty() const {
+	/// Convenience function to check if the sentence is empty
+    bool empty() const {
 		return tokens_.empty();
 	}
 
@@ -48,13 +69,23 @@ public:
 		return tokens_.size();
 	}
 
-	/// Token accessor
+	/// Token accessor (no range checking)
 	Token* operator[](size_t idx) {
 		return tokens_[idx];
 	}
 
-	/// Token accessor, const
+	/// Token accessor, const (no range checking)
 	const Token* operator[](size_t idx) const {
+		return tokens_[idx];
+	}
+
+	/// Token accessor, non-operator (no range checking)
+	Token* at(size_t idx) {
+		return tokens_[idx];
+	}
+
+	/// Token accessor, const (no range checking)
+	const Token* at(size_t idx) const {
 		return tokens_[idx];
 	}
 
@@ -63,12 +94,12 @@ public:
 		return tokens_;
 	}
 
-	/// Underlying vector accessor
-	std::vector<Token*>& tokens() {
-		return tokens_;
-	}
+	/// Underlying vector accessor, nonconst (dangerous)
+	//std::vector<Token*>& tokens() {
+	//	return tokens_;
+	//}
 
-	/// Helper function for appending tokens
+	/// Helper function for appending tokens. Prefer using this.
 	/// Might be overriden in a child class to make adding a token keep
 	/// extra invariants
 	virtual void append(Token* t) {

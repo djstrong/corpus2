@@ -75,6 +75,16 @@ namespace detail {
 	{
 		typedef T type;
 	};
+	template<typename T>
+	struct deptr<const T*>
+	{
+		typedef T type;
+	};
+	template<typename T>
+	struct deptr<T* const>
+	{
+		typedef const T type;
+	};
 } /* end ns detail */
 
 /**
