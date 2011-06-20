@@ -63,6 +63,7 @@ SET(libcorpus2_STAT_SRC
 	io/nonewriter.cpp
 	io/orthwriter.cpp
 	io/pathwriter.cpp
+	io/plainreader.cpp
 	io/plainwriter.cpp
 	io/premorphwriter.cpp
 	io/reader.cpp
