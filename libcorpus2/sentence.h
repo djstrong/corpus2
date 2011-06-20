@@ -39,28 +39,28 @@ namespace Corpus2 {
 class Sentence : private boost::noncopyable
 {
 public:
-    /// Convenience typedef for a shared pointer to a Sentence
+	/// Convenience typedef for a shared pointer to a Sentence
 	typedef boost::shared_ptr<Sentence> Ptr;
 
-    /// Convenience typedef for a shared pointer to a const Sentence
+	/// Convenience typedef for a shared pointer to a const Sentence
 	typedef boost::shared_ptr<const Sentence> ConstPtr;
 
 	/// Empty constructor. Creates a Sentence with no tokens.
 	Sentence();
 
-    /// Sentence cloning. All the tokens are duplicated.
+	/// Sentence cloning. All the tokens are duplicated.
 	virtual Ptr clone_shared() const;
 
 	/// Destructor. Deletes contained tokens.
 	virtual ~Sentence();
 
-    /// Releases ownership of all tokens, makes the sentence empty.
-    /// Warning: This will cause an obvious memory leak if the tokens are
-    /// not stored somewhere first (e.g. append()ed to another Sentence).
+	/// Releases ownership of all tokens, makes the sentence empty.
+	/// Warning: This will cause an obvious memory leak if the tokens are
+	/// not stored somewhere first (e.g. append()ed to another Sentence).
 	void release_tokens();
 
 	/// Convenience function to check if the sentence is empty
-    bool empty() const {
+	bool empty() const {
 		return tokens_.empty();
 	}
 
@@ -95,9 +95,9 @@ public:
 	}
 
 	/// Underlying vector accessor, nonconst (dangerous)
-	//std::vector<Token*>& tokens() {
-	//	return tokens_;
-	//}
+	std::vector<Token*>& tokens() {
+		return tokens_;
+	}
 
 	/// Helper function for appending tokens. Prefer using this.
 	/// Might be overriden in a child class to make adding a token keep
