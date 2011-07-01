@@ -10,8 +10,8 @@ IF(NOT CMAKE_BUILD_TYPE)
 		FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
-set(CORPUS2_BUILD_SWIG True CACHE BOOL "Build SWIG Python wrappers" FORCE)
-set(CORPUS2_BUILD_POLIQARP True CACHE BOOL "Build Poliqarp library and wraper" FORCE)
+set(CORPUS2_BUILD_SWIG True CACHE BOOL "Build SWIG Python wrappers")
+set(CORPUS2_BUILD_POLIQARP True CACHE BOOL "Build Poliqarp library and wraper")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	# Set our own default flags at first run.
