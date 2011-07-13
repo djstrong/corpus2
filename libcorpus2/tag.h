@@ -38,12 +38,11 @@ BOOST_STRONG_TYPEDEF(boost::uint32_t, tagset_idx_t);
  * This is an extended version of a POS tag, which also includes a number
  * of attributes which may have values set.
  *
- * The tag is stored in a binary firmat, with POS names etc. mapped to
- * numbers. A Tagset object is needed to create tags or print their string
- * representation.
- *
- * While not strictly necessary, the tagset ID of a tag is stored within.
- * This allows more sanity checking, esp. during tagset conversion.
+ * The tag is stored in a compact binary firmat, with POS names etc. mapped to
+ * numbers. Tags don't "know" their tagset. To perform some basic operations,
+ * you an appropriate Tagset object. These operations include tag creation,
+ * getting tag string representation and retrieving values of particular
+ * attributes.
  */
 class Tag
 //	: boost::equality_comparable<Tag>, boost::less_than_comparable<Tag>
