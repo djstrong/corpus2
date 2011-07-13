@@ -20,6 +20,7 @@
 %include "tokenreader.i"
 %include "tokenwriter.i"
 %include "libpwrnlperror.i"
+%include "tagging.i"
 
 %{
 #include <libcorpus2/util/settings.h>

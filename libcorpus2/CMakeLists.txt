@@ -50,6 +50,7 @@ SET(libcorpus2_STAT_SRC
 	lexeme.cpp
 	sentence.cpp
 	tag.cpp
+	tagging.cpp
 	tagset.cpp
 	tagsetmanager.cpp
 	tagsetparser.cpp
