@@ -15,9 +15,10 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/tagging.h>
-#include <libcorpus2/tagsetmanager.h>
+#include <libcorpus2/lexeme.h>
 
-// #include <libpwrutils/foreach.h>
+
+#include <libpwrutils/foreach.h>
 
 namespace Corpus2 {
 
@@ -38,6 +39,17 @@ Tag get_attribute_mask(const Tagset& tagset, std::string attr_name)
 	{
 		return Tag(0, tagset.get_attribute_mask(attr_name));
 	}
+}
+
+Tag mask_token(const Token& token, const Tag& mask, bool disamb_only)
+{
+	Tag t;
+	foreach (const Corpus2::Lexeme& lexeme, token.lexemes()) {
+		if(lexeme.is_disamb() || !disamb_only) {
+			t.combine_with(lexeme.tag().get_masked(mask));
+		}
+	}
+	return t;
 }
 
 

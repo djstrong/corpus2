@@ -18,6 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #define LIBCORPUS2_TAGGING_H
 
 #include <libcorpus2/tag.h>
+#include <libcorpus2/token.h>
 #include <libcorpus2/tagset.h>
 
 namespace Corpus2 {
@@ -34,6 +35,12 @@ namespace Corpus2 {
   */
 Tag get_attribute_mask(const Tagset& tagset,
 					   const std::string attr_name);
+
+/**
+  * Projects the token onto the mask. Depending on disamb_only, will consider
+  * only disamb or all lexemes.
+  */
+Tag mask_token(const Token& token, const Tag& mask, bool disamb_only);
 
 } /* end ns Corpus2 */
 
