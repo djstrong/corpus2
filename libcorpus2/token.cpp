@@ -70,7 +70,7 @@ struct preferred_lexeme_cmp
 				&& (tagset->get_original_pos_index(l1.tag().get_pos_index()) >
 					tagset->get_original_pos_index(l2.tag().get_pos_index())
 				|| (l1.tag().get_pos() == l2.tag().get_pos()
-				&& l1 < l2)));
+				&& l1 > l2)));
 	}
 };
 
