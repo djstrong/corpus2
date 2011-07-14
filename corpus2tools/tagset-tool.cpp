@@ -126,7 +126,7 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s,
 			}
 		}
 		std::cout << "\n";
-	} else if (atr > 0) {
+	} else if (atr >= 0) {
 		if (internals) {
 			std::cout << tagset.get_attribute_mask(atr) << " (" << (int)atr << ")\n";
 		}
