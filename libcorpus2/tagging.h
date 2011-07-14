@@ -42,6 +42,26 @@ Tag get_attribute_mask(const Tagset& tagset,
   */
 Tag mask_token(const Token& token, const Tag& mask, bool disamb_only);
 
+/** Returns the number of set elements belonging to the mask given. */
+int mask_card(const Tag& mask);
+
+/** Forces one disamb lexeme per token. The selection is based on tagset
+  * definition order. Returns if any disamb found.
+  */
+bool select_preferred_disamb(const Tagset& tagset, Token* token);
+
+/** Encodes attributes with unspecified values as each value set.
+  * This is to facilitate safe masking when the value in question is not to be
+  * skipped.
+  */
+void expand_unspec_attrs(const Tagset& tagset, Token* token);
+
+/** Repairs multivalue tags. Optional attributes will be cleared if
+  * multi-value. Regular attributes will be set to lowest value given.
+  */
+void select_singular_tags(const Tagset& tagset, Token* token);
+
+
 } /* end ns Corpus2 */
 
 #endif // LIBCORPUS2_TAGGING_H

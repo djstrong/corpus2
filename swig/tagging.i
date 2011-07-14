@@ -19,6 +19,14 @@ Tag get_attribute_mask(const Tagset& tagset,
 
 Tag mask_token(const Token& token, const Tag& mask, bool disamb_only);
 
+int mask_card(const Tag& mask);
+
+bool select_preferred_disamb(const Tagset& tagset, Token* token);
+
+void expand_unspec_attrs(const Tagset& tagset, Token* token);
+
+void select_singular_tags(const Tagset& tagset, Token* token);
+
 }
 
 using namespace std;

@@ -91,7 +91,8 @@ namespace Corpus2 {
 
     /* --------------------------------------------------------------------- */
     std::vector<Tag> split_tag(const Tag& tag) const;
-
+    Tag select_singular(const Tag& tag) const;
+    Tag expand_unspec_attrs(const Tag& tag) const;
     /* --------------------------------------------------------------------- */
     int pos_count() const;
     int attribute_count() const;

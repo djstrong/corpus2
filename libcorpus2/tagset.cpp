@@ -571,6 +571,55 @@ std::vector<Tag> Tagset::split_tag(const Tag& tag) const
 	return tags;
 }
 
+Tag Tagset::select_singular(const Tag& tag) const
+{
+	Tag new_tag;
+	// force one POS
+	idx_t pos_idx = tag.get_pos_index();
+	mask_t pos_mask = get_pos_mask(pos_idx);
+	new_tag.set_pos(pos_mask);
+	// now iterate over attrs
+	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
+	foreach (const idx_t& a, attrs) {
+		mask_t attr_mask = get_attribute_mask(a);
+		mask_t value = tag.get_values_for(attr_mask);
+		// check if the attr is multi-value
+		if (PwrNlp::count_bits_set(value) > 1)
+		{
+			if (pos_requires_attribute(pos_idx, a)) {
+				// this is a required attr, so just select first value
+				idx_t val_bit = PwrNlp::lowest_bit(value);
+				// well, this is not POS but attr value but the
+				// implementation is ok anyway...
+				mask_t one_mask = get_pos_mask(val_bit);
+				new_tag.add_values(one_mask);
+			}
+			// else it is already null
+		}
+		else {
+			// leave the singular value intact
+			new_tag.add_values(value);
+		}
+	}
+	return new_tag;
+}
+
+Tag Tagset::expand_unspec_attrs(const Tag& tag) const
+{
+	Tag new_tag(tag);
+	idx_t pos_idx = tag.get_pos_index();
+	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
+	foreach (const idx_t& a, attrs) {
+		mask_t attr_mask = get_attribute_mask(a);
+		mask_t value = tag.get_values_for(attr_mask);
+		if (!value.any()) { // no value given
+			const Tag all_vals(0, attr_mask);
+			new_tag.combine_with(all_vals);
+		}
+	}
+	return new_tag;
+}
+
 idx_t Tagset::get_pos_index(const string_range& pos) const
 {
 	return pos_dict_.get_id(pos);

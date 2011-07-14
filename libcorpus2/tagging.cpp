@@ -19,6 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #include <libpwrutils/foreach.h>
+#include <libpwrutils/bitset.h>
 
 namespace Corpus2 {
 
@@ -52,5 +53,42 @@ Tag mask_token(const Token& token, const Tag& mask, bool disamb_only)
 	return t;
 }
 
+int mask_card(const Tag& mask)
+{
+	return PwrNlp::count_bits_set(mask.get_pos())
+			+ PwrNlp::count_bits_set(mask.get_values());
+}
+
+bool select_preferred_disamb(const Tagset& tagset,
+							 Token* token)
+{
+	size_t lex_idx = token->get_preferred_lexeme_index(tagset);
+	if(!token->lexemes()[lex_idx].is_disamb()) {
+		return false;
+	}
+
+	for (size_t other_idx = 0;
+		 other_idx < token->lexemes().size();
+		 ++other_idx) {
+		if (other_idx != lex_idx) {
+			token->lexemes()[other_idx].set_disamb(false);
+		}
+	}
+	return true;
+}
+
+void expand_unspec_attrs(const Tagset& tagset, Token* token)
+{
+	foreach (Lexeme& lex, token->lexemes()) {
+		lex.set_tag(tagset.expand_unspec_attrs(lex.tag()));
+	}
+}
+
+void select_singular_tags(const Tagset& tagset, Token* token)
+{
+	foreach (Lexeme& lex, token->lexemes()) {
+		lex.set_tag(tagset.select_singular(lex.tag()));
+	}
+}
 
 } /* end ns Corpus2 */

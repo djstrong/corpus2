@@ -365,6 +365,24 @@ public:
 	 */
 	std::vector<Tag> split_tag(const Tag& tag) const;
 
+	/**
+	  * Creates a singular tag from this one, possibly being a "multi-tag".
+	  * POS and required attribute sets are reduced to tagset-wise first
+	  * values, while optional attributes are reduced to unspecified if
+	  * multiple values given (left intact otherwise).
+	  */
+	Tag select_singular(const Tag& tag) const;
+
+	/**
+	  * Creates a copy of the given tag where optional or required attributes
+	  * with no value given are encoded as each possible value set.
+	  * NOTE: this may result in tags technically invalid (multiple values set
+	  * for one attribute), yet it is convenient for some tagging scenarios to
+	  * explicitly distinguish between an irrelevant attribute and a relevant
+	  * one but no value given.
+	  */
+	Tag expand_unspec_attrs(const Tag& tag) const;
+
 	/// POS name <-> index dictionary getter
 	const SymbolDictionary<idx_t>& pos_dictionary() const {
 		return pos_dict_;
