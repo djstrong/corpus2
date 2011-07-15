@@ -374,12 +374,12 @@ public:
 	Tag select_singular(const Tag& tag) const;
 
 	/**
-	  * Creates a copy of the given tag where optional or required attributes
-	  * with no value given are encoded as each possible value set.
-	  * NOTE: this may result in tags technically invalid (multiple values set
-	  * for one attribute), yet it is convenient for some tagging scenarios to
-	  * explicitly distinguish between an irrelevant attribute and a relevant
-	  * one but no value given.
+	  * Creates a copy of the given tag where any attribute with no value given
+	  * is encoded as each possible value set. NOTE: this produce an invalid
+	  * tag (multiple values set for one attribute), yet it is convenient for
+	  * some tagging scenarios to be able to retrieve unspecified attr value as
+	  * a non-zero mask. This can always be decoded into a valid tag by using
+	  * select_singular.
 	  */
 	Tag expand_unspec_attrs(const Tag& tag) const;
 

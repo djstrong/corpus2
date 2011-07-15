@@ -609,7 +609,7 @@ Tag Tagset::expand_unspec_attrs(const Tag& tag) const
 	Tag new_tag(tag);
 	idx_t pos_idx = tag.get_pos_index();
 	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
-	foreach (const idx_t& a, attrs) {
+	for (idx_t a = 0; a < attribute_count(); ++a) {
 		mask_t attr_mask = get_attribute_mask(a);
 		mask_t value = tag.get_values_for(attr_mask);
 		if (!value.any()) { // no value given
