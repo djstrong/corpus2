@@ -27,6 +27,10 @@ void expand_unspec_attrs(const Tagset& tagset, Token* token);
 
 void select_singular_tags(const Tagset& tagset, Token* token);
 
+bool disambiguate_equal(Token* token, const Tag& mask_where, const Tag& mask_wanted);
+
+bool disambiguate_subset(Token* token, const Tag& mask_where, const Tag& mask_wanted);
+
 }
 
 using namespace std;

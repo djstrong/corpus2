@@ -91,4 +91,38 @@ void select_singular_tags(const Tagset& tagset, Token* token)
 	}
 }
 
+bool disambiguate_equal(Token* token, const Tag& mask_where,
+						const Tag& mask_wanted)
+{
+	std::vector<Lexeme> wanted;
+	foreach (const Lexeme& lex, token->lexemes()) {
+		Tag mask_theirs = lex.tag().get_masked(mask_where);
+		if (mask_theirs == mask_wanted) {
+			wanted.push_back(lex);
+		}
+	}
+	if (wanted.empty()) {
+		return false;
+	}
+	token->replace_lexemes(wanted);
+	return true;
+}
+
+bool disambiguate_subset(Token* token, const Tag& mask_where,
+						const Tag& mask_wanted)
+{
+	std::vector<Lexeme> wanted;
+	foreach (const Lexeme& lex, token->lexemes()) {
+		Tag mask_theirs = lex.tag().get_masked(mask_where);
+		if (mask_theirs.get_masked(mask_wanted) == mask_theirs) {
+			wanted.push_back(lex);
+		}
+	}
+	if (wanted.empty()) {
+		return false;
+	}
+	token->replace_lexemes(wanted);
+	return true;
+}
+
 } /* end ns Corpus2 */

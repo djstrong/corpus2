@@ -61,6 +61,24 @@ void expand_unspec_attrs(const Tagset& tagset, Token* token);
   */
 void select_singular_tags(const Tagset& tagset, Token* token);
 
+/** Tries to select only those lexemes whose tags projected onto mask_where
+  * have exactly the value as given in mask_wanted. E.g. pass whole attribute
+  * as mask_where and a particular desired value as mask_wanted. If no lexeme
+  * satisfies the constraint, will leave the token intact.
+  * @return if succeeded
+  */
+bool disambiguate_equal(Token* token, const Tag& mask_where,
+						const Tag& mask_wanted);
+
+/** Tries to select only those lexemes whose tags projected onto mask_where
+  * have a subset of the value as given in mask_wanted. E.g. pass noun + gerund
+  * mask and have both left. NOTE: this may be inconvenient for dealing with
+  * optional attributes. If no lexeme satisfies the constraint, will leave the
+  * token intact.
+  * @return if succeeded
+  */
+bool disambiguate_subset(Token* token, const Tag& mask_where,
+						const Tag& mask_wanted);
 
 } /* end ns Corpus2 */
 
