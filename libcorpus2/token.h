@@ -106,6 +106,11 @@ public:
 		lexemes_.push_back(lex);
 	}
 
+	/// Replaces all the lexemes with the given vector
+	void replace_lexemes(const std::vector<Lexeme>& new_lexemes) {
+		lexemes_ = new_lexemes;
+	}
+
 	/**
 	 * Get the 'best' lexeme available, with best meaning disambiguated if
 	 * possible, and when there is more than one candidate, some form of
