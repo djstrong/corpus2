@@ -50,11 +50,11 @@ int mask_card(const Tag& mask);
   */
 bool select_preferred_disamb(const Tagset& tagset, Token* token);
 
-/** Encodes attributes with unspecified values as each value set.
+/** Encodes optional attributes with unspecified values as each value set.
   * This is to facilitate safe masking when the value in question is not to be
   * skipped.
   */
-void expand_unspec_attrs(const Tagset& tagset, Token* token);
+void expand_optional_attrs(const Tagset& tagset, Token* token);
 
 /** Repairs multivalue tags. Optional attributes will be cleared if
   * multi-value. Regular attributes will be set to lowest value given.

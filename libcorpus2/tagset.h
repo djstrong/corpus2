@@ -374,14 +374,14 @@ public:
 	Tag select_singular(const Tag& tag) const;
 
 	/**
-	  * Creates a copy of the given tag where any attribute with no value given
-	  * is encoded as each possible value set. NOTE: this produce an invalid
-	  * tag (multiple values set for one attribute), yet it is convenient for
-	  * some tagging scenarios to be able to retrieve unspecified attr value as
-	  * a non-zero mask. This can always be decoded into a valid tag by using
-	  * select_singular.
+	  * Creates a copy of the given tag where any optional attribute with no
+	  * value given is encoded as each possible value set. NOTE: this may
+	  * an invalid tag (multiple values set for one attribute), yet it is
+	  * convenient for some tagging scenarios to be able to retrieve
+	  * unspecified attr value as a non-zero mask. This can always be decoded
+	  * into a valid tag by using select_singular.
 	  */
-	Tag expand_unspec_attrs(const Tag& tag) const;
+	Tag expand_optional_attrs(const Tag& tag) const;
 
 	/// POS name <-> index dictionary getter
 	const SymbolDictionary<idx_t>& pos_dictionary() const {

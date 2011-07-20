@@ -77,10 +77,10 @@ bool select_preferred_disamb(const Tagset& tagset,
 	return true;
 }
 
-void expand_unspec_attrs(const Tagset& tagset, Token* token)
+void expand_optional_attrs(const Tagset& tagset, Token* token)
 {
 	foreach (Lexeme& lex, token->lexemes()) {
-		lex.set_tag(tagset.expand_unspec_attrs(lex.tag()));
+		lex.set_tag(tagset.expand_optional_attrs(lex.tag()));
 	}
 }
 
