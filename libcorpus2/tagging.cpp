@@ -59,8 +59,7 @@ int mask_card(const Tag& mask)
 			+ PwrNlp::count_bits_set(mask.get_values());
 }
 
-bool select_preferred_disamb(const Tagset& tagset,
-							 Token* token)
+bool select_preferred_disamb(const Tagset& tagset, Token* token)
 {
 	size_t lex_idx = token->get_preferred_lexeme_index(tagset);
 	if(!token->lexemes()[lex_idx].is_disamb()) {
@@ -75,6 +74,18 @@ bool select_preferred_disamb(const Tagset& tagset,
 		}
 	}
 	return true;
+}
+
+void select_preferred_lexeme(const Tagset& tagset, Token* token)
+{
+	foreach (Lexeme& lex, token->lexemes()) {
+		lex.set_disamb(true);
+	}
+	if (token->lexemes().size() > 1) {
+		std::vector<Lexeme> one;
+		one.push_back(token->get_preferred_lexeme(tagset));
+		token->replace_lexemes(one);
+	}
 }
 
 void expand_optional_attrs(const Tagset& tagset, Token* token)

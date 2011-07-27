@@ -50,6 +50,12 @@ int mask_card(const Tag& mask);
   */
 bool select_preferred_disamb(const Tagset& tagset, Token* token);
 
+/** Forces one lexeme per token. The selection is based on tagset
+  * definition order, disamb markers are not respected.
+  * The selected lexeme will be set to disamb=True.
+  */
+void select_preferred_lexeme(const Tagset& tagset, Token* token);
+
 /** Encodes optional attributes with unspecified values as each value set.
   * This is to facilitate safe masking when the value in question is not to be
   * skipped.

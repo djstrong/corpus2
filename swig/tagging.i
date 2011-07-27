@@ -23,6 +23,8 @@ int mask_card(const Tag& mask);
 
 bool select_preferred_disamb(const Tagset& tagset, Token* token);
 
+void select_preferred_lexeme(const Tagset& tagset, Token* token);
+
 void expand_optional_attrs(const Tagset& tagset, Token* token);
 
 void select_singular_tags(const Tagset& tagset, Token* token);
