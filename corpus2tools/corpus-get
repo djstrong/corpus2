@@ -21,11 +21,11 @@ def parse_range_info(s):
 		try:
 			selection.add(int(elem))
 		except:
-			split = [x.strip() for x in elem.split('-')]
+			split = [int(x.strip()) for x in elem.split('-')]
 			try:
 				if len(split) == 2:
 					split.sort()
-					for x in xrange(int(split[0]), int(split[1])+1):
+					for x in xrange(split[0], split[1]+1):
 						selection.add(x)
 				else:
 					raise
@@ -98,6 +98,7 @@ def go():
 	reader = corpus2.TokenReader.create_path_reader(options.input_format, tagset, inpath)
 	writer = corpus2.TokenWriter.create_stdout_writer(options.output_format, tagset)
 	selection = {}
+	
 	for arg in args[1:]:
 		if ':' in arg:
 			sp = arg.split(':')
