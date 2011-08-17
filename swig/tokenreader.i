@@ -84,6 +84,12 @@ namespace Corpus2 {
     boost::shared_ptr<Corpus2::Token> get_next_token() {
       return boost::shared_ptr<Corpus2::Token>(self->get_next_token());
     }
+
+    %feature("autodoc", "1");
+    static TokenReaderPtr create_stdin_reader(
+        const std::string& class_id_params, const Tagset& tagset) {
+        return Corpus2::TokenReader::create_stream_reader(class_id_params, tagset, std::cin);
+    }
   }
 
 %feature("autodoc", "1");
