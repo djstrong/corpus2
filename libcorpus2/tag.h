@@ -143,9 +143,16 @@ public:
 	bool operator<(const Tag& other) const;
 
 	/**
-	 * Tag equality. Non-equality is provided by Boost template magic.
+	 * Tag equality.
 	 */
 	bool operator==(const Tag& other) const;
+
+	/**
+	 * Tag inequality.
+	 */
+	bool operator!=(const Tag& other) const {
+		return !((*this) == other);
+	}
 
 	/**
 	 * Boost seralization support. Users must include appropriate boost headers.
