@@ -63,7 +63,7 @@ bool select_preferred_disamb(const Tagset& tagset, Token* token)
 {
 	size_t lex_idx = token->get_preferred_lexeme_index(tagset);
 	if(!token->lexemes()[lex_idx].is_disamb()) {
-		return false;
+		return false; // disamb would've taken precedence => no disamb at all
 	}
 
 	for (size_t other_idx = 0;
@@ -85,6 +85,38 @@ void select_preferred_lexeme(const Tagset& tagset, Token* token)
 		std::vector<Lexeme> one;
 		one.push_back(token->get_preferred_lexeme(tagset));
 		token->replace_lexemes(one);
+	}
+}
+
+bool select_preferred_disamb_tag(const Tagset& tagset, Token* token)
+{
+	const Corpus2::Lexeme &prototypical = token->get_preferred_lexeme(tagset);
+	if(!prototypical.is_disamb()) {
+		return false; // disamb would've taken precedence => no disamb at all
+	}
+	foreach (Lexeme& lex, token->lexemes()) {
+		if (lex.tag() != prototypical.tag()) {
+			lex.set_disamb(false);
+		}
+	}
+	return true;
+}
+
+void select_preferred_tag(const Tagset& tagset, Token* token)
+{
+	foreach (Lexeme& lex, token->lexemes()) {
+		lex.set_disamb(true);
+	}
+	if (token->lexemes().size() > 1) {
+		const Corpus2::Tag tag_wanted = token->get_preferred_lexeme(tagset).tag();
+		std::vector<Lexeme> wanted;
+		foreach (const Lexeme& lex, token->lexemes()) {
+			if (lex.tag() == tag_wanted) {
+				wanted.push_back(lex);
+			}
+		}
+		assert(!wanted.empty());
+		token->replace_lexemes(wanted);
 	}
 }
 

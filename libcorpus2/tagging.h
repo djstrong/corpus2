@@ -56,6 +56,17 @@ bool select_preferred_disamb(const Tagset& tagset, Token* token);
   */
 void select_preferred_lexeme(const Tagset& tagset, Token* token);
 
+/** Forces one DISAMB TAG per token. Works as select_preferred_disamb,
+  * but multiple disamb lexemes may be left, as long as they differ only
+  * in base forms. Returns if any disamb found.
+  */
+bool select_preferred_disamb_tag(const Tagset& tagset, Token* token);
+
+/** Forces one TAG per token. Works as select_preferred_lexeme, but multiple
+  * lexemes may be left, as long as they differ only in base forms.
+  */
+void select_preferred_tag(const Tagset& tagset, Token* token);
+
 /** Encodes optional attributes with unspecified values as each value set.
   * This is to facilitate safe masking when the value in question is not to be
   * skipped.
