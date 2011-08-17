@@ -168,4 +168,11 @@ bool disambiguate_subset(Token* token, const Tag& mask_where,
 	return true;
 }
 
+void set_disambs(Token *token, const Tag& wanted_tag)
+{
+	foreach (Lexeme& lex, token->lexemes()) {
+		lex.set_disamb(lex.tag() == wanted_tag);
+	}
+}
+
 } /* end ns Corpus2 */

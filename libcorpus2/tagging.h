@@ -97,6 +97,8 @@ bool disambiguate_equal(Token* token, const Tag& mask_where,
 bool disambiguate_subset(Token* token, const Tag& mask_where,
 						const Tag& mask_wanted);
 
+/** Sets lexemes' disamb markers iff lexeme.tag is wanted_tag. */
+void set_disambs(Token *token, const Tag& wanted_tag);
 } /* end ns Corpus2 */
 
 #endif // LIBCORPUS2_TAGGING_H

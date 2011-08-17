@@ -37,6 +37,7 @@ bool disambiguate_equal(Token* token, const Tag& mask_where, const Tag& mask_wan
 
 bool disambiguate_subset(Token* token, const Tag& mask_where, const Tag& mask_wanted);
 
+void set_disambs(Token *token, const Tag& wanted_tag);
 }
 
 using namespace std;
