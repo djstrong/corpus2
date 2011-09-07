@@ -34,6 +34,8 @@ typedef boost::int8_t idx_t;
 typedef PwrNlp::bitset<64> mask_t;
 BOOST_STRONG_TYPEDEF(boost::uint32_t, tagset_idx_t);
 
+const mask_t filled_mask(PwrNlp::filled_bitset<64>());
+
 /**
  * This is an extended version of a POS tag, which also includes a number
  * of attributes which may have values set.

@@ -37,6 +37,13 @@ static const size_t ulong_bits = sizeof(unsigned long) * CHAR_BIT;
 
 typedef bitset<ulong_bits> word_bitset;
 
+template<size_t S>
+std::bitset<S> filled_bitset()
+{
+	std::bitset<S> b = std::bitset<S>();
+	b.flip();
+	return b;
+}
 
 /**
  * Count set bits in a integral type.
