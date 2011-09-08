@@ -73,4 +73,6 @@ size_t hash_value(const Tag& tag)
 	return seed;
 }
 
+const Tag Tag::all_pos_mask(filled_mask);
+
 } /* end ns Corpus2 */

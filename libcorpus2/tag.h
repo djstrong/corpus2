@@ -34,6 +34,7 @@ typedef boost::int8_t idx_t;
 typedef PwrNlp::bitset<64> mask_t;
 BOOST_STRONG_TYPEDEF(boost::uint32_t, tagset_idx_t);
 
+/// Full mask (1's only), may be used for all-POS tags.
 const mask_t filled_mask(PwrNlp::filled_bitset<64>());
 
 /**
@@ -45,6 +46,12 @@ const mask_t filled_mask(PwrNlp::filled_bitset<64>());
  * you an appropriate Tagset object. These operations include tag creation,
  * getting tag string representation and retrieving values of particular
  * attributes.
+ *
+ * NOTE: tags are essentialy binary masks, hence they may be either valid
+ * "singular" tags or they may be used as POS or attribute masks used to
+ * retrieve values of some attributes/POS from another tags. Note that given
+ * a Tag object alone it is not possible to determine if a tag is singular or
+ * valid. See comments of the Tagset class for those details.
  */
 class Tag
 //	: boost::equality_comparable<Tag>, boost::less_than_comparable<Tag>
@@ -165,6 +172,12 @@ public:
 		ar & pos_;
 		ar & values_;
 	}
+
+	/**
+	  * A mask with the whole POS part filled with 1's, useful to extract POS
+	  * values from other tags.
+	  */
+	const static Tag all_pos_mask;
 
 private:
 	/// the POS id
