@@ -223,6 +223,7 @@ int main(int argc, char** argv)
 			("sort,s", value(&sort)->zero_tokens(),
 			 "Sort parsed tags")
 			("help,h", "Show help")
+			("version", "print version string")
 			;
 	boost::program_options::variables_map vm;
 	boost::program_options::positional_options_description p;
@@ -243,6 +244,10 @@ int main(int argc, char** argv)
 		std::cout << "Available tagsets: ";
 		std::cout << Corpus2::available_tagsets() << "\n";
 		return 1;
+	}
+	if (vm.count("version")) {
+		std::cout << "tagset-tool (libcorpus2) " << Corpus2::version_string() << "\n";
+		return 0;
 	}
 
 	Corpus2::Path::Instance().set_verbose(!quiet);
