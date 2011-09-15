@@ -28,13 +28,6 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
-const std::string version_string()
-{
-	std::stringstream version;
-	version << version_major << "." << version_minor << "." << version_patch;
-	return version.str();
-}
-
 Corpus2PathSearcher::Corpus2PathSearcher()
 	: PwrNlp::PathSearcher<FileNotFound>(LIBCORPUS2_PATH_SEPARATOR)
 {

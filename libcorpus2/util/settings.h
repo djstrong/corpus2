@@ -23,12 +23,6 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
-const int version_major = (LIBCORPUS2_VERSION_MAJOR);
-const int version_minor = (LIBCORPUS2_VERSION_MINOR);
-const int version_patch = (LIBCORPUS2_VERSION_PATCH);
-
-const std::string version_string();
-
 class Corpus2PathSearcher : public PwrNlp::PathSearcher<FileNotFound>
 {
 public:

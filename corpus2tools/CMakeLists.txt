@@ -8,6 +8,7 @@ if (Libedit_FOUND)
 endif (Libedit_FOUND)
 
 include_directories( ${CMAKE_SOURCE_DIR} )
+include_directories(${corpus2_BINARY_DIR}/include)
 
 add_executable( tagset-tool tagset-tool.cpp )
 target_link_libraries ( tagset-tool corpus2 pwrutils ${Boost_LIBRARIES} ${LIBS})

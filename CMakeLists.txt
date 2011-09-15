@@ -4,10 +4,6 @@ set(corpus2_ver_major "1")
 set(corpus2_ver_minor "0")
 set(corpus2_ver_patch "12")
 
-add_definitions(-DLIBCORPUS2_VERSION_MAJOR=${corpus2_ver_major})
-add_definitions(-DLIBCORPUS2_VERSION_MINOR=${corpus2_ver_minor})
-add_definitions(-DLIBCORPUS2_VERSION_PATCH=${corpus2_ver_patch})
-
 cmake_minimum_required(VERSION 2.8.0)
 
 # use some of our own Find* scripts

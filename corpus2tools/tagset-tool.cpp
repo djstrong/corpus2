@@ -32,6 +32,13 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <histedit.h>
 #endif
 
+#ifdef HAVE_CONFIG_D_H
+#include <libcorpus2/config_d.h>
+#endif
+
+// not checking for HAVE_VERSION, there is no reason it shouldn't be there
+#include <libcorpus2/version.h>
+
 namespace {
 	const char* _prompt = "> ";
 }
@@ -246,7 +253,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	if (vm.count("version")) {
-		std::cout << "tagset-tool (libcorpus2) " << Corpus2::version_string() << "\n";
+		std::cout << "tagset-tool (libcorpus2) " << LIBCORPUS2_VERSION << "\n";
 		return 0;
 	}
 
