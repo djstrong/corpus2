@@ -90,6 +90,11 @@ public:
 	void set_wa(const PwrNlp::Whitespace::Enum& wa) {
 		wa_ = wa;
 	}
+	
+	/// If any whitespace came before this token.
+	bool after_space() const {
+		return wa_ != PwrNlp::Whitespace::None;
+	}
 
 	/// Lexemes getter
 	const std::vector<Lexeme>& lexemes() const {

@@ -37,6 +37,7 @@ namespace Corpus2 {
 
     const PwrNlp::Whitespace::Enum& wa() const;
     void set_wa(const PwrNlp::Whitespace::Enum& wa);
+    bool after_space() const;
 
     const std::vector<Lexeme>& lexemes() const;
     std::vector<Lexeme>& lexemes();
