@@ -557,12 +557,20 @@ std::vector<Tag> Tagset::split_tag(const Tag& tag) const
 				if ((v & vm).any()) {
 					if (dup) {
 						for (size_t i = 0; i < sz; ++i) {
-							tags.push_back(tags[i]);
+							Tag new_tag = tags[i];
+							mask_t new_vals = new_tag.get_values();
+							new_vals &= ~ma; // clear whole attr
+							new_vals ^= vm; // add just the new value
+							// tags[i].add_values(vm);
+							new_tag.set_values(new_vals);
+							tags.push_back(new_tag);
 						}
 					}
-					dup = true;
-					for (size_t i = 0; i < sz; ++i) {
-						tags[i].add_values(vm);
+					else {
+						dup = true;
+						for (size_t i = 0; i < sz; ++i) {
+							tags[i].add_values(vm);
+						}
 					}
 				}
 			}
