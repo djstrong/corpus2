@@ -5,6 +5,7 @@
 %{
   #include <unicode/unistr.h>
   #include <libcorpus2/lexeme.h>
+/*   #include <boost/make_shared.hpp> */
 %}
 
 %include "tag.i"
@@ -16,6 +17,8 @@
 
 %rename(__op_eq__) Corpus2::Lexeme::operator==(const Lexeme& other) const;
 %rename(__op_lw__) Corpus2::Lexeme::operator<(const Lexeme& other) const;
+
+/* %template(TagPtr) boost::shared_ptr<Corpus2::Tag>; */
 
 namespace Corpus2 {
   class Lexeme {
@@ -32,7 +35,7 @@ namespace Corpus2 {
     void set_lemma(const UnicodeString& l);
     void set_lemma_utf8(const std::string& l);
 
-    const Tag& tag() const;
+/*     const Tag& tag() const; UNSAFE */
     void set_tag(const Tag& tag);
 
     bool is_null() const;
@@ -42,6 +45,13 @@ namespace Corpus2 {
     bool operator<(const Lexeme& other) const;
     bool operator==(const Lexeme& other) const;
   };
+
+  %extend Lexeme {
+    /* Override lex.tag() with a version that returns a copy. */
+    Corpus2::Tag tag() {
+      return Corpus2::Tag(self->tag().get_pos(), self->tag().get_values());
+    }
+  }
 }
 
 using namespace std;
