@@ -6,9 +6,10 @@ import sys
 import corpus2
 from StringIO import StringIO
 
-descr = """%prog [options] TAGDCORP REFCORP
+descr = """%prog [options] TAGDFOLD1 ... REFFOLD1 ...
 
-Evaluates tagging of tagged corpus TAGDCORP using REFCORP as the gold standard.
+Evaluates tagging of tagged corpus consisting of possibly several folds using
+the given reference corpus (gold standard). The subsequent folds should match.
 """
 
 changelog = """
@@ -18,6 +19,8 @@ changelog = """
 * fix debug strings
 * skip non-disamb tokens as Pantera artefacts
 * higher frac precision in output
+* extract measures to functions for averaging
+* averaging over folds
 """
 
 def text(tok_seq, respect_spaces):
@@ -246,6 +249,45 @@ class TokComp:
 					if self.debug: print '\t\tMISS, ref len', len(ref_seq)
 				if posval == 2:
 					self.ref_toks_amb_pos_strong_hit += len(ref_seq)
+	
+	def weak_lower_bound(self):
+		"""Returns weak correctness percentage counting only hits where
+		segmentation did not change. That is, lower bound of real WC."""
+		return 100.0 * self.ref_toks_noamb_weak_hit / self.ref_toks
+	
+	def strong_lower_bound(self):
+		"""Returns strong correctness percentage counting only hits where
+		segmentation did not change. That is, lower bound of real SC."""
+		return 100.0 * self.ref_toks_noamb_strong_hit / self.ref_toks
+	
+	def weak_corr(self):
+		"""Returns weak correctness, counting changes in segmentation
+		as failure unless they concern punctuation (see above for two
+		rules)."""
+		all_weak_hits = self.ref_toks_amb_weak_hit + self.ref_toks_noamb_weak_hit
+		return 100.0 * all_weak_hits / self.ref_toks
+	
+	def strong_corr(self):
+		"""As above but SC."""
+		all_strong_hits = self.ref_toks_amb_strong_hit + self.ref_toks_noamb_strong_hit
+		return 100.0 * all_strong_hits / self.ref_toks
+	
+	def pos_strong_corr(self):
+		"""POS-only SC."""
+		all_pos_strong_hits = self.ref_toks_amb_pos_strong_hit + self.ref_toks_noamb_pos_strong_hit
+		return 100.0 * all_pos_strong_hits / self.ref_toks
+	
+	def weak_upper_bound(self):
+		"""Upper bound for weak correctness, i.e. counting every reference
+		token subjected to segmentation change as hit."""
+		upper_weak_hits = self.ref_toks_noamb_weak_hit + self.ref_toks_amb
+		return 100.0 * upper_weak_hits / self.ref_toks
+	
+	def strong_upper_bound(self):
+		"""Upper bound for SC."""
+		upper_strong_hits = self.ref_toks_noamb_strong_hit + self.ref_toks_amb
+		return 100.0 * upper_strong_hits / self.ref_toks
+	
 	def dump(self):
 		print '----'
 		print 'REF-toks\t%d' % self.ref_toks
@@ -254,11 +296,9 @@ class TokComp:
 		print 'TAGGER-amb-toks\t%d\t%.4f%%' % (self.tag_toks_amb, 100.0 * self.tag_toks_amb / self.tag_toks)
 		print
 		print 'REF-weak-hits-noamb (lower bound)\t%d\t%.4f%%' % \
-			(self.ref_toks_noamb_weak_hit, \
-			100.0 * self.ref_toks_noamb_weak_hit / self.ref_toks)
+			(self.ref_toks_noamb_weak_hit, self.weak_lower_bound())
 		print 'REF-strong-hits-noamb (lower bound)\t%d\t%.4f%%' % \
-			(self.ref_toks_noamb_strong_hit, \
-			100.0 * self.ref_toks_noamb_strong_hit / self.ref_toks)
+			(self.ref_toks_noamb_strong_hit, self.strong_lower_bound())
 		print
 		print 'REF-weak-hits-amb (heur recover)\t%d\t%.4f%%' % \
 			(self.ref_toks_amb_weak_hit, \
@@ -273,28 +313,27 @@ class TokComp:
 			(self.ref_toks_amb_pos_strong_hit, \
 			100.0 * self.ref_toks_amb_pos_strong_hit / self.ref_toks)
 		print
-		all_weak_hits = self.ref_toks_amb_weak_hit + self.ref_toks_noamb_weak_hit
+		
 		print 'REF-weak-hits-all (heur)\t%d\t%.4f%%' % \
-			(all_weak_hits, \
-			100.0 * all_weak_hits / self.ref_toks)
-		all_strong_hits = self.ref_toks_amb_strong_hit + self.ref_toks_noamb_strong_hit
+			(self.ref_toks_amb_weak_hit + self.ref_toks_noamb_weak_hit, \
+			self.weak_corr())
+		
 		print 'REF-strong-hits-all (heur)\t%d\t%.4f%%' % \
-			(all_strong_hits, \
-			100.0 * all_strong_hits / self.ref_toks)
-		all_pos_strong_hits = self.ref_toks_amb_pos_strong_hit + self.ref_toks_noamb_pos_strong_hit
+			(self.ref_toks_amb_strong_hit + self.ref_toks_noamb_strong_hit, \
+			self.strong_corr())
+		
 		print 'REF-POS-strong-hits-all (heur)\t%d\t%.4f%%' % \
-			(all_pos_strong_hits, \
-			100.0 * all_pos_strong_hits / self.ref_toks)
+			(self.ref_toks_amb_pos_strong_hit + self.ref_toks_noamb_pos_strong_hit, \
+			self.pos_strong_corr())
 		print
 		# all amb as hits
-		upper_weak_hits = self.ref_toks_noamb_weak_hit + self.ref_toks_amb
 		print 'REF-weak-hits-hitamb (upper bound)\t%d\t%.4f%%' % \
-			(upper_weak_hits, \
-			100.0 * upper_weak_hits / self.ref_toks)
-		upper_strong_hits = self.ref_toks_noamb_strong_hit + self.ref_toks_amb
+			(self.ref_toks_noamb_weak_hit + self.ref_toks_amb, \
+			self.weak_upper_bound())
+		
 		print 'REF-strong-hits-hitamb (upper bound)\t%d\t%.4f%%' % \
-			(upper_strong_hits, \
-			100.0 * upper_strong_hits/ self.ref_toks)
+			(self.ref_toks_noamb_strong_hit + self.ref_toks_amb, \
+			self.strong_upper_bound())
 
 def go():
 	parser = OptionParser(usage=descr)
@@ -317,24 +356,46 @@ def go():
 	parser.add_option('-d', '--debug', action='store_true', dest='debug_mode')
 	(options, args) = parser.parse_args()
 	
-	if len(args) != 2:
-		print 'You need to provide tagged corpus and reference corpus.'
+	if len(args) < 2 and len(args) % 2 != 0:
+		print 'You need to provide a series of tagged folds and a coresponding'
+		print 'series of reference folds.'
 		print 'See --help for details.'
 		print
 		sys.exit(1)
 	
-	tag_fn, ref_fn = args
 	tagset = corpus2.get_named_tagset(options.tagset)
 	
-	tag_rdr = corpus2.TokenReader.create_path_reader(options.input_format, tagset, tag_fn)
-	ref_rdr = corpus2.TokenReader.create_path_reader(options.input_format, tagset, ref_fn)
+	num_folds = len(args) / 2
 	
-	res = TokComp(tagset, options.punc_tag,
-		options.expand_optional, options.debug_mode)
+	weak_lower_bound = 0.0
+	weak_upper_bound = 0.0
+	weak = 0.0
+	strong_pos = 0.0
 	
-	for tag_seq, ref_seq in tok_seqs(tag_rdr, ref_rdr, options.respect_spaces, options.verbose, options.debug_mode):
-		res.update(tag_seq, ref_seq)
-	res.dump()
+	for fold_idx in range(num_folds):
+		tag_fn = args[fold_idx] # filename of tagged fold @ fold_idx
+		ref_fn = args[fold_idx + num_folds] # ... reference fold @ fold_idx
+		if options.verbose:
+			print '### FOLD %2d: %s (tag) v. %s (ref)' % ((fold_idx + 1), tag_fn, ref_fn)
+		tag_rdr = corpus2.TokenReader.create_path_reader(options.input_format, tagset, tag_fn)
+		ref_rdr = corpus2.TokenReader.create_path_reader(options.input_format, tagset, ref_fn)
+		
+		res = TokComp(tagset, options.punc_tag,
+			options.expand_optional, options.debug_mode)
+		for tag_seq, ref_seq in tok_seqs(tag_rdr, ref_rdr, options.respect_spaces, options.verbose, options.debug_mode):
+			res.update(tag_seq, ref_seq)
+		if options.verbose:
+			res.dump()
+		weak_lower_bound += res.weak_lower_bound()
+		weak_upper_bound += res.weak_upper_bound()
+		weak += res.weak_corr()
+		strong_pos += res.pos_strong_corr()
+	
+	print 'AVG weak corr lower bound\t%.4f%%' % (weak_lower_bound / num_folds)
+	print 'AVG weak corr upper bound\t%.4f%%' % (weak_upper_bound / num_folds)
+	print 'AVG weak corr (heur)\t%.4f%%' % (weak / num_folds)
+	print 'AVG POS strong corr\t%.4f%%' % (strong_pos / num_folds)
+	
 
 if __name__ == '__main__':
 	go()
