@@ -57,7 +57,7 @@ def tok_seqs(rdr_here, rdr_there, respect_spaces, verbose_mode, debug_mode):
 	buff_here = [tok_here]
 	buff_there = [tok_there]
 	
-	LIMIT = 20
+	LIMIT = 30
 	
 	num_iter = 0
 	
@@ -124,12 +124,15 @@ class TokComp:
 	non-punct token.
 	
 	punc_tag is a string representation of tag used for punctuation.
+	unk_tag is a string representation of tag used for unknown words.
 	Set expand_optional to True if ommission of optional attribute
 	values should be treated as multiple tags, each with a different
 	variant of the value."""
-	def __init__(self, tagset, punc_tag, expand_optional, debug = False):
+	def __init__(self, tagset, punc_tag, unk_tag,
+		expand_optional, debug = False):
 		self.tagset = tagset
 		self.punc_tag = punc_tag
+		self.unk_tag = unk_tag
 		self.expand_optional = expand_optional
 		self.debug = debug
 		self.ref_toks = 0 # all tokens in ref corpus
@@ -157,6 +160,10 @@ class TokComp:
 	def is_punc(self, tok):
 		tok_tags = set([self.tagset.tag_to_string(lex.tag()) for lex in tok.lexemes() if lex.is_disamb()])
 		return tok_tags == set([self.punc_tag])
+	
+	def is_unknown(self, tok):
+		tok_tags = [self.tagset.tag_to_string(lex.tag()) for lex in tok.lexemes()]
+		return unk_tag in tok_tags
 	
 	def tagstrings_of_token(self, tok):
 		"""Returns a set of strings, corresponding to disamb tags
@@ -204,6 +211,8 @@ class TokComp:
 	def update(self, tag_seq, ref_seq):
 		self.tag_toks += len(tag_seq)
 		self.ref_toks += len(ref_seq)
+		
+		unk_tokens = sum(self.is_unk(ref_tok) for ref_tok in 
 		
 		# first variant: no segmentation mess
 		if len(tag_seq) == 1 and len(ref_seq) == 1:
@@ -356,7 +365,7 @@ def go():
 	parser.add_option('-d', '--debug', action='store_true', dest='debug_mode')
 	(options, args) = parser.parse_args()
 	
-	if len(args) < 2 and len(args) % 2 != 0:
+	if len(args) < 2 or len(args) % 2 != 0:
 		print 'You need to provide a series of tagged folds and a coresponding'
 		print 'series of reference folds.'
 		print 'See --help for details.'
