@@ -10,6 +10,9 @@ descr = """%prog [options] TAGDFOLD1 ... REFFOLD1 ...
 
 Evaluates tagging of tagged corpus consisting of possibly several folds using
 the given reference corpus (gold standard). The subsequent folds should match.
+
+E.g. PYTHONIOENCODING=utf8 ./tagger-eval.py tagged??.xml folds/test??.xml | tee results.txt
+
 """
 
 changelog = """
@@ -256,7 +259,10 @@ class TokComp:
 			all_punc_ref = all(self.is_punc(tok) for tok in ref_seq)
 			all_punc_tag = all(self.is_punc(tok) for tok in tag_seq)
 			if all_punc_ref and all_punc_tag:
-				for feats in pre_feat_sets: feats.update([Feat.ALLPUNC_HIT, Feat.STRONG_POS_HIT, Feat.STRONG_TAG_HIT])
+				for feats in pre_feat_sets:
+					feats.update([Feat.ALLPUNC_HIT,
+						Feat.WEAK_POS_HIT, Feat.STRONG_POS_HIT,
+						Feat.WEAK_TAG_HIT, Feat.STRONG_TAG_HIT])
 				# second variant: PUNC v. PUNC gives hit
 				if self.debug: print '\t\tpunc hit, ref len', len(ref_seq)
 			else:
@@ -269,7 +275,7 @@ class TokComp:
 					hit_feats = self.cmp_toks(nonpunc_tag[0], nonpunc_ref[0])
 					for feats in pre_feat_sets:
 						feats.update(hit_feats)
-					if hit_feats:
+					if Feat.WEAK_TAG_HIT in hit_feats:
 						for feats in pre_feat_sets:
 							feats.add(Feat.PUNCAROUND_HIT)
 						if self.debug: print '\t\tpuncPLUS weak hit, ref len', len(ref_seq)
