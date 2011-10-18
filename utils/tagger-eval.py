@@ -138,6 +138,9 @@ class Metric:
 	# heur recover
 	PUNCHIT_PUNCONLY = ([Feat.ALLPUNC_HIT], None)
 	PUNCHIT_AROUND = ([Feat.PUNCAROUND_HIT], None)
+	# percentage of known and unknown tokens
+	KN = ([Feat.KNOWN], None)
+	UNK = ([Feat.UNKNOWN], None)
 	# percentage of tokens subjected to seg change
 	SEG_CHANGE = ([Feat.SEG_CHANGE], None)
 	SEG_NOCHANGE = ([Feat.SEG_NOCHANGE], None)
@@ -355,6 +358,9 @@ def go():
 	unk_weak = 0.0
 	unk_strong_pos = 0.0
 	
+	perc_unk = 0.0
+	perc_segchange = 0.0
+	
 	for fold_idx in range(num_folds):
 		tag_fn = args[fold_idx] # filename of tagged fold @ fold_idx
 		ref_fn = args[fold_idx + num_folds] # ... reference fold @ fold_idx
@@ -375,6 +381,8 @@ def go():
 		strong_pos += res.value_of(Metric.POS_SC)
 		unk_weak += res.value_of(Metric.UNK_WC)
 		unk_strong_pos += res.value_of(Metric.UNK_POS_SC)
+		perc_unk += res.value_of(Metric.UNK)
+		perc_segchange += res.value_of(Metric.SEG_CHANGE)
 	
 	print 'AVG weak corr lower bound\t%.4f%%' % (weak_lower_bound / num_folds)
 	print 'AVG weak corr upper bound\t%.4f%%' % (weak_upper_bound / num_folds)
@@ -382,6 +390,8 @@ def go():
 	print 'AVG POS strong corr\t%.4f%%' % (strong_pos / num_folds)
 	print 'AVG UNK weak corr (heur)\t%.4f%%' % (unk_weak / num_folds)
 	print 'AVG UNK POS strong corr\t%.4f%%' % (unk_strong_pos / num_folds)
+	print 'AVG percentage UNK\t%.4f%%' % (perc_unk / num_folds)
+	print 'AVG percentage seg change\t%.4f%%' % (perc_segchange / num_folds)
 	
 
 if __name__ == '__main__':
