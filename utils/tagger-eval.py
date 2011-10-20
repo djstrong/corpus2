@@ -27,7 +27,7 @@ changelog = """
 * separate stats for unknown forms
 """
 
-def text(tok_seq, respect_spaces):
+def text(tok_seq, respect_spaces, mark_boundaries = False):
 	"""Extracts text from a sequence of tokens. If respect_spaces, will append
 	spaces between tokens where no no-space markers present."""
 	buff = StringIO()
@@ -35,10 +35,14 @@ def text(tok_seq, respect_spaces):
 	for tok in tok_seq:
 		if nonfirst and respect_spaces and tok.after_space():
 			buff.write(' ')
+		if mark_boundaries:
+			buff.write('[')
 		buff.write(tok.orth_utf8().decode('utf-8'))
+		if mark_boundaries:
+			buff.write(']')
 		nonfirst = True
 	return buff.getvalue()
-		
+
 def next_tok(rdr):
 	while True:
 		tok = rdr.get_next_token()
@@ -253,6 +257,8 @@ class TokComp:
 			pre_feat_sets[0].add(Feat.SEG_NOCHANGE)
 			pre_feat_sets[0].update(self.cmp_toks(tag_seq[0], ref_seq[0]))
 		else:
+			if self.debug:
+				print 'SEGCHANGE\t%s\t%s' % (text(tag_seq, True, True), text(ref_seq, True, True))
 			# mark all as subjected to segmentation changes
 			for feats in pre_feat_sets: feats.add(Feat.SEG_CHANGE)
 			# check if all ref and tagged toks are punctuation
