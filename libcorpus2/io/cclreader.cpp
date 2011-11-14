@@ -20,6 +20,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libxml++/libxml++.h>
 #include <libxml2/libxml/parser.h>
 #include <boost/make_shared.hpp>
+#include <boost/algorithm/string.hpp>
 #include <libcorpus2/ann/annotatedsentence.h>
 #include <cstdlib>
 #include <fstream>
@@ -53,11 +54,14 @@ protected:
 	void finish_token();
 
 	static const int STATE_ANN = 901;
-	static const int STATE_REL = 902;
+	static const int STATE_REL = 902; // currently unused
+	static const int STATE_PROP = 910;
 
 	boost::shared_ptr<AnnotatedSentence> ann_sent_;
 
 	std::string ann_chan_;
+
+	std::string prop_key_;
 
 	bool ann_head_;
 
@@ -171,6 +175,17 @@ bool CclReaderImpl::process_start_element(const Glib::ustring & name,
 			throw XcesError("<ann> with no channel name");
 		}
 		return true;
+	} else if (state_ == STATE_TOK && name == "prop") {
+		state_ = STATE_PROP;
+		grab_characters_ = true;
+		clear_buf();
+		prop_key_ = "";
+		foreach (const Attribute& a, attributes) {
+			if (a.name == "key") {
+				prop_key_ = a.value;
+			}
+		}
+		return true;
 	} else {
 		return false;
 	}
@@ -191,6 +206,17 @@ bool CclReaderImpl::process_end_element(const Glib::ustring & name)
 				token_ann_heads_.insert(ann_chan_);
 			}
 		}
+		state_ = STATE_TOK;
+		return true;
+	} else if (state_ == STATE_PROP && name == "prop") {
+		std::string prop_val = get_buf();
+		boost::algorithm::trim(prop_val);
+		grab_characters_ = false;
+		if (!tok_->get_metadata()) {
+			tok_->create_metadata();
+		}
+		tok_->get_metadata()->set_attribute(prop_key_, prop_val);
+
 		state_ = STATE_TOK;
 		return true;
 	} else {

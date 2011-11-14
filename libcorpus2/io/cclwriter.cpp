@@ -2,6 +2,7 @@
 #include <libpwrutils/foreach.h>
 #include <libcorpus2/ann/annotatedsentence.h>
 #include <libcorpus2/io/xcescommon.h>
+#include <libcorpus2/tokenmetadata.h>
 
 namespace Corpus2 {
 
@@ -49,9 +50,18 @@ void CclWriter::write_sentence_int(const Sentence &s)
 				os() << v.second.get_segment_at(idx);
 				os() << "</ann>\n";
 			}
+			TokenMetaData* md = t->get_metadata();
+			if (md) {
+				foreach (const TokenMetaData::attr_map_t::value_type& v, md->attributes()) {
+					osi() << "<prop key=\"" << v.first << "\"" << ">";
+					os() << v.second << "</prop>\n";
+				}
+			}
 			if (use_indent_) indent_less();
 			osi() << "</tok>\n";
 		} else {
+			// TODO: currently writing of token metadata is supported only when
+			// we've got an AnnotatedSentence.
 			XmlWriter::write_token(*t);
 		}
 	}

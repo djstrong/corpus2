@@ -19,6 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/lexeme.h>
 #include <libcorpus2/tagset.h>
+#include <libcorpus2/tokenmetadata.h>
 
 #include <libpwrutils/util.h>
 #include <libpwrutils/whitespace.h>
@@ -35,7 +36,7 @@ namespace Corpus2 {
 
 
 /// Forward declaration of optional Token metadata class
-class TokenMetaData;
+//class TokenMetaData;
 
 /**
  * A single token with morphological analyses.
