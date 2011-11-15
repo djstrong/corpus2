@@ -113,6 +113,11 @@ public:
 		return tokens_[0];
 	}
 
+	/// Identifier getter
+	const std::string id() const {
+		return id_;
+	}
+
 protected:
 	/// The tokens this sentence contains and owns
 	std::vector<Token*> tokens_;
