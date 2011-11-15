@@ -17,7 +17,11 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef LIBCORPUS2_DOCREADER_H
 #define LIBCORPUS2_DOCREADER_H
 
-#include <libcorpus2/io/reader.h>
+#include <libcorpus2/document.h>
+#include <libcorpus2/io/cclreader.h>
+#include <libcorpus2/io/relreader.h>
+
+#include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
 
@@ -32,11 +36,39 @@ public:
 	 * chunk-style annotations are read from annot_path, while relations
 	 * between chunk-style annotations are read from rela_path.
 	 * Both path may in particular point to the same path.
-	 * TODO!
+	 * @param tagset Tagset to use
+	 * @param annot_path Path to file with morphosyntax and chunk-style annotations
+	 * @param rela_path  path to file with relations
 	 */
-	DocumentReader(const std::string &annot_path,
-				   const std::string &rela_path,
-				   const std::string &rdr_class_id = "ccl");
+	DocumentReader(const Tagset& tagset,
+				   const std::string &annot_path,
+				   const std::string &rela_path);
+
+	/**
+	 * Reads document stored in given file(s), in file with morphosyntax and
+	 * chunk-style annotations and from file with relations.
+	 * @return Pointer to readed Document
+	 */
+	boost::shared_ptr<Document> read();
+
+private:
+	/**
+	 * Makes CclReader and RelationReader for given paths to files.
+	 * @param annot_path Path to file with morphosyntax and chunk-style annotations
+	 * @param tagset Tagset to use in CclReader
+	 * @param rela_path  path to file with relations
+	 */
+	void make_readers(
+			const Tagset& tagset,
+			const std::string &annot_path,
+			const std::string &rela_path);
+
+	// -------------------------------------------------------------------------
+	/// Pointer to CclReader
+	boost::shared_ptr<CclReader> ccl_reader_;
+
+	/// Pointer to RelationReader
+	boost::shared_ptr<RelationReader> rel_reader_;
 };
 } /* end ns Corpus2 */
 

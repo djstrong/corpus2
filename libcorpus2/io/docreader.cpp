@@ -14,9 +14,40 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE and COPYING files for more details.
 */
 
-#include <libcorpus2/io/docreader.h>
 #include <boost/make_shared.hpp>
+#include <libcorpus2/io/docreader.h>
 
 namespace Corpus2 {
+	DocumentReader::DocumentReader(const Tagset& tagset,
+		const std::string &annot_path, const std::string &rela_path)
+	{
+		make_readers(tagset, annot_path, rela_path);
+	}
+
+	void DocumentReader::make_readers(const Tagset& tagset,
+		const std::string &annot_path, const std::string &rela_path)
+	{
+		ccl_reader_ = boost::make_shared<CclReader>(tagset, annot_path);
+		rel_reader_ = boost::make_shared<RelationReader>(rela_path);
+	}
+
+	boost::shared_ptr<Document> DocumentReader::read()
+	{
+		boost::shared_ptr<Chunk> chunk;
+		boost::shared_ptr<Document> document = boost::make_shared<Document>();
+
+		// Read ccl document and makes document
+		while (1) {
+			chunk = ccl_reader_->get_next_chunk();
+			if (!chunk) {
+				break;
+			}
+			else {
+				document->add_paragraph(chunk);
+			}
+		}
+
+		return document;
+	}
 
 } /* end ns Corpus2 */
