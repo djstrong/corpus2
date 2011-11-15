@@ -6,8 +6,8 @@
 
 namespace Corpus2 {
 
-AnnotatedSentence::AnnotatedSentence()
-	: Sentence(), channels_()
+AnnotatedSentence::AnnotatedSentence(const std::string &id)
+	: Sentence(id), channels_()
 {
 }
 

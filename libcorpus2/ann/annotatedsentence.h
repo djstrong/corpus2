@@ -37,7 +37,7 @@ public:
 	/**
 	 * Create an empty AnnotatedSentece with no tokens and no channels
 	 */
-	AnnotatedSentence();
+	AnnotatedSentence(const std::string &id = "");
 
 	~AnnotatedSentence();
 
