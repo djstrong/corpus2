@@ -140,9 +140,18 @@ void CclReaderImpl::start_chunk(const AttributeList& attributes)
 
 
 
-void CclReaderImpl::start_sentence(const AttributeList& /*attributes*/)
+void CclReaderImpl::start_sentence(const AttributeList &attributes)
 {
-	ann_sent_ = boost::make_shared<AnnotatedSentence>();
+	// find sentence id
+	std::string id = "";
+	foreach (const Attribute& a, attributes) {
+		if (a.name == "id") {
+			id = a.value;
+			break;
+		}
+	}
+
+	ann_sent_ = boost::make_shared<AnnotatedSentence>(id);
 	sent_ = ann_sent_;
 	state_ = STATE_SENTENCE;
 }

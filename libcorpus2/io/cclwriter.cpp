@@ -33,7 +33,15 @@ void CclWriter::write_sentence(const Sentence& s)
 void CclWriter::write_sentence_int(const Sentence &s)
 {
 	const AnnotatedSentence* ann = dynamic_cast<const AnnotatedSentence*>(&s);
-	osi() << "<sentence>\n";
+
+	std::string id = s.id();
+	if (id == "") {
+		osi() << "<sentence>\n";
+	}
+	else {
+		osi() << "<sentence id=\"" << id << "\">\n";
+	}
+
 	if (use_indent_) indent_more();
 	for (size_t idx = 0; idx < s.size(); ++idx) {
 		const Token* t = s.tokens()[idx];
