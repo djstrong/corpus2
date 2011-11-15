@@ -43,6 +43,8 @@ namespace Corpus2 {
 
     virtual void append(Token* t);
     const Token* first_token() const;
+
+    const std::string id() const;
   };
 }
 
