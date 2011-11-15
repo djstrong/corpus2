@@ -41,6 +41,7 @@ SET(libcorpus2_STAT_SRC
 	ann/iob.cpp
 	ann/view.cpp
 	chunk.cpp
+	document.cpp
 	exception.cpp
 	lexeme.cpp
 	sentence.cpp
@@ -53,6 +54,7 @@ SET(libcorpus2_STAT_SRC
 	tokenmetadata.cpp
 	io/cclreader.cpp
 	io/cclwriter.cpp
+	io/docreader.cpp
 	io/helpers.cpp
 	io/fastxces.cpp
 	io/iob-chan.cpp
