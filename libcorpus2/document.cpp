@@ -20,7 +20,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 Document::Document()
-	: paragraphs_()
+	: paragraphs_(), relations_()
 {
 }
 

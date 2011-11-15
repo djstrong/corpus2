@@ -18,6 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #define LIBCORPUS2_DOCUMENT_H
 
 #include <libcorpus2/chunk.h>
+#include <libcorpus2/relation.h>
 #include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
@@ -34,16 +35,32 @@ public:
 	Document();
 	~Document();
 
+	/// Adds paragraphs to document
 	void add_paragraph(const boost::shared_ptr<Chunk> para) {
 		paragraphs_.push_back(para);
 	}
 
+	/// Adds relation to document relations
+	void add_relation(const boost::shared_ptr<Relation> relation) {
+		relations_.push_back(relation);
+	}
+
+	/// Paragraphs accessor
 	const std::vector< boost::shared_ptr<Chunk> >& paragraphs() const {
 		return paragraphs_;
 	}
 
+	/// Relations accessor
+	const std::vector< boost::shared_ptr<Relation> >& relations() const {
+		return relations_;
+	}
+
 protected:
+	/// Paragraphs in document
 	std::vector< boost::shared_ptr<Chunk> > paragraphs_;
+
+	/// Relations in document
+	std::vector< boost::shared_ptr<Relation> > relations_;
 };
 
 } /* end ns Corpus2 */
