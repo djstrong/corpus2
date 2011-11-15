@@ -45,8 +45,9 @@ public:
 	/// Convenience typedef for a shared pointer to a const Sentence
 	typedef boost::shared_ptr<const Sentence> ConstPtr;
 
-	/// Empty constructor. Creates a Sentence with no tokens.
-	Sentence();
+	/// Constructor with default (empty) sentence identifier. 
+	/// Creates a Sentence with no tokens.
+	Sentence(const std::string &id = "");
 
 	/// Sentence cloning. All the tokens are duplicated.
 	virtual Ptr clone_shared() const;
@@ -115,6 +116,9 @@ public:
 protected:
 	/// The tokens this sentence contains and owns
 	std::vector<Token*> tokens_;
+
+	/// The sentence identifer - default is empty
+	const std::string id_;
 };
 
 } /* end ns Corpus2 */
