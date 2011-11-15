@@ -44,6 +44,7 @@ SET(libcorpus2_STAT_SRC
 	document.cpp
 	exception.cpp
 	lexeme.cpp
+	relation.cpp
 	sentence.cpp
 	tag.cpp
 	tagging.cpp
