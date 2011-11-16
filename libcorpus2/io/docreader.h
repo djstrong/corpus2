@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski, Paweł Kędzia
 	Part of the libcorpus2 project
 
 	This program is free software; you can redistribute it and/or modify it
@@ -17,6 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef LIBCORPUS2_DOCREADER_H
 #define LIBCORPUS2_DOCREADER_H
 
+#include <libcorpus2/relation.h>
 #include <libcorpus2/document.h>
 #include <libcorpus2/io/cclreader.h>
 #include <libcorpus2/io/relreader.h>

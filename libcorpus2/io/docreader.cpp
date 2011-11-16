@@ -47,6 +47,10 @@ namespace Corpus2 {
 			}
 		}
 
+		// Read relations and adds them to the document
+		const std::vector< boost::shared_ptr<Relation> > relations =
+				rel_reader_->relations();
+
 		return document;
 	}
 
