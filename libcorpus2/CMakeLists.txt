@@ -66,6 +66,7 @@ SET(libcorpus2_STAT_SRC
 	io/plainwriter.cpp
 	io/premorphwriter.cpp
 	io/reader.cpp
+	io/relreader.cpp
 	io/rft.cpp
 	io/sax.cpp
 	io/statwriter.cpp
