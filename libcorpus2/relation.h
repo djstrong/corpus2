@@ -84,12 +84,12 @@ public:
 	~Relation();
 
 	/// Accessor to "from" direction point
-	const boost::shared_ptr<const DirectionPoint> from() const {
+	const boost::shared_ptr<const DirectionPoint>& from() const {
 		return from_;
 	}
 
 	/// Accessor to "to" direction point
-	const boost::shared_ptr<const DirectionPoint> to() const {
+	const boost::shared_ptr<const DirectionPoint>& to() const {
 		return to_;
 	}
 
