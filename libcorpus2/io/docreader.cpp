@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski, Paweł Kędzia
 	Part of the libcorpus2 project
 
 	This program is free software; you can redistribute it and/or modify it
@@ -50,6 +50,9 @@ namespace Corpus2 {
 		// Read relations and adds them to the document
 		const std::vector< boost::shared_ptr<Relation> > relations =
 				rel_reader_->relations();
+		for (unsigned int i = 0; i < relations.size(); i++) {
+			document->add_relation(relations[i]);
+		}
 
 		return document;
 	}
