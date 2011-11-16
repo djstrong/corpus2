@@ -93,6 +93,11 @@ public:
 		return to_;
 	}
 
+	/// Accessor to name of the relation
+	const std::string name() const {
+		return name_;
+	}
+
 private:
 	/// Direction name
 	const std::string& name_;
