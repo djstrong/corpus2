@@ -16,6 +16,7 @@
 %include "lexeme.i"
 %include "libpwrnlperror.i"
 %include "relation.i"
+%include "relationreader.i"
 %include "sentence.i"
 %include "tag.i"
 %include "tagging.i"
