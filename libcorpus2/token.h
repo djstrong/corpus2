@@ -24,6 +24,9 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libpwrutils/util.h>
 #include <libpwrutils/whitespace.h>
 
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
+
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/function.hpp>
 
@@ -186,13 +189,19 @@ public:
 	bool orth_pos_match(mask_t pos, const UnicodeString& orth) const;
 
 	/// Metadata setter
-	void set_metadata(TokenMetaData* md) {
-		metadata_.reset(md);
+	void set_metadata(TokenMetaData& md) {
+		// metadata_.reset(md);
+		metadata_ = md.clone();
+	}
+
+	/// Metadata setter (sets metadata as shared_ptr)
+	void set_metadata_ptr(boost::shared_ptr<TokenMetaData> md) {
+		metadata_ = md;
 	}
 
 	/// Metadata getter
-	TokenMetaData* get_metadata() const {
-		return metadata_.get();
+	boost::shared_ptr<TokenMetaData> get_metadata() const {
+		return metadata_;
 	}
 
 	/// Creates an empty metdata object for this Token
@@ -210,7 +219,8 @@ private:
 	std::vector<Lexeme> lexemes_;
 
 	/// Metadata
-	std::auto_ptr<TokenMetaData> metadata_;
+	// std::auto_ptr<TokenMetaData> metadata_;
+	boost::shared_ptr<TokenMetaData> metadata_;
 };
 
 } /* end ns Corpus2 */

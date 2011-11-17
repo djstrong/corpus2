@@ -58,7 +58,7 @@ void CclWriter::write_sentence_int(const Sentence &s)
 				os() << v.second.get_segment_at(idx);
 				os() << "</ann>\n";
 			}
-			TokenMetaData* md = t->get_metadata();
+			boost::shared_ptr<TokenMetaData> md = t->get_metadata();
 			if (md) {
 				foreach (const TokenMetaData::attr_map_t::value_type& v, md->attributes()) {
 					osi() << "<prop key=\"" << v.first << "\"" << ">";

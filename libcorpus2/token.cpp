@@ -23,7 +23,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 Token::Token()
-	: orth_(), wa_(), lexemes_(), metadata_(NULL)
+	: orth_(), wa_(), lexemes_(), metadata_()
 {
 }
 
@@ -44,8 +44,8 @@ Token* Token::clone() const
 	t->orth_ = orth_;
 	t->wa_ = wa_;
 	t->lexemes_ = lexemes_;
-	if (metadata_.get()) {
-		t->set_metadata(metadata_->clone());
+	if (metadata_) {
+		t->set_metadata_ptr(metadata_->clone());
 	}
 	return t;
 }
@@ -153,7 +153,8 @@ bool Token::orth_pos_match(mask_t pos, const UnicodeString &orth) const
 
 void Token::create_metadata()
 {
-	metadata_.reset(new TokenMetaData);
+	// metadata_.reset(new TokenMetaData);
+	metadata_ = boost::make_shared<TokenMetaData>();
 }
 
 } /* end ns Corpus2 */
