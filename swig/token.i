@@ -9,9 +9,11 @@
 
 %include "lexeme.i"
 %include "tagset.i"
+%include "tokenmetadata.i"
 
 %include "std_string.i"
 %include "std_vector.i"
+%include "boost_shared_ptr.i"
 
 
 %feature("notabstract") Corpus2::Token;
@@ -57,6 +59,10 @@ namespace Corpus2 {
 
     bool has_disamb_lexeme() const;
     int count_disamb_lexemes() const;
+
+    boost::shared_ptr<TokenMetaData> get_metadata() const;
+    void set_metadata(TokenMetaData& md);
+    void set_metadata_ptr(boost::shared_ptr<TokenMetaData> md);
   };
 }
 
