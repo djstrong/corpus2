@@ -12,6 +12,10 @@ link_directories(${Libcorpus2_BINARY_DIR})
 FIND_PACKAGE(SWIG REQUIRED)
 INCLUDE(${SWIG_USE_FILE})
 
+FIND_PACKAGE(LibXML++ REQUIRED QUIET)
+include_directories(${LibXML++_INCLUDE_DIRS})
+
+
 find_package(PythonLibs)
 find_package(PythonInterp)
 # idea taken from pyplot build system 
