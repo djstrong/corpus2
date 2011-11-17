@@ -152,6 +152,7 @@ std::vector<Annotation> AnnotationChannel::make_annotation_vector(
 				rv.resize(smax = s);
 			}
 			rv[s - 1].indices.push_back(i);
+			rv[s - 1].seg_number = s;
 			if (heads_[i]) {
 				rv[s - 1].head_index = i;
 			}

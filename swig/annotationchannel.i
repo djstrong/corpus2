@@ -18,9 +18,10 @@
 
 namespace Corpus2 {
   struct Annotation {
-    Annotation() : indices(), head_index(-1) {}
+    Annotation() : indices(), head_index(-1), seg_number(0) {}
     std::vector<int> indices;
     int head_index;
+    int seg_number;
     bool empty() const;
     bool sane() const;
   };

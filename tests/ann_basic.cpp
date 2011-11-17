@@ -119,6 +119,10 @@ BOOST_AUTO_TEST_CASE( make_ann )
 	BOOST_CHECK_EQUAL(anns[2].indices[1], 4);
 	BOOST_CHECK_EQUAL(anns[3].indices[0], 5);
 	BOOST_CHECK_EQUAL(anns[2].head_index, 3);
+	BOOST_CHECK_EQUAL(anns[0].seg_number, 1);
+	BOOST_CHECK_EQUAL(anns[1].seg_number, 2);
+	BOOST_CHECK_EQUAL(anns[2].seg_number, 3);
+	BOOST_CHECK_EQUAL(anns[3].seg_number, 4);
 }
 
 

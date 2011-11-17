@@ -13,12 +13,16 @@ namespace Corpus2 {
 /**
  * A general indexed annotation spanning a possibly disjoint group of
  * tokens, with a distinguished 'head' token.
+ * The annotation contains information about token indices (array subscripts
+ * referring to the original sentence), the index of a token marked as head,
+ * as well as the original segment number (segment index).
  */
 struct Annotation
 {
-	Annotation() : indices(), head_index(-1) {}
+	Annotation() : indices(), head_index(-1), seg_number(0) {}
 	std::vector<int> indices;
 	int head_index;
+	int seg_number;
 	bool empty() const {
 		return indices.empty();
 	}
