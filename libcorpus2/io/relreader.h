@@ -105,6 +105,8 @@ private:
 	bool readed_;
 	bool in_relation_;
 	bool in_relations_;
+	bool in_from_direct_;
+	bool in_to_direct_;
 
 	/// File pointer
 	boost::scoped_ptr<std::istream> file_;

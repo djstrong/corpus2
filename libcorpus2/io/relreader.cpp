@@ -28,6 +28,8 @@ RelationReader::RelationReader(const std::string &rela_path)
 	readed_ = false;
 	in_relation_ = false;
 	in_relations_ = false;
+	in_from_direct_ = false;
+	in_to_direct_ = false;
 
 	file_.reset(new std::ifstream(rela_path.c_str(), std::ifstream::in));
 
@@ -73,9 +75,11 @@ void RelationReader::on_start_element(const Glib::ustring& name,
 		parse_relation_name(attributes);
 	}
 	else if (in_relation_ && name == RELATION_DIRECT_FROM) {
+		in_from_direct_ = true;
 		parse_direction_from(attributes);
 	}
 	else if (in_relation_ && name == RELATION_DIRECT_TO) {
+		in_to_direct_ = true;
 		parse_direction_to(attributes);
 	}
 	else {
@@ -84,6 +88,8 @@ void RelationReader::on_start_element(const Glib::ustring& name,
 }
 
 void RelationReader::on_end_element(const Glib::ustring& name) {
+	int annotation_number = 99999999;
+
 	if (name == RELATIONS_TAG) {
 		in_relations_ = false;
 	}
@@ -95,6 +101,26 @@ void RelationReader::on_end_element(const Glib::ustring& name) {
 		} catch (...) {
 			throw;
 		}
+	}
+	else if (in_from_direct_) {
+		std::istringstream (ann_number_) >> annotation_number;
+		rel_from_ = boost::make_shared<DirectionPoint>(
+			rel_from_->sentence_id(),
+			rel_from_->channel_name(),
+			annotation_number
+		);
+		ann_number_ = "";
+		in_from_direct_ = false;
+	}
+	else if (in_to_direct_) {
+		std::istringstream (ann_number_) >> annotation_number;
+		rel_to_ = boost::make_shared<DirectionPoint>(
+			rel_to_->sentence_id(),
+			rel_to_->channel_name(),
+			annotation_number
+		);
+		ann_number_ = "";
+		in_to_direct_ = false;
 	}
 	else {
 		//
@@ -155,8 +181,6 @@ void RelationReader::parse_direction(const AttributeList& attributes,
 	int annotation_number = 99999999;
 	std::string sentence_id = get_attribute_value(attributes, RELATION_SENTENCE_ID);
 	std::string channel_name = get_attribute_value(attributes, RELATION_CHANNEL_NAME);
-
-	std::istringstream (ann_number_) >> annotation_number;
 
 	direct = boost::make_shared<DirectionPoint>(
 			sentence_id, channel_name, annotation_number);
