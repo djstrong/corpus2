@@ -81,6 +81,16 @@ public:
 			 const boost::shared_ptr<const DirectionPoint> from,
 			 const boost::shared_ptr<const DirectionPoint> to);
 
+	/**
+	 * Makes directed relation
+	 * @param name Name of the relation
+	 * @param from Source of relation direction
+	 * @param to Target of relation direction
+	 */
+	Relation(const std::string& name,
+			 const DirectionPoint& from,
+			 const DirectionPoint& to);
+
 	~Relation();
 
 	/// Accessor to "from" direction point
@@ -100,7 +110,7 @@ public:
 
 private:
 	/// Direction name
-	const std::string& name_;
+	const std::string name_;
 
 	/// Direction points: from and to
 	const boost::shared_ptr<const DirectionPoint> from_;

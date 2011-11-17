@@ -14,6 +14,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE and COPYING files for more details.
 */
 
+#include <boost/make_shared.hpp>
 #include <libcorpus2/relation.h>
 
 namespace Corpus2 {
@@ -22,6 +23,15 @@ Relation::Relation(const std::string& name,
 				   const boost::shared_ptr<const DirectionPoint> from,
 				   const boost::shared_ptr<const DirectionPoint> to)
 	: name_(name), from_(from), to_(to)
+{
+}
+
+Relation::Relation(const std::string& name,
+				   const DirectionPoint& from,
+				   const DirectionPoint& to)
+	: name_(name),
+	from_(boost::make_shared<const DirectionPoint>(from)),
+	to_(boost::make_shared<const DirectionPoint>(to))
 {
 }
 
