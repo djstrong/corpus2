@@ -13,8 +13,10 @@
 // %feature("notabstract") Corpus2::TokenMetaData;
 %template(DirectionPointPtr) boost::shared_ptr<Corpus2::DirectionPoint>;
 %template(ConstDirectionPointPtr) boost::shared_ptr<const Corpus2::DirectionPoint>;
+
 %template(RelationPtr) boost::shared_ptr<Corpus2::Relation>;
 %template(ConstRelationPtr) boost::shared_ptr<const Corpus2::Relation>;
+%template(RelationPtrVector) std::vector< boost::shared_ptr<Corpus2::Relation> >;
 
 namespace Corpus2 {
   class DirectionPoint {

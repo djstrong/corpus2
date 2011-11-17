@@ -19,6 +19,9 @@
 %include "sentence.i"
 
 %template(ChunkPtr) boost::shared_ptr<Corpus2::Chunk>;
+%template(ConstChunkPtr) boost::shared_ptr<const Corpus2::Chunk>;
+%template(ChunkPtrVector) std::vector< boost::shared_ptr<Corpus2::Chunk> >;
+
 %template(SentencePtrVector) std::vector<boost::shared_ptr<Sentence> >;
 // %template(attr_map_t) std::map<std::string, std::string>;
 
@@ -48,7 +51,6 @@ namespace Corpus2 {
   };
 }
 
-%template(ChunkPtrVector) std::vector<boost::shared_ptr<Chunk> >;
 using namespace std;
 using namespace Corpus2;
 
