@@ -104,7 +104,7 @@ void RelationReader::on_end_element(const Glib::ustring& name) {
 void RelationReader::on_characters(const Glib::ustring &text)
 {
 	if (in_relation_) {
-		ann_number_ = text.raw();
+		ann_number_ += text.raw();
 	}
 }
 

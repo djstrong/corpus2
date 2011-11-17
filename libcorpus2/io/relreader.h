@@ -45,7 +45,6 @@ public:
 	/**
 	 * Reads a document with relations
 	 * @param rela_path  path to file with relations
-	 * TODO! Not implemented yet!
 	 */
 	RelationReader(const std::string &rela_path);
 
