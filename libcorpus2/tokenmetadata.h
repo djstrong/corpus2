@@ -30,7 +30,7 @@ class TokenMetaData
 public:
 	TokenMetaData();
 
-	TokenMetaData* clone() const;
+	boost::shared_ptr<TokenMetaData> clone() const;
 
 	typedef std::map<std::string, std::string> attr_map_t;
 

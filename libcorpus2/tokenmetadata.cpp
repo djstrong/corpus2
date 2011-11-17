@@ -24,9 +24,9 @@ TokenMetaData::TokenMetaData()
 {
 }
 
-TokenMetaData* TokenMetaData::clone() const
+boost::shared_ptr<TokenMetaData> TokenMetaData::clone() const
 {
-	return new TokenMetaData(*this);
+	return boost::make_shared<TokenMetaData>(*this);
 }
 
 bool TokenMetaData::has_attribute(const std::string &name) const
