@@ -12,6 +12,7 @@
 %include "chunk.i"
 %include "iob.i"
 %include "lexeme.i"
+%include "relation.i"
 %include "sentence.i"
 %include "tag.i"
 %include "tagset.i"
