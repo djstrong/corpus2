@@ -10,6 +10,7 @@
 %include "annotationchannel.i"
 %include "annotationview.i"
 %include "chunk.i"
+%include "document.i"
 %include "iob.i"
 %include "lexeme.i"
 %include "relation.i"
