@@ -9,13 +9,14 @@
 %include "tag.i"
 %include "exception.i"
 
+%include "std_defs.i"
 %include "std_string.i"
 %include "std_vector.i"
 
 %feature("notabstract") Corpus2::Tagset;
 
 %template(TagVector) std::vector<Corpus2::Tag>;
-%template(StdStringVector) std::vector<std::string>;
+// %template(StdStringVector) std::vector<std::string>;
 
 namespace Corpus2 {
   class Tagset;

@@ -7,6 +7,8 @@
 %}
 
 
+%include "std_defs.i"
+
 %include "std_set.i"
 %include "std_map.i"
 %include "std_pair.i"
@@ -18,7 +20,7 @@
 
 %template(ChunkPtr) boost::shared_ptr<Corpus2::Chunk>;
 %template(SentencePtrVector) std::vector<boost::shared_ptr<Sentence> >;
-%template(attr_map_t) std::map<std::string, std::string>;
+// %template(attr_map_t) std::map<std::string, std::string>;
 
 namespace Corpus2 {
   class Chunk {

@@ -8,9 +8,11 @@
 
 %include "std_string.i"
 %include "std_vector.i"
-%include "iob.i"
 
-%template(IntVector) std::vector<int>;
+%include "iob.i"
+%include "std_defs.i"
+
+// %template(IntVector) std::vector<int>;
 %template(IOBVector) std::vector<Corpus2::IOB::Enum>;
 %template(AnnotationVector) std::vector<Corpus2::Annotation>;
 
