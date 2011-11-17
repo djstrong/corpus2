@@ -17,6 +17,7 @@
 %include "tagset.i"
 %include "tagsetmanager.i"
 %include "token.i"
+%include "tokenmetadata.i"
 %include "tokenreader.i"
 %include "tokenwriter.i"
 %include "libpwrnlperror.i"
