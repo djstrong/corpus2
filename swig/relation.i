@@ -10,7 +10,6 @@
 %include "std_string.i"
 %include "boost_shared_ptr.i"
 
-// %feature("notabstract") Corpus2::TokenMetaData;
 %template(DirectionPointPtr) boost::shared_ptr<Corpus2::DirectionPoint>;
 %template(ConstDirectionPointPtr) boost::shared_ptr<const Corpus2::DirectionPoint>;
 

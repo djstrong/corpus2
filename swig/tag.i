@@ -20,6 +20,8 @@
 %rename(__op_eq__) Corpus2::Tag::operator==(const Tag& other) const;
 %rename(__op_lw__) Corpus2::Tag::operator<(const Tag& other) const;
 
+%template(TagVector) std::vector<Corpus2::Tag>;
+
 namespace Corpus2 {
   class Tag {
   public:

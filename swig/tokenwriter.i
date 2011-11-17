@@ -15,7 +15,9 @@
 %include "boost_shared_ptr.i"
 
 %nodefaultctor Corpus2::TokenWriter;
+
 %template(TokenWriterPtr) boost::shared_ptr<Corpus2::TokenWriter>;
+%template(ConstTokenWriterPtr) boost::shared_ptr<const Corpus2::TokenWriter>;
 
 namespace Corpus2 {
   class TokenWriter {

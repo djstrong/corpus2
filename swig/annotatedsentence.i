@@ -17,9 +17,8 @@
 
 %feature("notabstract") Corpus2::AnnotatedSentence;
 
-%template(chan_map_t) std::map<std::string, Corpus2::AnnotationChannel>;
-%template(SentencePtr) boost::shared_ptr<Corpus2::Sentence>;
 %template(AnnotatedSentencePtr) boost::shared_ptr<Corpus2::AnnotatedSentence>;
+%template(ConstAnnotatedSentencePtr) boost::shared_ptr<const Corpus2::AnnotatedSentence>;
 
 namespace Corpus2 {
   class MissingAnnotationChannel : public Corpus2Error {

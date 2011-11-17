@@ -15,8 +15,8 @@
 
 %feature("notabstract") Corpus2::Tagset;
 
-%template(TagVector) std::vector<Corpus2::Tag>;
-// %template(StdStringVector) std::vector<std::string>;
+%template(TagsetPtr) boost::shared_ptr<Corpus2::Tagset>;
+%template(ConstTagsetPtr) boost::shared_ptr<const Corpus2::Tagset>;
 
 namespace Corpus2 {
   class Tagset;

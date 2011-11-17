@@ -8,13 +8,20 @@
 
 %include "std_string.i"
 %include "std_vector.i"
+%include "boost_shared_ptr.i"
 
 %include "iob.i"
 %include "std_defs.i"
 
-// %template(IntVector) std::vector<int>;
-%template(IOBVector) std::vector<Corpus2::IOB::Enum>;
+%template(chan_map_t) std::map<std::string, Corpus2::AnnotationChannel>;
+
+%template(AnnotationoPtr) boost::shared_ptr<Corpus2::Annotation>;
+%template(ConstAnnotationoPtr) boost::shared_ptr<const Corpus2::Annotation>;
+
 %template(AnnotationVector) std::vector<Corpus2::Annotation>;
+
+%template(AnnotationChannelPtr) boost::shared_ptr<Corpus2::AnnotationChannel>;
+%template(ConstAnnotationChannelPtr) boost::shared_ptr<const Corpus2::AnnotationChannel>;
 
 namespace Corpus2 {
   struct Annotation {

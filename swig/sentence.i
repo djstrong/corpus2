@@ -10,9 +10,11 @@
 %include "token.i"
 %include "boost_shared_ptr.i"
 
-%template(Ptr) boost::shared_ptr<Corpus2::Sentence>;
-%template(ConstPtr) boost::shared_ptr<const Corpus2::Sentence>;
-%template(TokenPtrVector) std::vector<Corpus2::Token*>;
+%template(SentencePtr) boost::shared_ptr<Corpus2::Sentence>;
+%template(ConstSentencePtr) boost::shared_ptr<const Corpus2::Sentence>;
+
+%template(SentencePtrVector) std::vector<boost::shared_ptr<Corpus2::Sentence> >;
+%template(ConstSentencePtrVector) std::vector<boost::shared_ptr<const Corpus2::Sentence> >;
 
 namespace Corpus2 {
   class Sentence {

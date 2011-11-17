@@ -15,6 +15,7 @@
 %feature("notabstract") Corpus2::TokenMetaData;
 
 %template(TokenMetaDataPtr) boost::shared_ptr<Corpus2::TokenMetaData>;
+%template(ConstTokenMetaDataPtr) boost::shared_ptr<const Corpus2::TokenMetaData>;
 
 namespace Corpus2 {
   class TokenMetaData {

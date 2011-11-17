@@ -14,6 +14,7 @@
 %include "boost_shared_ptr.i"
 
 %template(AnnotationViewPtr) boost::shared_ptr<Corpus2::AnnotationView>;
+%template(ConstAnnotationViewPtr) boost::shared_ptr<const Corpus2::AnnotationView>;
 
 %nodefaultctor Corpus2::TokenWriter;
 
@@ -24,7 +25,7 @@ namespace Corpus2 {
     ~AnnotationView();
 
     /* --------------------------------------------------------------------- */
-    Ptr clone_shared() const;
+    boost::shared_ptr<Sentence> clone_shared() const;
     
     /* --------------------------------------------------------------------- */
     void commit();

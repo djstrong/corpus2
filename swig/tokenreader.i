@@ -17,11 +17,12 @@
 %include "boost_shared_ptr.i"
 
 %nodefaultctor Corpus2::TokenReader;
+
 %template(TokenReaderPtr) boost::shared_ptr<Corpus2::TokenReader>;
-%template(TokenPtr) boost::shared_ptr<Corpus2::Token>;
-// %template(StdStringVector) std::vector<std::string>;
-// %template(ChunkPtr) boost::shared_ptr<Corpus2::Chunk>;
-typedef boost::shared_ptr<Corpus2::Token> TokenPtr;
+%template(ConstTokenReaderPtr) boost::shared_ptr<const Corpus2::TokenReader>;
+
+// typedef boost::shared_ptr<Corpus2::Token> TokenPtr;
+
 namespace Corpus2 {
   class TokenReader {
   public:

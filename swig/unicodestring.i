@@ -17,11 +17,11 @@ class UnicodeString {
     UChar* getTerminatedBuffer();
 
 %pythoncode %{
-	def __unicode__(self):
-		return self.as_utf16().decode('utf16')
+  def __unicode__(self):
+    return self.as_utf16().decode('utf16')
 
-	def __str__(self):
-		return self.as_utf8()
+  def __str__(self):
+    return self.as_utf8()
 %}
 
 };
@@ -31,11 +31,11 @@ class UnicodeString {
         return std::string((char*)self->getTerminatedBuffer(), self->length()*2);
     }
 
-	std::string as_utf8() {
-		std::string r;
-		self->toUTF8String(r);
-		return r;
-	}
+  std::string as_utf8() {
+    std::string r;
+    self->toUTF8String(r);
+    return r;
+  }
 }
 
 

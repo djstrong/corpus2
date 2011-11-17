@@ -6,7 +6,7 @@
   #include <libcorpus2/ann/iob.h>
 %}
 
-// %include "...i"
+%template(IOBVector) std::vector<Corpus2::IOB::Enum>;
 
 namespace Corpus2 {
   namespace IOB {
