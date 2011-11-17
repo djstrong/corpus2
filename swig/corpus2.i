@@ -11,19 +11,20 @@
 %include "annotationview.i"
 %include "chunk.i"
 %include "document.i"
+%include "documentreader.i"
 %include "iob.i"
 %include "lexeme.i"
+%include "libpwrnlperror.i"
 %include "relation.i"
 %include "sentence.i"
 %include "tag.i"
+%include "tagging.i"
 %include "tagset.i"
 %include "tagsetmanager.i"
 %include "token.i"
 %include "tokenmetadata.i"
 %include "tokenreader.i"
 %include "tokenwriter.i"
-%include "libpwrnlperror.i"
-%include "tagging.i"
 
 %{
 #include <libcorpus2/util/settings.h>
