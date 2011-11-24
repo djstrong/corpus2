@@ -6,13 +6,31 @@
   #include <libcorpus2/io/docreader.h>
 %}
 
+%include "exception.i"
 %include "document.i"
 %include "boost_shared_ptr.i"
 
 namespace Corpus2 {
   class DocumentReader {
   public:
+    %exception {
+      try {
+        $action
+      } catch (PwrNlp::PwrNlpError &e) {
+        PyErr_SetString(PyExc_IndexError, e.info().c_str());
+        return NULL;
+      }
+    }
     DocumentReader(const Tagset&, const std::string&, const std::string &);
+
+    %exception {
+      try {
+        $action
+      } catch (PwrNlp::PwrNlpError &e) {
+        PyErr_SetString(PyExc_IndexError, e.info().c_str());
+        return NULL;
+      }
+    }
     boost::shared_ptr<Document> read();
 
     /* --------------------------------------------------------------------- */
