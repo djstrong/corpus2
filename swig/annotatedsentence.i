@@ -32,7 +32,7 @@ namespace Corpus2 {
     typedef std::map<std::string, AnnotationChannel> chan_map_t;
 
     /* --------------------------------------------------------------------- */
-    AnnotatedSentence();
+    AnnotatedSentence(const std::string &id = "");
     ~AnnotatedSentence();
     
     /* --------------------------------------------------------------------- */
