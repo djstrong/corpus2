@@ -52,6 +52,13 @@ public:
 	 */
 	boost::shared_ptr<Document> read();
 
+	/**
+	 * Sets options for readers (relation reader and/or ccl reader).
+	 * Available options:
+	 *  - autogen_sent_id -- for automatically generation identifiers of sentences
+	 */
+	void set_option(const std::string& option);
+
 private:
 	/**
 	 * Makes CclReader and RelationReader for given paths to files.

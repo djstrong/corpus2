@@ -33,6 +33,8 @@ namespace Corpus2 {
     }
     boost::shared_ptr<Document> read();
 
+    void set_option(const std::string& option);
+
     /* --------------------------------------------------------------------- */
     ~DocumentReader();
   };

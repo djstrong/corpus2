@@ -57,4 +57,11 @@ namespace Corpus2 {
 		return document;
 	}
 
+	void DocumentReader::set_option(const std::string& option)
+	{
+		if (option == "autogen_sent_id") {
+			ccl_reader_->set_option("autogen_sent_id");
+		}
+	}
+
 } /* end ns Corpus2 */
