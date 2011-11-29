@@ -29,7 +29,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 
 bool CclReader::registered = TokenReader::register_reader<CclReader>("ccl",
-	"ign,loose,strict,disamb_only,no_warn_inconsistent");
+	"ign,loose,strict,disamb_only,no_warn_inconsistent,autogen_chunk_id,autogen_sent_id");
 
 class CclReaderImpl : public XmlReader
 {
