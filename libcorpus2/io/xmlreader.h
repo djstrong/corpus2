@@ -49,6 +49,7 @@ public:
 
 protected:
 	std::string get_type_from_attributes(const AttributeList& attributes) const;
+	std::string get_id_from_attributes(const AttributeList& attributes) const;
 
 	void on_start_element(const Glib::ustring & name,
 			const AttributeList& attributes);

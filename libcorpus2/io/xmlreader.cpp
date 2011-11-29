@@ -52,6 +52,16 @@ std::string XmlReader::get_type_from_attributes(const AttributeList& attributes)
 	return type;
 }
 
+std::string XmlReader::get_id_from_attributes(const AttributeList& attributes) const
+{
+	foreach (const Attribute& a, attributes) {
+		if (a.name == "id") {
+			return a.value;
+		}
+	}
+	return "";
+}
+
 
 void XmlReader::on_start_element(const Glib::ustring &name,
 		const AttributeList& attributes)

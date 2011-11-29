@@ -61,7 +61,19 @@ namespace Corpus2 {
 	{
 		if (option == "autogen_sent_id") {
 			ccl_reader_->set_option("autogen_sent_id");
+		} else if (option == "autogen_chunk_id") {
+			ccl_reader_->set_option("autogen_chunk_id");
 		}
+	}
+
+	std::string DocumentReader::get_option(const std::string& option) const {
+		if (option == "autogen_sent_id") {
+			return ccl_reader_->get_option("autogen_sent_id");
+		}
+		else if (option == "autogen_chunk_id") {
+			return ccl_reader_->get_option("autogen_chunk_id");
+		}
+		return "";
 	}
 
 } /* end ns Corpus2 */

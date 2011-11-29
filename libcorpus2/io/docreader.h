@@ -59,6 +59,11 @@ public:
 	 */
 	void set_option(const std::string& option);
 
+	/**
+	 * @return option
+	 */
+	std::string get_option(const std::string& option) const;
+
 private:
 	/**
 	 * Makes CclReader and RelationReader for given paths to files.

@@ -36,7 +36,8 @@ class CclReaderImpl : public XmlReader
 public:
 	CclReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
-		bool disamb_only, bool disamb_sh, bool autogen_sent_id);
+		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
+		bool autogen_chunk_id);
 
 	~CclReaderImpl();
 
@@ -46,6 +47,14 @@ public:
 
 	bool get_autogen_sent_id() const {
 		return autogen_sent_id_;
+	}
+
+	void set_autogen_chunk_id(bool autogen_chunk_id) {
+		autogen_chunk_id_ = autogen_chunk_id;
+	}
+
+	bool get_autogen_chunk_id() const {
+		return autogen_chunk_id_;
 	}
 
 protected:
@@ -86,21 +95,30 @@ private:
 	bool autogen_sent_id_;
 	unsigned int sent_number_; /// Sentence number, automatically generated
 	static const std::string SENT_ID_PREFFIX;
+	// and same for chunk...
+	bool autogen_chunk_id_;
+	unsigned int chunk_number_;
+	static const std::string CHUNK_ID_PREFFIX;
 };
 const std::string CclReaderImpl::SENT_ID_PREFFIX = "sentence";
+const std::string CclReaderImpl::CHUNK_ID_PREFFIX = "chunk";
 
 CclReader::CclReader(const Tagset& tagset, std::istream& is,
-		bool disamb_only, bool disamb_sh, bool autogen_sent_id)
+		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
+		bool autogen_chunk_id)
 	: BufferedChunkReader(tagset),
-	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh, autogen_sent_id))
+	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh,
+		autogen_sent_id, autogen_chunk_id))
 {
 	this->is_ = &is;
 }
 
 CclReader::CclReader(const Tagset& tagset, const std::string& filename,
-		bool disamb_only, bool disamb_sh, bool autogen_sent_id)
+		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
+		bool autogen_chunk_id)
 	: BufferedChunkReader(tagset),
-	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh, autogen_sent_id))
+	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh,
+		autogen_sent_id, autogen_chunk_id))
 {
 	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
 
@@ -131,14 +149,17 @@ void CclReader::ensure_more()
 
 CclReaderImpl::CclReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
-		bool disamb_only, bool disamb_sh, bool autogen_sent_id)
+		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
+		bool autogen_chunk_id)
 	: XmlReader(base_reader, obuf)
 {
 	XmlReader::set_disamb_only(disamb_only);
 	XmlReader::set_disamb_sh(disamb_sh);
 	sentence_tag_name_ = "sentence";
 	sent_number_ = 0;
+	chunk_number_ = 0;
 	autogen_sent_id_ = autogen_sent_id;
+	autogen_chunk_id_ = autogen_chunk_id;
 }
 
 CclReaderImpl::~CclReaderImpl()
@@ -147,8 +168,16 @@ CclReaderImpl::~CclReaderImpl()
 
 void CclReaderImpl::start_chunk(const AttributeList& attributes)
 {
-	// TODO: Autogenerating chunk identifiers
+	std::string id = get_id_from_attributes(attributes);
+	if (id.empty() && autogen_chunk_id_) {
+		std::ostringstream ss;
+		ss << ++chunk_number_;
+		id = CclReaderImpl::CHUNK_ID_PREFFIX + ss.str();
+	}
+
 	chunk_ = boost::make_shared<Chunk>();
+	chunk_->set_attribute("id", id);
+
 	std::string type = get_type_from_attributes(attributes);
 	if (type == "s") {
 		throw XcesError("Trying to parse XCES as CCL (<chunk type=\"s\">)");
@@ -278,6 +307,8 @@ void CclReader::set_option(const std::string& option)
 		impl_->set_disamb_only(true);
 	} else if (option == "autogen_sent_id") {
 		impl_->set_autogen_sent_id(true);
+	} else if (option == "autogen_chunk_id") {
+		impl_->set_autogen_chunk_id(true);
 	}
 	else {
 		BufferedChunkReader::set_option(option);
@@ -292,6 +323,8 @@ std::string CclReader::get_option(const std::string& option) const
 		return impl_->get_warn_on_inconsistent() ? option : "";
 	} else if (option == "autogen_sent_id") {
 		return impl_->get_autogen_sent_id() ? "autogen_sent_id" : "";
+	} else if (option == "autogen_chunk_id") {
+		return impl_->get_autogen_chunk_id() ? "autogen_chunk_id" : "";
 	}
 	return BufferedChunkReader::get_option(option);
 }
