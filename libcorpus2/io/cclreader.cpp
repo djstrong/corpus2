@@ -24,6 +24,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/ann/annotatedsentence.h>
 #include <cstdlib>
 #include <fstream>
+#include <sstream>
 
 namespace Corpus2 {
 
@@ -35,9 +36,17 @@ class CclReaderImpl : public XmlReader
 public:
 	CclReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
-		bool disamb_only, bool disamb_sh);
+		bool disamb_only, bool disamb_sh, bool autogen_sent_id);
 
 	~CclReaderImpl();
+
+	void set_autogen_sent_id(bool autogen_sent_id) {
+		autogen_sent_id_ = autogen_sent_id;
+	}
+
+	bool get_autogen_sent_id() const {
+		return autogen_sent_id_;
+	}
 
 protected:
 	bool process_start_element(const Glib::ustring & name,
@@ -70,19 +79,28 @@ protected:
 	token_ann_t token_anns_;
 
 	std::set<std::string> token_ann_heads_;
+
+private:
+	/// marker for autogenerating sentence identifiers (default is false --
+	/// sentences identifiers will not be generated)
+	bool autogen_sent_id_;
+	unsigned int sent_number_; /// Sentence number, automatically generated
+	static const std::string SENT_ID_PREFFIX;
 };
+const std::string CclReaderImpl::SENT_ID_PREFFIX = "sentence";
 
 CclReader::CclReader(const Tagset& tagset, std::istream& is,
-		bool disamb_only, bool disamb_sh)
+		bool disamb_only, bool disamb_sh, bool autogen_sent_id)
 	: BufferedChunkReader(tagset),
-	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
+	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh, autogen_sent_id))
 {
 	this->is_ = &is;
 }
 
-CclReader::CclReader(const Tagset& tagset, const std::string& filename, bool disamb_only, bool disamb_sh)
+CclReader::CclReader(const Tagset& tagset, const std::string& filename,
+		bool disamb_only, bool disamb_sh, bool autogen_sent_id)
 	: BufferedChunkReader(tagset),
-	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
+	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh, autogen_sent_id))
 {
 	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
 
@@ -113,12 +131,14 @@ void CclReader::ensure_more()
 
 CclReaderImpl::CclReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
-		bool disamb_only, bool disamb_sh)
+		bool disamb_only, bool disamb_sh, bool autogen_sent_id)
 	: XmlReader(base_reader, obuf)
 {
 	XmlReader::set_disamb_only(disamb_only);
 	XmlReader::set_disamb_sh(disamb_sh);
 	sentence_tag_name_ = "sentence";
+	sent_number_ = 0;
+	autogen_sent_id_ = autogen_sent_id;
 }
 
 CclReaderImpl::~CclReaderImpl()
@@ -127,6 +147,7 @@ CclReaderImpl::~CclReaderImpl()
 
 void CclReaderImpl::start_chunk(const AttributeList& attributes)
 {
+	// TODO: Autogenerating chunk identifiers
 	chunk_ = boost::make_shared<Chunk>();
 	std::string type = get_type_from_attributes(attributes);
 	if (type == "s") {
@@ -149,6 +170,11 @@ void CclReaderImpl::start_sentence(const AttributeList &attributes)
 			id = a.value;
 			break;
 		}
+	}
+	if (id.empty() && autogen_sent_id_) {
+		std::ostringstream ss;
+		ss << ++sent_number_;
+		id = CclReaderImpl::SENT_ID_PREFFIX + ss.str();
 	}
 
 	ann_sent_ = boost::make_shared<AnnotatedSentence>(id);
@@ -250,7 +276,10 @@ void CclReader::set_option(const std::string& option)
 		impl_->set_warn_on_inconsistent(false);
 	} else if (option == "disamb_only") {
 		impl_->set_disamb_only(true);
-	} else {
+	} else if (option == "autogen_sent_id") {
+		impl_->set_autogen_sent_id(true);
+	}
+	else {
 		BufferedChunkReader::set_option(option);
 	}
 }
@@ -261,6 +290,8 @@ std::string CclReader::get_option(const std::string& option) const
 		return impl_->get_disamb_only() ? option : "";
 	} else if (option == "no_warn_inconsistent") {
 		return impl_->get_warn_on_inconsistent() ? option : "";
+	} else if (option == "autogen_sent_id") {
+		return impl_->get_autogen_sent_id() ? "autogen_sent_id" : "";
 	}
 	return BufferedChunkReader::get_option(option);
 }

@@ -31,10 +31,12 @@ class CclReader : public BufferedChunkReader
 {
 public:
 	CclReader(const Tagset& tagset, std::istream& is,
-			bool disamb_only = false, bool disamb_sh = false);
+			bool disamb_only = false, bool disamb_sh = false,
+			bool autogen_sent_id = false);
 
 	CclReader(const Tagset& tagset, const std::string& filename,
-			bool disamb_only = false, bool disamb_sh = false);
+			bool disamb_only = false, bool disamb_sh = false,
+			bool autogen_sent_id = false);
 
 	~CclReader();
 
