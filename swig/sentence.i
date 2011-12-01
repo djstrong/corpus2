@@ -47,6 +47,12 @@ namespace Corpus2 {
     const Token* first_token() const;
 
     const std::string id() const;
+
+    %extend {
+      static boost::shared_ptr<Corpus2::Sentence> create_sent(const std::string &id) {
+        return boost::shared_ptr<Corpus2::Sentence>(new Corpus2::Sentence(id));
+      }
+    }
   };
 }
 
