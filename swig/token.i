@@ -18,8 +18,6 @@
 
 %feature("notabstract") Corpus2::Token;
 
-%rename(__op_eq__) Corpus2::Token::operator==(const Corpus2::Token& other) const;
-
 %template(TokenPtr) boost::shared_ptr<Corpus2::Token>;
 %template(ConstTokenPtr) boost::shared_ptr<const Corpus2::Token>;
 

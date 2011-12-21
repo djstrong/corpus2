@@ -15,9 +15,6 @@
 
 %feature("notabstract") Corpus2::Lexeme;
 
-%rename(__op_eq__) Corpus2::Lexeme::operator==(const Lexeme& other) const;
-%rename(__op_lw__) Corpus2::Lexeme::operator<(const Lexeme& other) const;
-
 %template(LexemeVector) std::vector<Corpus2::Lexeme>;
 
 namespace Corpus2 {
