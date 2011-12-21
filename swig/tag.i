@@ -48,6 +48,13 @@ namespace Corpus2 {
   };
 
   size_t hash_value(const Tag &tag);
+
+  %extend Tag {
+    long __hash__() {
+      return (long) hash_value(*self);
+    }
+  }
+
 }
 
 using namespace std;
