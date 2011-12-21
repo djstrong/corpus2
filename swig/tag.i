@@ -49,10 +49,15 @@ namespace Corpus2 {
 
   size_t hash_value(const Tag &tag);
 
-  %extend Tag {
+  %extend Tag {  
     long __hash__() {
       return (long) hash_value(*self);
     }
+    // otherwise x != y wont trigger operator==
+    %pythoncode %{
+      def __ne__(self, other):
+        return not self.__eq__(other)
+    %}
   }
 
 }

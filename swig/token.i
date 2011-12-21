@@ -68,6 +68,14 @@ namespace Corpus2 {
     void set_metadata(TokenMetaData& md);
     void set_metadata_ptr(boost::shared_ptr<TokenMetaData> md);
   };
+
+  %extend Token {
+    // otherwise x != y wont trigger operator==
+    %pythoncode %{
+      def __ne__(self, other):
+        return not self.__eq__(other)
+    %}
+  }
 }
 
 using namespace std;

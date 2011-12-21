@@ -48,6 +48,11 @@ namespace Corpus2 {
     Corpus2::Tag tag() {
       return Corpus2::Tag(self->tag().get_pos(), self->tag().get_values());
     }
+    // otherwise x != y wont trigger operator==
+    %pythoncode %{
+      def __ne__(self, other):
+        return not self.__eq__(other)
+    %}
   }
 }
 
