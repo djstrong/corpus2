@@ -115,6 +115,11 @@ public:
 		lexemes_.push_back(lex);
 	}
 
+	/// Leaves a faulty token with no lexemes (use with care!)
+	void remove_all_lexemes() {
+		lexemes_.clear();
+	}
+
 	/// Replaces all the lexemes with the given vector
 	void replace_lexemes(const std::vector<Lexeme>& new_lexemes) {
 		lexemes_ = new_lexemes;

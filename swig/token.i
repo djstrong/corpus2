@@ -50,6 +50,8 @@ namespace Corpus2 {
 
     void add_lexeme(const Lexeme& lex);
 
+    void remove_all_lexemes();
+
     const Lexeme& get_preferred_lexeme(const Tagset& tagset) const;
     size_t get_preferred_lexeme_index(const Tagset& tagset) const;
 
