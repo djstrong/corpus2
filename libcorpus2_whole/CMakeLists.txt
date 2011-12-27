@@ -7,13 +7,13 @@ set(LIBS ${LIBS} ${LibXML++_LIBRARIES})
 
 SET(libcorpus2_whole_SRC
 	corpus.cpp
-	corpusreader.cpp
-	docreader.cpp
 	document.cpp
-	poliqarpdocumentreader.cpp
 	relation.cpp
-	relreader.cpp
-	docreaderi.h
+	io/corpusreader.cpp
+	io/docreader.cpp
+	io/docreaderi.h
+	io/poliqarpdocumentreader.cpp
+	io/relreader.cpp
 )
 
 file(GLOB_RECURSE INCS "*.h")
