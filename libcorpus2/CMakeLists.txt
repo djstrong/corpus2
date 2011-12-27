@@ -38,13 +38,11 @@ set(LIBS ${LIBS} ${Boost_LIBRARIES})
 SET(libcorpus2_STAT_SRC
 	ann/annotatedsentence.cpp
 	ann/channel.cpp
-	ann/iob.cpp
+	ann/iob.cpp 
 	ann/view.cpp
 	chunk.cpp
-	document.cpp
 	exception.cpp
 	lexeme.cpp
-	relation.cpp
 	sentence.cpp
 	tag.cpp
 	tagging.cpp
@@ -55,7 +53,6 @@ SET(libcorpus2_STAT_SRC
 	tokenmetadata.cpp
 	io/cclreader.cpp
 	io/cclwriter.cpp
-	io/docreader.cpp
 	io/helpers.cpp
 	io/fastxces.cpp
 	io/iob-chan.cpp
@@ -66,7 +63,6 @@ SET(libcorpus2_STAT_SRC
 	io/plainwriter.cpp
 	io/premorphwriter.cpp
 	io/reader.cpp
-	io/relreader.cpp
 	io/rft.cpp
 	io/sax.cpp
 	io/statwriter.cpp

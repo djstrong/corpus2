@@ -3,7 +3,7 @@
 
 %module libcorpusrelation
 %{
-  #include <libcorpus2/relation.h>
+  #include <libcorpus2_whole/relation.h>
 %}
 
 %include "std_defs.i"

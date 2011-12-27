@@ -3,7 +3,7 @@
 
 %module libcorpusrelationreader
 %{
-  #include <libcorpus2/io/relreader.h>
+  #include <libcorpus2_whole/relreader.h>
 %}
 
 namespace Corpus2 {

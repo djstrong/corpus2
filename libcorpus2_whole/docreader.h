@@ -14,13 +14,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE and COPYING files for more details.
 */
 
-#ifndef LIBCORPUS2_DOCREADER_H
-#define LIBCORPUS2_DOCREADER_H
+#ifndef LIBCORPUS2_WHOLE__DOCREADER_H
+#define LIBCORPUS2_WHOLE__DOCREADER_H
 
-#include <libcorpus2/relation.h>
-#include <libcorpus2/document.h>
+#include <libcorpus2_whole/relation.h>
+#include <libcorpus2_whole/document.h>
+#include <libcorpus2_whole/docreaderi.h>
 #include <libcorpus2/io/cclreader.h>
-#include <libcorpus2/io/relreader.h>
+#include <libcorpus2_whole/relreader.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -30,7 +31,7 @@ namespace Corpus2 {
  * A reader for whole documents. Note that a whole document is read into memory
  * before any processing may take place.
  */
-class DocumentReader {
+class DocumentReader : public DocumentReaderI {
 public:
 	/**
 	 * Reads a whole document, using the two given path: the morphosyntax and
@@ -85,4 +86,4 @@ private:
 };
 } /* end ns Corpus2 */
 
-#endif // LIBCORPUS2_DOCREADER_H
+#endif // LIBCORPUS2_WHOLE_DOCREADER_H

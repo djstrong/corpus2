@@ -14,15 +14,15 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE and COPYING files for more details.
 */
 
-#ifndef LIBCORPUS2_RELREADER_H
-#define LIBCORPUS2_RELREADER_H
+#ifndef LIBCORPUS2_WHOLE_RELREADER_H
+#define LIBCORPUS2_WHOLE_RELREADER_H
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <libxml++/parsers/saxparser.h>
 
-#include <libcorpus2/relation.h>
+#include <libcorpus2_whole/relation.h>
 
 #include <iostream>
 
@@ -120,4 +120,4 @@ private:
 };
 } /* end ns Corpus2 */
 
-#endif // LIBCORPUS2_RELREADER_H
+#endif // LIBCORPUS2_WHOLE_RELREADER_H

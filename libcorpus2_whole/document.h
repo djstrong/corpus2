@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski, Paweł Kędzia
 	Part of the libcorpus2 project
 
 	This program is free software; you can redistribute it and/or modify it
@@ -14,11 +14,11 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE and COPYING files for more details.
 */
 
-#ifndef LIBCORPUS2_DOCUMENT_H
-#define LIBCORPUS2_DOCUMENT_H
+#ifndef LIBCORPUS2_WHOLE_DOCUMENT_H
+#define LIBCORPUS2_WHOLE_DOCUMENT_H
 
 #include <libcorpus2/chunk.h>
-#include <libcorpus2/relation.h>
+#include <libcorpus2_whole/relation.h>
 #include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
@@ -65,4 +65,4 @@ protected:
 
 } /* end ns Corpus2 */
 
-#endif // LIBCORPUS2_DOCUMENT_H
+#endif // LIBCORPUS2_WHOLE_DOCUMENT_H

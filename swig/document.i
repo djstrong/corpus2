@@ -3,7 +3,7 @@
 
 %module libcorpusdocument
 %{
-  #include <libcorpus2/document.h>
+  #include <libcorpus2_whole/document.h>
 %}
 
 %include "std_defs.i"

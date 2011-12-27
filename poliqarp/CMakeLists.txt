@@ -1,4 +1,4 @@
-PROJECT(Corpus2Poliqarp)
+PROJECT(corpus2_poliqarpreader)
 cmake_minimum_required(VERSION 2.8.0)
 set(c2pq_ver_major 1)
 set(c2pq_ver_minor 0)

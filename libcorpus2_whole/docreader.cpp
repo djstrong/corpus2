@@ -15,11 +15,12 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <boost/make_shared.hpp>
-#include <libcorpus2/io/docreader.h>
+#include <libcorpus2_whole/docreader.h>
 
 namespace Corpus2 {
 	DocumentReader::DocumentReader(const Tagset& tagset,
 		const std::string &annot_path, const std::string &rela_path)
+			: DocumentReaderI("document")
 	{
 		make_readers(tagset, annot_path, rela_path);
 	}

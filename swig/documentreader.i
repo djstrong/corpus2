@@ -3,7 +3,7 @@
 
 %module libcorpusdocumentreader
 %{
-  #include <libcorpus2/io/docreader.h>
+  #include <libcorpus2_whole/docreader.h>
 %}
 
 %include "exception.i"

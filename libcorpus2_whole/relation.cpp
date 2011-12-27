@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <boost/make_shared.hpp>
-#include <libcorpus2/relation.h>
+#include <libcorpus2_whole/relation.h>
 
 namespace Corpus2 {
 

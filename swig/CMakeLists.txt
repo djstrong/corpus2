@@ -2,7 +2,7 @@
 
 PROJECT(corpus2SwigWrap)
 
-set(LIBS "corpus2" "pwrutils")
+set(LIBS "corpus2" "corpus2_whole" "corpus2_poliqarpreader" "pwrutils")
 
 include_directories (${corpus2_SOURCE_DIR})
 include_directories (${pwrutils_SOURCE_DIR})

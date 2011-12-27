@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski, Paweł Kędzia
 	Part of the libcorpus2 project
 
 	This program is free software; you can redistribute it and/or modify it
@@ -14,18 +14,15 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE and COPYING files for more details.
 */
 
-#include <libcorpus2/document.h>
-#include <boost/make_shared.hpp>
+#include <libcorpus2_whole/corpus.h>
 
 namespace Corpus2 {
+namespace whole{
 
-Document::Document()
-	: paragraphs_(), relations_()
+Corpus::Corpus(const std::string name) : name_(name), documents_()
 {
+	this->current_document_ = documents_.begin();
 }
 
-Document::~Document()
-{
-}
-
-} /* end ns Corpus2 */
+} // whole ns
+} // Corpus2 ns
