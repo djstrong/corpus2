@@ -4,9 +4,9 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-#include <libcorpus2_whole/docreaderi.h>
+#include <libcorpus2_whole/io/docreaderi.h>
+#include <libcorpus2_whole/io/docreader.h>
 #include <libcorpus2_whole/corpus.h>
-#include <libcorpus2_whole/docreader.h>
 
 namespace Corpus2 {
 namespace whole {

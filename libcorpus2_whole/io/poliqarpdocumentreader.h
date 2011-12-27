@@ -2,7 +2,7 @@
 #define LIBCORPUS2_WHOLE_POLIQARPDOCUMENTREADER_H
 
 #include <poliqarp/pqreader.h>
-#include <libcorpus2_whole/docreaderi.h>
+#include <libcorpus2_whole/io/docreaderi.h>
 #include <libcorpus2_whole/document.h>
 
 namespace Corpus2 {

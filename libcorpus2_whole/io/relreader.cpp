@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libpwrutils/foreach.h>
 #include <libcorpus2/exception.h>
-#include <libcorpus2_whole/relreader.h>
+#include <libcorpus2_whole/io/relreader.h>
 
 #include <fstream>
 #include <boost/make_shared.hpp>

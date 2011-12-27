@@ -19,9 +19,9 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2_whole/relation.h>
 #include <libcorpus2_whole/document.h>
-#include <libcorpus2_whole/docreaderi.h>
+#include <libcorpus2_whole/io/docreaderi.h>
 #include <libcorpus2/io/cclreader.h>
-#include <libcorpus2_whole/relreader.h>
+#include <libcorpus2_whole/io/relreader.h>
 
 #include <boost/shared_ptr.hpp>
 

@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <boost/make_shared.hpp>
-#include <libcorpus2_whole/docreader.h>
+#include <libcorpus2_whole/io/docreader.h>
 
 namespace Corpus2 {
 	DocumentReader::DocumentReader(const Tagset& tagset,

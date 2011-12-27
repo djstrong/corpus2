@@ -2,7 +2,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include <libcorpus2/exception.h>
-#include <libcorpus2_whole/corpusreader.h>
+#include <libcorpus2_whole/io/corpusreader.h>
 
 namespace Corpus2 {
 namespace whole {

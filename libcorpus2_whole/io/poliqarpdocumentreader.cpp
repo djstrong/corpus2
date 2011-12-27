@@ -1,4 +1,4 @@
-#include <libcorpus2_whole/poliqarpdocumentreader.h>
+#include <libcorpus2_whole/io/poliqarpdocumentreader.h>
 
 namespace Corpus2 {
 namespace whole {
