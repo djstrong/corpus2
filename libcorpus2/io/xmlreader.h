@@ -27,6 +27,9 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 namespace Corpus2 {
 
+/**
+  * Helper class for reading xml, xces like
+  */
 class XmlReader : public BasicSaxParser
 {
 public:
