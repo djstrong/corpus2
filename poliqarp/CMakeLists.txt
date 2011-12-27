@@ -19,4 +19,10 @@ target_link_libraries(c2pqtest poliqarpc2 corpus2_poliqarpreader corpus2 pwrutil
 if(UNIX)
 	install(TARGETS corpus2_poliqarpreader LIBRARY DESTINATION lib)
 	install(TARGETS c2pqtest RUNTIME DESTINATION bin)
+	# ${CMAKE_CURRENT_SOURCE_DIR}
+	install(
+		DIRECTORY .
+		DESTINATION include/corpus2_poliqarpreader
+		FILES_MATCHING PATTERN "*.h"
+	)
 endif(UNIX)
