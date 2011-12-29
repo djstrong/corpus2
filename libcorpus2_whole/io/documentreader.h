@@ -26,6 +26,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
+namespace whole {
 
 /**
  * A reader for whole documents. Note that a whole document is read into memory
@@ -84,6 +85,8 @@ private:
 	/// Pointer to RelationReader
 	boost::shared_ptr<RelationReader> rel_reader_;
 };
-} /* end ns Corpus2 */
+
+} // whole ns
+} // Corpus2 ns
 
 #endif // LIBCORPUS2_WHOLE_DOCREADER_H

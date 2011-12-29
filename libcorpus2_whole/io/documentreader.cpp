@@ -15,9 +15,10 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <boost/make_shared.hpp>
-#include <libcorpus2_whole/io/docreader.h>
+#include <libcorpus2_whole/io/documentreader.h>
 
 namespace Corpus2 {
+namespace whole {
 	DocumentReader::DocumentReader(const Tagset& tagset,
 		const std::string &annot_path, const std::string &rela_path)
 			: DocumentReaderI("document")
@@ -77,4 +78,5 @@ namespace Corpus2 {
 		return "";
 	}
 
-} /* end ns Corpus2 */
+} // whole ns
+} // Corpus2 ns

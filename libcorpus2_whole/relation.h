@@ -21,6 +21,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
+namespace whole {
 
 /**
  * Helper class to represent one of two point of direction in any relation.
@@ -117,6 +118,7 @@ private:
 	const boost::shared_ptr<const DirectionPoint> to_;
 };
 
-} /* end ns Corpus2 */
+} // whole ns
+} // Corpus2 ns
 
 #endif // LIBCORPUS2_RELATIONT_H

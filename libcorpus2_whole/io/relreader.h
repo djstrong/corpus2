@@ -27,6 +27,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <iostream>
 
 namespace Corpus2 {
+namespace whole {
+
 	const static std::string RELATION_TAG = "rel";
 	const static std::string RELATIONS_TAG = "relations";
 	const static std::string RELATION_DIRECT_FROM = "from";
@@ -118,6 +120,8 @@ private:
 	boost::shared_ptr<DirectionPoint> rel_from_;
 	boost::shared_ptr<DirectionPoint> rel_to_;
 };
-} /* end ns Corpus2 */
+
+} // whole ns
+} // Corpus2 ns
 
 #endif // LIBCORPUS2_WHOLE_RELREADER_H

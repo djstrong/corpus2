@@ -22,6 +22,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
+namespace whole {
 
 /**
  * A whole document, consisting of consecutive paragraphs ("chunks"), being
@@ -63,6 +64,7 @@ protected:
 	std::vector< boost::shared_ptr<Relation> > relations_;
 };
 
-} /* end ns Corpus2 */
+} // whole ns
+} // Corpus2 ns
 
 #endif // LIBCORPUS2_WHOLE_DOCUMENT_H
