@@ -3,7 +3,7 @@
 
 %module libcorpusdocumentreader
 %{
-  #include <libcorpus2_whole/io/docreader.h>
+  #include <libcorpus2_whole/io/documentreader.h>
 %}
 
 %include "exception.i"
@@ -11,6 +11,7 @@
 %include "boost_shared_ptr.i"
 
 namespace Corpus2 {
+namespace whole {
   class DocumentReader {
   public:
     %exception {
@@ -39,9 +40,11 @@ namespace Corpus2 {
     /* --------------------------------------------------------------------- */
     ~DocumentReader();
   };
-}
+} // whole ns
+} // Corpus2 ns
 
 using namespace std;
 using namespace Corpus2;
+using namespace Corpus2::whole;
 
 #endif /* SWIG_LIBCORPUS2_DOCUMENTREADER_I */
