@@ -49,12 +49,22 @@ public:
 	}
 
 	/// Next document in corpus
-	/// @todo I don't know if it'll be working... It should be tested!
 	boost::shared_ptr<Document> next_document() {
-		return *(current_document_++);
+		if (!this->set_) {
+			this->set_ = true;
+			this->current_document_ = documents_.begin();
+
+		}
+		else {
+			current_document_++;
+		}
+
+		return *current_document_;
 	}
 
 private:
+	bool set_;
+
 	/// Corpus name
 	const std::string name_;
 

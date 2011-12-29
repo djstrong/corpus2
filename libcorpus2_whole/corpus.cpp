@@ -21,7 +21,7 @@ namespace whole{
 
 Corpus::Corpus(const std::string name) : name_(name), documents_()
 {
-	this->current_document_ = documents_.begin();
+	set_ = false;
 }
 
 } // whole ns
