@@ -14,14 +14,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE and COPYING files for more details.
 */
 
-#ifndef LIBCORPUS2_WHOLE__DOCREADER_H
-#define LIBCORPUS2_WHOLE__DOCREADER_H
+#ifndef LIBCORPUS2_WHOLE_DOCREADER_H
+#define LIBCORPUS2_WHOLE_DOCREADER_H
 
+#include <libcorpus2/io/cclreader.h>
 #include <libcorpus2_whole/relation.h>
 #include <libcorpus2_whole/document.h>
-#include <libcorpus2_whole/io/docreaderi.h>
-#include <libcorpus2/io/cclreader.h>
 #include <libcorpus2_whole/io/relreader.h>
+#include <libcorpus2_whole/io/reader_i.h>
 
 #include <boost/shared_ptr.hpp>
 
