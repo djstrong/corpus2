@@ -35,7 +35,7 @@ private:
 
 private:
 	/// Type of corpus, sets only once in constructor
-	const std::string& corpus_type_;
+	const std::string corpus_type_;
 
 	/// Tagset to use, sets only onece in constructor
 	const Tagset& tagset_;

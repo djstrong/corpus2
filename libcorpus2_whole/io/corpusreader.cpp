@@ -13,8 +13,12 @@ CorpusReader::CorpusReader(const Tagset& tagset, const std::string& corpus_type)
 
 boost::shared_ptr<Corpus> CorpusReader::read(const std::string& corpus_file_path)
 {
-	boost::shared_ptr<CorpusReaderI> reader = this->get_corpus_reader_by_type();
-	return reader->read(corpus_file_path);
+	try {
+		boost::shared_ptr<CorpusReaderI> reader = this->get_corpus_reader_by_type();
+		return reader->read(corpus_file_path);
+	} catch(...) {
+		throw;
+	}
 }
 
 //
