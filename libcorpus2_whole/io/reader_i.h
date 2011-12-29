@@ -2,11 +2,13 @@
 #define READERI_H
 
 #include <string>
-
-#include <libcorpus2_whole/document.h>
 #include <boost/shared_ptr.hpp>
 
+#include <libcorpus2_whole/document.h>
+#include <libcorpus2_whole/corpus.h>
+
 namespace Corpus2 {
+namespace whole {
 
 /**
  * Reader interface,
@@ -26,6 +28,13 @@ protected:
 	const std::string type_;
 };
 
-}
+class CorpusReaderI
+{
+public:
+	virtual boost::shared_ptr<Corpus> read(const std::string& corpus_file) = 0;
+};
+
+} // whole ns
+} // Corpus2 ns
 
 #endif // READERI_H
