@@ -9,11 +9,13 @@ SET(libcorpus2_whole_SRC
 	corpus.cpp
 	document.cpp
 	relation.cpp
-	io/corpusreader.cpp
-	io/docreader.cpp
-	io/docreaderi.h
-	io/poliqarpdocumentreader.cpp
+	io/reader_i.h
 	io/relreader.cpp
+	io/documentreader.cpp
+	io/documentcorpusreader.cpp
+	io/poliqarpdocumentreader.cpp
+	io/poliqarpcorpusreader.cpp
+	io/corpusreader.cpp
 )
 
 file(GLOB_RECURSE INCS "*.h")
