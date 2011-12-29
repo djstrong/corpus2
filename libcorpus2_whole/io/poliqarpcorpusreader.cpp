@@ -17,7 +17,10 @@ boost::shared_ptr<Corpus> PoliqarpCorpusReader::read(const std::string& corpus_f
 	this->pq_doc_reader_ = boost::shared_ptr<PoliqarpDocumentReader>(
 			new PoliqarpDocumentReader(tagset_, corpus_file));
 
-	while ((doc = this->pq_doc_reader_->read())) {
+	while (1) {
+		if (!(doc = this->pq_doc_reader_->read())) {
+			break;
+		}
 		corpus->add_document(doc);
 	}
 

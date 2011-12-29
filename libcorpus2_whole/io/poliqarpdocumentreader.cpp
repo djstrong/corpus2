@@ -12,9 +12,11 @@ PoliqarpDocumentReader::PoliqarpDocumentReader(const Tagset& tagset, const std::
 
 boost::shared_ptr<Document> PoliqarpDocumentReader::read()
 {
-	boost::shared_ptr<Document> document = boost::make_shared<Document>();
+	boost::shared_ptr<Document> document;
 	boost::shared_ptr<Chunk> chunk = this->pqr_->get_next_chunk();
+
 	if (chunk) {
+		document = boost::make_shared<Document>();
 		document->add_paragraph(chunk);
 	}
 	return document;
