@@ -13,6 +13,8 @@
 %template(DocumentPtr) boost::shared_ptr<Corpus2::whole::Document>;
 %template(ConstDocumentPtr) boost::shared_ptr<const Corpus2::whole::Document>;
 
+%template(DocumentPtrVector) std::vector<boost::shared_ptr<Corpus2::whole::Document> >;
+
 namespace Corpus2 {
 namespace whole {
   class Document {
