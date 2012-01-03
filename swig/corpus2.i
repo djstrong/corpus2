@@ -27,6 +27,8 @@
 %include "tokenreader.i"
 %include "tokenwriter.i"
 
+%include "corpus.i"
+
 %{
 #include <libcorpus2/util/settings.h>
 static void set_verbose(bool v) {
