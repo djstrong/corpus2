@@ -12,6 +12,8 @@ class CorpusReader
 {
 public:
 	/**
+	 * Constructor of corpus reader. Here must be set type of the corpus, which
+	 * will be reading.
 	 * @arg corpus_type may be:
 	 *  - document (contains relations)
 	 *  - poliqarp
