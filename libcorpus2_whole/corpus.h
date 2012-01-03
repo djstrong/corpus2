@@ -50,17 +50,20 @@ public:
 
 	/// Next document in corpus
 	boost::shared_ptr<Document> next_document() {
+		static boost::shared_ptr<Document> _empty_doc_ptr;
 		if (!this->set_) {
 			if (this->documents_.size() == 0) {
-				boost::shared_ptr<Document> tmp;
-				return tmp;
+				return _empty_doc_ptr;
 			}
-			else {
-				this->set_ = true;
-				this->current_document_ = documents_.begin();
-			}
+
+			this->set_ = true;
+			this->current_document_ = documents_.begin();
 		}
 		else {
+			if (current_document_ == documents_.end()) {
+				return _empty_doc_ptr;
+			}
+
 			current_document_++;
 		}
 
