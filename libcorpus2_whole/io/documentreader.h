@@ -78,12 +78,22 @@ private:
 			const std::string &annot_path,
 			const std::string &rela_path);
 
+	/**
+	 * Based on given paths (annotations and relations) makes document identifier
+	 * Document identifier is set to id_ class-state
+	 */
+	void make_id_doc(const std::string &annot_path,
+					 const std::string &rela_path);
+
 	// -------------------------------------------------------------------------
 	/// Pointer to CclReader
 	boost::shared_ptr<CclReader> ccl_reader_;
 
 	/// Pointer to RelationReader
 	boost::shared_ptr<RelationReader> rel_reader_;
+
+	/// Future document identifier
+	std::string id_;
 };
 
 } // whole ns

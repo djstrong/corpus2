@@ -33,7 +33,10 @@ namespace whole {
 class Document
 {
 public:
-	Document();
+	/**
+	 * Path to file, if not set, then default is empty
+	 */
+	Document(const std::string& path = "");
 	~Document();
 
 	/// Adds paragraphs to document
@@ -56,12 +59,20 @@ public:
 		return relations_;
 	}
 
+	/// Returns path to the document
+	const std::string& path() const {
+		return path_;
+	}
+
 protected:
 	/// Paragraphs in document
-	std::vector< boost::shared_ptr<Chunk> > paragraphs_;
+	std::vector<boost::shared_ptr<Chunk> > paragraphs_;
 
 	/// Relations in document
-	std::vector< boost::shared_ptr<Relation> > relations_;
+	std::vector<boost::shared_ptr<Relation> > relations_;
+
+	/// Path to the file (if it's not a file, then is empty)
+	const std::string path_;
 };
 
 } // whole ns

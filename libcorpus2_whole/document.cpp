@@ -20,8 +20,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 namespace whole {
 
-Document::Document()
-	: paragraphs_(), relations_()
+Document::Document(const std::string& path)
+	: paragraphs_(), relations_(), path_(path)
 {
 }
 

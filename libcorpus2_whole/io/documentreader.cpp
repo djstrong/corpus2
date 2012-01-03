@@ -24,6 +24,7 @@ namespace whole {
 			: DocumentReaderI("document")
 	{
 		make_readers(tagset, annot_path, rela_path);
+		make_id_doc(annot_path, rela_path);
 	}
 
 	void DocumentReader::make_readers(const Tagset& tagset,
@@ -33,10 +34,16 @@ namespace whole {
 		rel_reader_ = boost::make_shared<RelationReader>(rela_path);
 	}
 
+	void DocumentReader::make_id_doc(const std::string &annot_path,
+		const std::string &rela_path)
+	{
+		id_ = (annot_path + ";" + rela_path);
+	}
+
 	boost::shared_ptr<Document> DocumentReader::read()
 	{
 		boost::shared_ptr<Chunk> chunk;
-		boost::shared_ptr<Document> document = boost::make_shared<Document>();
+		boost::shared_ptr<Document> document = boost::make_shared<Document>(id_);
 
 		// Read ccl document and makes document
 		while (1) {
