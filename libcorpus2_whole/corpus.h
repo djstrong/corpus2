@@ -51,9 +51,14 @@ public:
 	/// Next document in corpus
 	boost::shared_ptr<Document> next_document() {
 		if (!this->set_) {
-			this->set_ = true;
-			this->current_document_ = documents_.begin();
-
+			if (this->documents_.size() == 0) {
+				boost::shared_ptr<Document> tmp;
+				return tmp;
+			}
+			else {
+				this->set_ = true;
+				this->current_document_ = documents_.begin();
+			}
 		}
 		else {
 			current_document_++;
