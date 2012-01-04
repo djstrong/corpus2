@@ -10,13 +10,9 @@
 %include "annotationchannel.i"
 %include "annotationview.i"
 %include "chunk.i"
-%include "document.i"
-%include "documentreader.i"
 %include "iob.i"
 %include "lexeme.i"
 %include "libpwrnlperror.i"
-%include "relation.i"
-%include "relationreader.i"
 %include "sentence.i"
 %include "tag.i"
 %include "tagging.i"
@@ -26,6 +22,13 @@
 %include "tokenmetadata.i"
 %include "tokenreader.i"
 %include "tokenwriter.i"
+
+%include "relation.i"
+%include "document.i"
+%include "corpus.i"
+%include "relationreader.i"
+%include "documentreader.i"
+%include "corpusreader.i"
 
 %{
 #include <libcorpus2/util/settings.h>

@@ -2,22 +2,18 @@
 #define LIBCORPUS2_WHOLE_CORPUSREADER_H
 
 #include <string>
-#include <boost/shared_ptr.hpp>
-
-#include <libcorpus2_whole/io/docreaderi.h>
-#include <libcorpus2_whole/io/docreader.h>
 #include <libcorpus2_whole/corpus.h>
+#include <libcorpus2_whole/io/reader_i.h>
 
 namespace Corpus2 {
 namespace whole {
 
-/**
- * CorpusReader is a corpus-like reader
- */
 class CorpusReader
 {
 public:
 	/**
+	 * Constructor of corpus reader. Here must be set type of the corpus, which
+	 * will be reading.
 	 * @arg corpus_type may be:
 	 *  - document (contains relations)
 	 *  - poliqarp
@@ -35,19 +31,16 @@ public:
 	 */
 	boost::shared_ptr<Corpus> read(const std::string& corpus_file);
 
-protected:
-	/// Tagset to use, sets only onece in constructor
-	const Tagset& tagset_;
-
-	/// Type of corpus, sets only once in constructor
-	const std::string& corpus_type_;
-
 private:
 	/// Returns reader based on corpus type (poliqarp/document)
-	boost::shared_ptr<DocumentReaderI> get_reader_by_type(
-		const std::string &type,
-		const std::string &ann_path,
-		const std::string &rel_path = "");
+	boost::shared_ptr<CorpusReaderI> get_corpus_reader_by_type();
+
+private:
+	/// Type of corpus, sets only once in constructor
+	const std::string corpus_type_;
+
+	/// Tagset to use, sets only onece in constructor
+	const Tagset& tagset_;
 };
 
 } // whole ns

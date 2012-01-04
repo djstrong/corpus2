@@ -10,14 +10,15 @@
 %include "std_string.i"
 %include "boost_shared_ptr.i"
 
-%template(DirectionPointPtr) boost::shared_ptr<Corpus2::DirectionPoint>;
-%template(ConstDirectionPointPtr) boost::shared_ptr<const Corpus2::DirectionPoint>;
+%template(DirectionPointPtr) boost::shared_ptr<Corpus2::whole::DirectionPoint>;
+%template(ConstDirectionPointPtr) boost::shared_ptr<const Corpus2::whole::DirectionPoint>;
 
-%template(RelationPtr) boost::shared_ptr<Corpus2::Relation>;
-%template(ConstRelationPtr) boost::shared_ptr<const Corpus2::Relation>;
-%template(RelationPtrVector) std::vector< boost::shared_ptr<Corpus2::Relation> >;
+%template(RelationPtr) boost::shared_ptr<Corpus2::whole::Relation>;
+%template(ConstRelationPtr) boost::shared_ptr<const Corpus2::whole::Relation>;
+%template(RelationPtrVector) std::vector< boost::shared_ptr<Corpus2::whole::Relation> >;
 
 namespace Corpus2 {
+namespace whole {
   class DirectionPoint {
   public:
     DirectionPoint(const std::string, const std::string, const int);
@@ -50,9 +51,11 @@ namespace Corpus2 {
     %rename(rel_name) name() const;
     const std::string name() const;
   };
-}
+} // whole ns
+} // Corpus2 ns
 
 using namespace std;
 using namespace Corpus2;
+using namespace Corpus2::whole;
 
 #endif /* SWIG_LIBCORPUS2_RELATION_I */

@@ -18,6 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2_whole/relation.h>
 
 namespace Corpus2 {
+namespace whole {
 
 Relation::Relation(const std::string& name,
 				   const boost::shared_ptr<const DirectionPoint> from,
@@ -39,4 +40,5 @@ Relation::~Relation()
 {
 }
 
-} /* end ns Corpus2 */
+} // whole ns
+} // Corpus2 ns

@@ -1,0 +1,55 @@
+#include <fstream>
+#include <boost/algorithm/string.hpp>
+
+#include <libcorpus2/exception.h>
+#include <libcorpus2_whole/io/documentcorpusreader.h>
+#include <libcorpus2_whole/io/documentreader.h>
+
+namespace Corpus2 {
+namespace whole {
+
+DocumentCorpusReader::DocumentCorpusReader(const Tagset& tagset) : tagset_(tagset)
+{
+	//
+}
+
+boost::shared_ptr<Corpus> DocumentCorpusReader::read(const std::string& corpus_file_path)
+{
+	std::string line;
+	std::string ann_path, rel_path;
+	boost::shared_ptr<DocumentReader> doc_reader;
+
+	std::ifstream corpus_file(corpus_file_path.c_str());
+	if (!corpus_file) {
+		throw Corpus2Error(corpus_file_path + " file not found!");
+	}
+
+	boost::shared_ptr<Corpus> corpus = boost::make_shared<Corpus>(corpus_file_path);
+	while(getline(corpus_file, line)) {
+		// split line by semicolon
+		std::vector<std::string> splitted_line;
+		boost::split(splitted_line, line, boost::is_any_of(";"));
+
+		if (splitted_line.empty()) {
+			// maybe exception?
+			continue;
+		}
+		else if (splitted_line.size() == 1) {
+			// maybe exception?
+			continue;
+		}
+
+		ann_path = splitted_line[0];
+		rel_path = splitted_line[1];
+
+		doc_reader = boost::shared_ptr<DocumentReader>(
+				new DocumentReader(this->tagset_, ann_path, rel_path));
+
+		corpus->add_document(doc_reader->read());
+	}
+
+	return corpus;
+}
+
+} // whole ns
+} // Corpus2 ns

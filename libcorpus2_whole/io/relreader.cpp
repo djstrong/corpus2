@@ -22,6 +22,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/make_shared.hpp>
 
 namespace Corpus2 {
+namespace whole {
+
 RelationReader::RelationReader(const std::string &rela_path)
 	: rela_path_(rela_path)
 {
@@ -197,4 +199,5 @@ std::string RelationReader::get_attribute_value(
 	return "";
 }
 
-} /* end ns Corpus2 */
+} // whole ns
+} // Corpus2 ns

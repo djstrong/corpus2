@@ -22,6 +22,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
+namespace whole {
 
 /**
  * A whole document, consisting of consecutive paragraphs ("chunks"), being
@@ -32,7 +33,10 @@ namespace Corpus2 {
 class Document
 {
 public:
-	Document();
+	/**
+	 * Path to file, if not set, then default is empty
+	 */
+	Document(const std::string& path = "");
 	~Document();
 
 	/// Adds paragraphs to document
@@ -55,14 +59,23 @@ public:
 		return relations_;
 	}
 
+	/// Returns path to the document
+	const std::string& path() const {
+		return path_;
+	}
+
 protected:
 	/// Paragraphs in document
-	std::vector< boost::shared_ptr<Chunk> > paragraphs_;
+	std::vector<boost::shared_ptr<Chunk> > paragraphs_;
 
 	/// Relations in document
-	std::vector< boost::shared_ptr<Relation> > relations_;
+	std::vector<boost::shared_ptr<Relation> > relations_;
+
+	/// Path to the file (if it's not a file, then is empty)
+	const std::string path_;
 };
 
-} /* end ns Corpus2 */
+} // whole ns
+} // Corpus2 ns
 
 #endif // LIBCORPUS2_WHOLE_DOCUMENT_H

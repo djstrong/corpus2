@@ -18,9 +18,10 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/make_shared.hpp>
 
 namespace Corpus2 {
+namespace whole {
 
-Document::Document()
-	: paragraphs_(), relations_()
+Document::Document(const std::string& path)
+	: paragraphs_(), relations_(), path_(path)
 {
 }
 
@@ -28,4 +29,5 @@ Document::~Document()
 {
 }
 
-} /* end ns Corpus2 */
+} // whole ns
+} // Corpus2 ns

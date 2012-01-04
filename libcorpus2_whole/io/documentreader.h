@@ -14,18 +14,19 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE and COPYING files for more details.
 */
 
-#ifndef LIBCORPUS2_WHOLE__DOCREADER_H
-#define LIBCORPUS2_WHOLE__DOCREADER_H
+#ifndef LIBCORPUS2_WHOLE_DOCREADER_H
+#define LIBCORPUS2_WHOLE_DOCREADER_H
 
+#include <libcorpus2/io/cclreader.h>
 #include <libcorpus2_whole/relation.h>
 #include <libcorpus2_whole/document.h>
-#include <libcorpus2_whole/io/docreaderi.h>
-#include <libcorpus2/io/cclreader.h>
 #include <libcorpus2_whole/io/relreader.h>
+#include <libcorpus2_whole/io/reader_i.h>
 
 #include <boost/shared_ptr.hpp>
 
 namespace Corpus2 {
+namespace whole {
 
 /**
  * A reader for whole documents. Note that a whole document is read into memory
@@ -77,13 +78,25 @@ private:
 			const std::string &annot_path,
 			const std::string &rela_path);
 
+	/**
+	 * Based on given paths (annotations and relations) makes document identifier
+	 * Document identifier is set to id_ class-state
+	 */
+	void make_id_doc(const std::string &annot_path,
+					 const std::string &rela_path);
+
 	// -------------------------------------------------------------------------
 	/// Pointer to CclReader
 	boost::shared_ptr<CclReader> ccl_reader_;
 
 	/// Pointer to RelationReader
 	boost::shared_ptr<RelationReader> rel_reader_;
+
+	/// Future document identifier
+	std::string id_;
 };
-} /* end ns Corpus2 */
+
+} // whole ns
+} // Corpus2 ns
 
 #endif // LIBCORPUS2_WHOLE_DOCREADER_H
