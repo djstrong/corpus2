@@ -29,7 +29,7 @@ def sentences(rdr):
 		yield sent
 
 def chunks(rdr):
-	"""Yields subsequent sentences from a reader."""
+	"""Yields subsequent paragraphs from a reader."""
 	while True:
 		chunk = rdr.get_next_chunk()
 		if not chunk:
