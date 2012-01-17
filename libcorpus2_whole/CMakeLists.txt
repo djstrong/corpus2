@@ -13,10 +13,15 @@ SET(libcorpus2_whole_SRC
 	io/relreader.cpp
 	io/documentreader.cpp
 	io/documentcorpusreader.cpp
-	io/poliqarpdocumentreader.cpp
-	io/poliqarpcorpusreader.cpp
 	io/corpusreader.cpp
 )
+
+if(CORPUS2_BUILD_POLIQARP)
+	SET(libcorpus2_whole_SRC ${libcorpus2_whole_SRC}
+		io/poliqarpdocumentreader.cpp
+		io/poliqarpcorpusreader.cpp
+	)
+endif(CORPUS2_BUILD_POLIQARP)
 
 file(GLOB_RECURSE INCS "*.h")
 
