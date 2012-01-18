@@ -115,11 +115,12 @@ Token* PoliqarpClient::get_next_focus_token()
 	}
 };
 
-Sentence::Ptr PoliqarpClient::get_next_match_sequence()
+Sentence::Ptr PoliqarpClient::get_next_match_sequence(bool getWholeSentence)
 {
 	poliqarp_match match;
 	if (next_match(match)) {
-		return get_token_range(match.start, match.end);
+                if(getWholeSentence) return get_token_range(match.withinStart, match.withinEnd);
+                else return get_token_range(match.start, match.end);
 	} else {
 		return Sentence::Ptr();
 	}

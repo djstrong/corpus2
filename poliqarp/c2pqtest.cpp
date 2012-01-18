@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	//while (Corpus2::Token* t = pqc.get_next_focus_token()) {
 	//	writer->write_token_dispose(t);
 	//}
-	while (Corpus2::Sentence::Ptr s = pqc.get_next_match_sequence()) {
+	while (Corpus2::Sentence::Ptr s = pqc.get_next_match_sequence(false)) {
 		writer->write_sentence(*s);
 	}
 }

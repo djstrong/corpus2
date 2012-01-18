@@ -31,7 +31,7 @@ public:
 	bool next_match(poliqarp_match& match);
 
 	Token* get_next_focus_token();
-	Sentence::Ptr get_next_match_sequence();
+        Sentence::Ptr get_next_match_sequence(bool getWholeSentence);
 	boost::shared_ptr<Chunk> get_next_document();
 
 	Token* get_token(size_t pos);

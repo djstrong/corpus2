@@ -683,6 +683,8 @@ look_breakout:
             match.start = ctx.m_start;
             assert(ctx.m_end != (size_t)-1);
             match.end = ctx.m_end;
+            match.withinStart = ctx.subdocument.corpus_low;
+            match.withinEnd = ctx.subdocument.corpus_high;
             match.focus = ctx.m_focus == (size_t)-1 ? ctx.m_start : ctx.m_focus;
             match.document = corpus->document.current - 1;
             pthread_mutex_lock(&result->mutex);

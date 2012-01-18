@@ -40,6 +40,8 @@ public:
 
 	boost::shared_ptr<Chunk> get_next_chunk();
 
+        void setGetWholeSentence(bool getWholeSentence_);
+
 	void set_option(const std::string& option);
 
 	std::string get_option(const std::string& option) const;
@@ -51,9 +53,11 @@ protected:
 
 	boost::scoped_ptr<PoliqarpClient> pq_;
 
-	bool executed_;
+        bool executed_;
 
 	PQ_MODE mode_;
+
+        bool getWholeSentence;
 };
 
 } /* end ns Corpus2 */

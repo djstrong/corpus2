@@ -20,7 +20,7 @@ bool PoliqarpReader::registered = TokenReader::register_path_reader<PoliqarpRead
 
 PoliqarpReader::PoliqarpReader(const Tagset &tagset, const std::string &filename)
 	: TokenReader(tagset), pq_(new PoliqarpClient(tagset, filename)),
-	executed_(false), mode_(PQ_SENTENCES)
+        executed_(false), mode_(PQ_SENTENCES), getWholeSentence(false)
 {
 	pq_->compile_query("[]+ within s");
 }
@@ -33,7 +33,7 @@ void PoliqarpReader::set_query(const std::string &query)
 {
 	pq_->compile_query(query);
 	mode_ = PQ_MANUAL;
-	executed_ = false;
+        executed_ = false;
 }
 
 void PoliqarpReader::execute()
@@ -50,8 +50,8 @@ Token* PoliqarpReader::get_next_token()
 
 Sentence::Ptr PoliqarpReader::get_next_sentence()
 {
-	if (!executed_) execute();
-	return pq_->get_next_match_sequence();
+        if (!executed_) execute();
+        return pq_->get_next_match_sequence(getWholeSentence);
 }
 
 boost::shared_ptr<Chunk> PoliqarpReader::get_next_chunk()
@@ -74,9 +74,16 @@ void PoliqarpReader::set_option(const std::string &option)
 		pq_->compile_query("[]");
 		mode_ = PQ_TOKENS;
 		executed_ = false;
-	} else {
+        } else if (option == "getWholeSentence") {
+                setGetWholeSentence(true);
+        }else {
 		TokenReader::set_option(option);
 	}
+}
+
+void PoliqarpReader::setGetWholeSentence(bool getWholeSentence_)
+{
+    getWholeSentence = getWholeSentence_;
 }
 
 std::string PoliqarpReader::get_option(const std::string& option) const

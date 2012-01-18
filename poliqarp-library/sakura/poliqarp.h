@@ -376,6 +376,8 @@ int poliqarp_resize_match_buffer(struct poliqarp_match_buffer *buffer,
 struct poliqarp_match {
    size_t start; /** Offset of the first segment that belongs to this 
                      match. */
+   size_t withinEnd;
+   size_t withinStart;
    size_t end;   /** Offset of one-past-end segment in this match. */
    size_t focus; /** Offset (relative to start of corpus) of focus point. */
    size_t document; /** Document identifier associated with this match. */

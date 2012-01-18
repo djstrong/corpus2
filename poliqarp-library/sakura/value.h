@@ -229,7 +229,7 @@ found_true:
  * @param pos Position for which the value is calculated.
  */
 static inline bool poliqarp_value_eval(const struct poliqarp_value *this,
-   const struct poliqarp_corpus *corpus,
+   const struct poliqarp_corpus * corpus,
    const struct poliqarp_binary_segment *pos)
 {
    switch (this->domain) {
