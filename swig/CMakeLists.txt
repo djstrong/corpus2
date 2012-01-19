@@ -2,7 +2,11 @@
 
 PROJECT(corpus2SwigWrap)
 
-set(LIBS "corpus2" "corpus2_whole" "corpus2_poliqarpreader" "pwrutils")
+set(LIBS "corpus2" "corpus2_whole" "pwrutils")
+
+if(CORPUS2_BUILD_POLIQARP)
+	set(LIBS ${LIBS} "corpus2_poliqarpreader" )
+endif(CORPUS2_BUILD_POLIQARP)
 
 include_directories (${corpus2_SOURCE_DIR})
 include_directories (${pwrutils_SOURCE_DIR})
