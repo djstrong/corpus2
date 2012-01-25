@@ -69,10 +69,6 @@ FIND_PATH(LIBCORPUS2_SRC_DATA_DIR
 )
 MARK_AS_ADVANCED(LIBCORPUS2_SRC_DATA_DIR)
 
-add_subdirectory(libpwrutils)
-add_subdirectory(libcorpus2)
-add_subdirectory(libcorpus2_whole)
-
 if(CORPUS2_BUILD_POLIQARP)
 	add_subdirectory(poliqarp-library)
 	add_subdirectory(poliqarp)
@@ -81,6 +77,9 @@ else()
 	message(STATUS "Not building Poliqarp library and wrapper")
 endif(CORPUS2_BUILD_POLIQARP)
 
+add_subdirectory(libpwrutils)
+add_subdirectory(libcorpus2)
+add_subdirectory(libcorpus2_whole)
 add_subdirectory(corpus2tools)
 add_subdirectory(tests)
 
