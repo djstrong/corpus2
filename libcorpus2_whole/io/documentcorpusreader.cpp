@@ -35,8 +35,7 @@ boost::shared_ptr<Corpus> DocumentCorpusReader::read(const std::string& corpus_f
 			continue;
 		}
 		else if (splitted_line.size() == 1) {
-			// maybe exception?
-			continue;
+			throw Corpus2Error("DocumentReader requires both paths to relations and annotations");
 		}
 
 		ann_path = splitted_line[0];
