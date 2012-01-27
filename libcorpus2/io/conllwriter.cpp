@@ -50,6 +50,7 @@ void ConllWriter::write_sentence(const Sentence& s)
 		os()<<"\n";
 		i++;
 	}
+	os()<<"\n";
 }
 
 void ConllWriter::write_chunk(const Chunk &c)
@@ -66,6 +67,19 @@ void ConllWriter::do_header()
 
 void ConllWriter::do_footer()
 {
+}
+
+std::string ConllWriter::convert_tag(std::string tag)
+{
+	if(tag.compare("adja")==0||tag.compare("adjc")==0||tag.compare("adjp")==0||tag.compare("padj")==0||tag.compare("pact")==0||tag.compare("ppas")==0)
+		return "adj";
+	if(tag.compare("padv")==0||tag.compare("pant")==0||tag.compare("pcon")==0)
+		return "adv";
+	if(tag.compare("bedzie")==0||tag.compare("fin")==0||tag.compare("imps")==0||tag.compare("impt")==0||tag.compare("inf")==0||tag.compare("praet")==0||tag.compare("pred")==0||tag.compare("winien")==0)
+		return "verb";
+	if(tag.compare("psubst")==0||tag.compare("depr")==0||tag.compare("ger")==0||tag.compare("ppron3")==0||tag.compare("ppron12")==0||tag.compare("siebie")==0)
+		return "subst";
+	return tag;
 }
 
 } /* end ns Corpus2 */

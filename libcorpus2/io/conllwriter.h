@@ -27,6 +27,7 @@ protected:
 	void do_footer();
 private:
 	Tagset myTagset;
+	std::string convert_tag(std::string tag);
 
 };
 
