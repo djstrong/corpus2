@@ -53,6 +53,7 @@ SET(libcorpus2_STAT_SRC
 	tokenmetadata.cpp
 	io/cclreader.cpp
 	io/cclwriter.cpp
+	io/conllwriter.cpp
 	io/helpers.cpp
 	io/fastxces.cpp
 	io/iob-chan.cpp

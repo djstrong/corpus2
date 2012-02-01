@@ -19,6 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libpwrutils/foreach.h>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/make_shared.hpp>
 #include <fstream>
 
@@ -143,7 +144,7 @@ Sentence::Ptr RftReader::actual_next_sentence()
 	while (is().good()) {
 		std::getline(is(), line);
 		if (line.empty()
-			|| (mbt_dialect_ && line.find_first_of("<utt>") == 0)) { // TODO: check
+			|| (mbt_dialect_ && boost::starts_with(line, "<utt>"))) {
 			return s;
 		} else {
 			size_t tab = line.find('\t');

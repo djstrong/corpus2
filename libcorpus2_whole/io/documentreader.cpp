@@ -31,6 +31,10 @@ namespace whole {
 		const std::string &annot_path, const std::string &rela_path)
 	{
 		ccl_reader_ = boost::make_shared<CclReader>(tagset, annot_path);
+		// prevent the underlying CCL reader from complaining about
+		// relation XML tags unknown to the reader itself
+		// (in case annot_path and rela_path poin to the same file)
+		ccl_reader_->set_option("no_warn_unexpected_xml");
 		rel_reader_ = boost::make_shared<RelationReader>(rela_path);
 	}
 

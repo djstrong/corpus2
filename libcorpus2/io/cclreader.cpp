@@ -309,6 +309,8 @@ void CclReader::set_option(const std::string& option)
 		impl_->set_autogen_sent_id(true);
 	} else if (option == "autogen_chunk_id") {
 		impl_->set_autogen_chunk_id(true);
+	} else if (option == "no_warn_unexpected_xml") {
+		impl_->set_warn_on_unexpected(false);
 	}
 	else {
 		BufferedChunkReader::set_option(option);
@@ -320,11 +322,13 @@ std::string CclReader::get_option(const std::string& option) const
 	if (option == "disamb_only") {
 		return impl_->get_disamb_only() ? option : "";
 	} else if (option == "no_warn_inconsistent") {
-		return impl_->get_warn_on_inconsistent() ? option : "";
+		return impl_->get_warn_on_inconsistent() ? "" : option;
 	} else if (option == "autogen_sent_id") {
-		return impl_->get_autogen_sent_id() ? "autogen_sent_id" : "";
+		return impl_->get_autogen_sent_id() ? option : "";
 	} else if (option == "autogen_chunk_id") {
-		return impl_->get_autogen_chunk_id() ? "autogen_chunk_id" : "";
+		return impl_->get_autogen_chunk_id() ? option : "";
+	} else if (option == "no_warn_unexpected_xml") {
+		return impl_->get_warn_on_unexpected() ? "" : option;
 	}
 	return BufferedChunkReader::get_option(option);
 }

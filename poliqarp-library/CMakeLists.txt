@@ -142,7 +142,7 @@ set(poliqarpd_SRC
 )
 
 add_library(poliqarpc2 SHARED ${foostring_SRC} ${progress_SRC} ${unibits_SRC} ${common_SRC} ${sakura_SRC} ${BF_SOURCES} ${PoliqarpLibrary_BINARY_DIR}/sakura/parser.h)
-add_dependencies(poliqarpc2 ${PoliqarpLibrary_BINARY_DIR}/sakura/parser.ha)
+#add_dependencies(poliqarpc2 ${PoliqarpLibrary_BINARY_DIR}/sakura/parser.h)
 set_target_properties(poliqarpc2 PROPERTIES
 	VERSION "${pqlib_ver_major}.${pqlib_ver_minor}"
 	SOVERSION ${pqlib_ver_major})
