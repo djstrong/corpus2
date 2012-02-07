@@ -1,8 +1,21 @@
+/*
+	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski, Paweł Kędzia
+	Part of the libcorpus2 project
 
+	This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option)
+any later version.
+
+	This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.
+
+	See the LICENSE and COPYING files for more details.
+*/
 #include <boost/algorithm/string.hpp>
 #include <libcorpus2_whole/io/documentreader.h>
 #include <libcorpus2_whole/io/cclrelreader.h>
-
 
 #include <libcorpus2_whole/io/poliqarpdocumentreader.h>
 
@@ -14,38 +27,31 @@ namespace whole{
 DocumentReader::DocumentReader(const Tagset& tagset, const std::string& corpus_type, const std::string& corpus_file_path)
 	: corpus_type_(corpus_type), tagset_(tagset), corpus_path_(corpus_file_path)
 {
-	if (corpus_type_ == "poliqarp")
-	{
+	if (corpus_type_ == "poliqarp") {
 		reader = boost::shared_ptr<PoliqarpDocumentReader>(
 						new PoliqarpDocumentReader(tagset_, corpus_path_));
 	}
-	else if (corpus_type_ == "document")
-        {
-            corpus_file.open(corpus_file_path.c_str());
+	else if (corpus_type_ == "document") {
+		corpus_file.open(corpus_file_path.c_str());
 	}
-	else
+	else {
 		throw Corpus2Error(corpus_type_ + " is an unknown reader type!");
-
+	}
 }
 
 boost::shared_ptr<Document> DocumentReader::read()
 {
 
 	std::string line;
-	if (corpus_type_ == "poliqarp")
-	{
+	if (corpus_type_ == "poliqarp") {
 		return this->reader->read();
 	}
-        if (corpus_type_ == "document")
-	{
-            if (std::getline(corpus_file, line))
-		{
-                        return get_cclrel_reader(line)->read();
-                        //return Document("End");
+	if (corpus_type_ == "document") {
+		if (std::getline(corpus_file, line)) {
+			return get_cclrel_reader(line)->read();
 		}
-		else
-		{
-                    return boost::make_shared<Document>("End");
+		else {
+			return boost::make_shared<Document>("End");
 		}
 	}
 }
@@ -60,7 +66,7 @@ boost::shared_ptr<DocumentReaderI> DocumentReader::get_cclrel_reader(std::string
 	boost::split(splitted_line, line, boost::is_any_of(";"));
 
 	if (splitted_line.empty()) {
-                throw Corpus2Error("Empty line in corpus file!");
+		throw Corpus2Error("Empty line in corpus file!");
 	}
 	else if (splitted_line.size() == 1) {
 		throw Corpus2Error("CclRelReader requires both paths to relations and annotations");
