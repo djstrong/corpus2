@@ -1,5 +1,5 @@
-#ifndef LIBCORPUS2_WHOLE_CORPUSREADER_H
-#define LIBCORPUS2_WHOLE_CORPUSREADER_H
+#ifndef LIBCORPUS2_WHOLE_DOCUMENTREADER_H
+#define LIBCORPUS2_WHOLE_DOCUMENTREADER_H
 #include <fstream>
 #include <string>
 #include <libcorpus2_whole/corpus.h>
@@ -31,4 +31,4 @@ private:
 } // whole ns
 } // Corpus2 ns
 
-#endif // LIBCORPUS2_WHOLE_CORPUSREADER_H
+#endif // LIBCORPUS2_WHOLE_DOCUMENTREADER_H
