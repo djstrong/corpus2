@@ -11,9 +11,11 @@ SET(libcorpus2_whole_SRC
 	relation.cpp
 	io/reader_i.h
 	io/relreader.cpp
-	io/documentreader.cpp
+	io/cclrelreader.cpp
 	io/documentcorpusreader.cpp
 	io/corpusreader.cpp
+	io/documentreader.cpp
+
 )
 
 if(CORPUS2_BUILD_POLIQARP)

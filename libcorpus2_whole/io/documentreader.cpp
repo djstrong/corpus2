@@ -1,93 +1,81 @@
-/*
-	Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski, Paweł Kędzia
-	Part of the libcorpus2 project
 
-	This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the Free
-Software Foundation; either version 3 of the License, or (at your option)
-any later version.
-
-	This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.
-
-	See the LICENSE and COPYING files for more details.
-*/
-
-#include <boost/make_shared.hpp>
+#include <boost/algorithm/string.hpp>
 #include <libcorpus2_whole/io/documentreader.h>
+#include <libcorpus2_whole/io/cclrelreader.h>
+
+
+#include <libcorpus2_whole/io/poliqarpdocumentreader.h>
+
+
 
 namespace Corpus2 {
-namespace whole {
-	DocumentReader::DocumentReader(const Tagset& tagset,
-		const std::string &annot_path, const std::string &rela_path)
-			: DocumentReaderI("document")
+namespace whole{
+
+DocumentReader::DocumentReader(const Tagset& tagset, const std::string& corpus_type, const std::string& corpus_file_path)
+	: corpus_type_(corpus_type), tagset_(tagset), corpus_path_(corpus_file_path)
+{
+	if (corpus_type_ == "poliqarp")
 	{
-		make_readers(tagset, annot_path, rela_path);
-		make_id_doc(annot_path, rela_path);
+		reader = boost::shared_ptr<PoliqarpDocumentReader>(
+						new PoliqarpDocumentReader(tagset_, corpus_path_));
 	}
-
-	void DocumentReader::make_readers(const Tagset& tagset,
-		const std::string &annot_path, const std::string &rela_path)
-	{
-		ccl_reader_ = boost::make_shared<CclReader>(tagset, annot_path);
-		// prevent the underlying CCL reader from complaining about
-		// relation XML tags unknown to the reader itself
-		// (in case annot_path and rela_path poin to the same file)
-		ccl_reader_->set_option("no_warn_unexpected_xml");
-		rel_reader_ = boost::make_shared<RelationReader>(rela_path);
+	else if (corpus_type_ == "document")
+        {
+            corpus_file.open(corpus_file_path.c_str());
 	}
+	else
+		throw Corpus2Error(corpus_type_ + " is an unknown reader type!");
 
-	void DocumentReader::make_id_doc(const std::string &annot_path,
-		const std::string &rela_path)
+}
+
+boost::shared_ptr<Document> DocumentReader::read()
+{
+
+	std::string line;
+	if (corpus_type_ == "poliqarp")
 	{
-		id_ = (annot_path + ";" + rela_path);
+		return this->reader->read();
 	}
-
-	boost::shared_ptr<Document> DocumentReader::read()
+        if (corpus_type_ == "document")
 	{
-		boost::shared_ptr<Chunk> chunk;
-		boost::shared_ptr<Document> document = boost::make_shared<Document>(id_);
-
-		// Read ccl document and makes document
-		while (1) {
-			chunk = ccl_reader_->get_next_chunk();
-			if (!chunk) {
-				break;
-			}
-			else {
-				document->add_paragraph(chunk);
-			}
+            if (std::getline(corpus_file, line))
+		{
+                        return get_cclrel_reader(line)->read();
+                        //return Document("End");
 		}
-
-		// Read relations and adds them to the document
-		const std::vector< boost::shared_ptr<Relation> > relations =
-				rel_reader_->relations();
-		for (unsigned int i = 0; i < relations.size(); i++) {
-			document->add_relation(relations[i]);
-		}
-
-		return document;
-	}
-
-	void DocumentReader::set_option(const std::string& option)
-	{
-		if (option == "autogen_sent_id") {
-			ccl_reader_->set_option("autogen_sent_id");
-		} else if (option == "autogen_chunk_id") {
-			ccl_reader_->set_option("autogen_chunk_id");
+		else
+		{
+                    return boost::make_shared<Document>("End");
 		}
 	}
+}
 
-	std::string DocumentReader::get_option(const std::string& option) const {
-		if (option == "autogen_sent_id") {
-			return ccl_reader_->get_option("autogen_sent_id");
-		}
-		else if (option == "autogen_chunk_id") {
-			return ccl_reader_->get_option("autogen_chunk_id");
-		}
-		return "";
+
+boost::shared_ptr<DocumentReaderI> DocumentReader::get_cclrel_reader(std::string& line)
+{
+	std::string ann_path, rel_path;
+
+	// split line by semicolon
+	std::vector<std::string> splitted_line;
+	boost::split(splitted_line, line, boost::is_any_of(";"));
+
+	if (splitted_line.empty()) {
+                throw Corpus2Error("Empty line in corpus file!");
 	}
+	else if (splitted_line.size() == 1) {
+		throw Corpus2Error("CclRelReader requires both paths to relations and annotations");
+	}
+
+	ann_path = splitted_line[0];
+	rel_path = splitted_line[1];
+
+	return boost::shared_ptr<CclRelReader>(
+			new CclRelReader(tagset_, ann_path, rel_path));
+
+
+
+}
+
 
 } // whole ns
 } // Corpus2 ns

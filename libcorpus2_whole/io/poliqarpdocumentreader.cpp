@@ -19,6 +19,10 @@ boost::shared_ptr<Document> PoliqarpDocumentReader::read()
 		document = boost::make_shared<Document>();
 		document->add_paragraph(chunk);
 	}
+	else
+	{
+		document = boost::make_shared<Document>("End");
+	}
 	return document;
 }
 
