@@ -17,8 +17,9 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2_whole/io/documentreader.h>
 #include <libcorpus2_whole/io/cclrelreader.h>
 
+#ifdef WITH_POLIQARP
 #include <libcorpus2_whole/io/poliqarpdocumentreader.h>
-
+#endif
 
 
 namespace Corpus2 {
@@ -27,33 +28,34 @@ namespace whole{
 DocumentReader::DocumentReader(const Tagset& tagset, const std::string& corpus_type, const std::string& corpus_file_path)
 	: corpus_type_(corpus_type), tagset_(tagset), corpus_path_(corpus_file_path)
 {
-	if (corpus_type_ == "poliqarp") {
-		reader = boost::shared_ptr<PoliqarpDocumentReader>(
-						new PoliqarpDocumentReader(tagset_, corpus_path_));
-	}
-	else if (corpus_type_ == "document") {
+	if (corpus_type_ == "document") {
 		corpus_file.open(corpus_file_path.c_str());
-	}
-	else {
+#ifdef WITH_POLIQARP
+	} else if (corpus_type_ == "poliqarp") {
+		reader = boost::shared_ptr<PoliqarpDocumentReader>(
+					new PoliqarpDocumentReader(tagset_, corpus_path_));
+#endif
+	} else {
 		throw Corpus2Error(corpus_type_ + " is an unknown reader type!");
 	}
 }
 
 boost::shared_ptr<Document> DocumentReader::read()
 {
-
 	std::string line;
+#ifdef WITH_POLIQARP
 	if (corpus_type_ == "poliqarp") {
 		return this->reader->read();
 	}
+#endif
 	if (corpus_type_ == "document") {
 		if (std::getline(corpus_file, line)) {
 			return get_cclrel_reader(line)->read();
-		}
-		else {
+		} else {
 			return boost::make_shared<Document>("End");
 		}
 	}
+	throw Corpus2Error(corpus_type_ + " is an unknown reader type!");
 }
 
 
@@ -77,9 +79,6 @@ boost::shared_ptr<DocumentReaderI> DocumentReader::get_cclrel_reader(std::string
 
 	return boost::shared_ptr<CclRelReader>(
 			new CclRelReader(tagset_, ann_path, rel_path));
-
-
-
 }
 
 
