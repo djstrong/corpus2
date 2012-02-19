@@ -25,6 +25,21 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 namespace Corpus2 {
 namespace whole{
 
+DocumentReader::DocumentReader(const Tagset& tagset, const std::string& corpus_type, const std::string& corpus_file_path, const std::string& corpus_reader)
+	: corpus_type_(corpus_type), tagset_(tagset), corpus_path_(corpus_file_path)
+{
+	if (corpus_type_ == "document") {
+		corpus_file.open(corpus_file_path.c_str());
+#ifdef WITH_POLIQARP
+	} else if (corpus_type_ == "poliqarp") {
+		reader = boost::shared_ptr<PoliqarpDocumentReader>(
+					new PoliqarpDocumentReader(tagset_, corpus_path_, corpus_reader));
+#endif
+	} else {
+		throw Corpus2Error(corpus_type_ + " is an unknown reader type!");
+	}
+}
+
 DocumentReader::DocumentReader(const Tagset& tagset, const std::string& corpus_type, const std::string& corpus_file_path)
 	: corpus_type_(corpus_type), tagset_(tagset), corpus_path_(corpus_file_path)
 {
@@ -33,7 +48,7 @@ DocumentReader::DocumentReader(const Tagset& tagset, const std::string& corpus_t
 #ifdef WITH_POLIQARP
 	} else if (corpus_type_ == "poliqarp") {
 		reader = boost::shared_ptr<PoliqarpDocumentReader>(
-					new PoliqarpDocumentReader(tagset_, corpus_path_));
+					new PoliqarpDocumentReader(tagset_, corpus_path_, "poliqarp"));
 #endif
 	} else {
 		throw Corpus2Error(corpus_type_ + " is an unknown reader type!");

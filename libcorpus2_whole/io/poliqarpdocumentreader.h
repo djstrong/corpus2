@@ -18,8 +18,8 @@ namespace whole {
 class PoliqarpDocumentReader : public DocumentReaderI
 {
 public:
+	PoliqarpDocumentReader(const Tagset& tagset, const std::string& corpus_path, const std::string& corpus_reader);
 	PoliqarpDocumentReader(const Tagset& tagset, const std::string& corpus_path);
-
 	/**
 	 * Semantic of this methd is similar to get_next_document from Poliqarp Client
 	 * @return nth readed document
@@ -35,7 +35,7 @@ public:
 
 private:
 	/// Poliqarp reader used for reading Poliqarp corp
-	boost::shared_ptr<PoliqarpReader> pqr_;
+        Corpus2::TokenReader::TokenReaderPtr pqr_;
 };
 
 } // whole ns

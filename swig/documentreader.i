@@ -19,7 +19,8 @@ namespace Corpus2 {
 namespace whole {
   class DocumentReader {
   public:
-    DocumentReader(const Tagset& tagset, const std::string& corpus_type,const std::string& corpus_file);
+    DocumentReader(const Tagset& tagset, const std::string& corpus_type,const std::string& corpus_file_path, const std::string& corpus_reader);
+    DocumentReader(const Tagset& tagset, const std::string& corpus_type,const std::string& corpus_file_path);
     boost::shared_ptr<Document> read();
   };
 } // whole ns
