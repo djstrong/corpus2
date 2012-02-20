@@ -27,6 +27,7 @@
 %include "document.i"
 %include "corpus.i"
 %include "relationreader.i"
+%include "cclrelreader.i"
 %include "documentreader.i"
 %include "corpusreader.i"
 

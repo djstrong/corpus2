@@ -1,44 +1,27 @@
-#ifndef SWIG_LIBCORPUS2_DOCUMENTREADER_I
-#define SWIG_LIBCORPUS2_DOCUMENTREADER_I
+#ifndef SWIG_LIBCORPUS2_CORPUS_READER_I
+#define SWIG_LIBCORPUS2_CORPUS_READER_I
 
-%module libcorpusdocumentreader
+%module libcorpusdocument
 %{
   #include <libcorpus2_whole/io/documentreader.h>
 %}
 
-%include "exception.i"
-%include "document.i"
-%include "boost_shared_ptr.i"
+%include "std_defs.i"
+%include "tagset.i"
+%include "corpus.i"
+
+%template(DocumentReaderPtr) boost::shared_ptr<Corpus2::whole::DocumentReader>;
+%template(ConstDocumentReaderPtr) boost::shared_ptr<const Corpus2::whole::DocumentReader>;
+
+%template(DocumentReaderPtrVector) std::vector<boost::shared_ptr<Corpus2::whole::DocumentReader> >;
 
 namespace Corpus2 {
 namespace whole {
   class DocumentReader {
   public:
-    %exception {
-      try {
-        $action
-      } catch (PwrNlp::PwrNlpError &e) {
-        PyErr_SetString(PyExc_IndexError, e.info().c_str());
-        return NULL;
-      }
-    }
-    DocumentReader(const Tagset&, const std::string&, const std::string &);
-
-    %exception {
-      try {
-        $action
-      } catch (PwrNlp::PwrNlpError &e) {
-        PyErr_SetString(PyExc_IndexError, e.info().c_str());
-        return NULL;
-      }
-    }
+    DocumentReader(const Tagset& tagset, const std::string& corpus_type,const std::string& corpus_file_path, const std::string& corpus_reader);
+    DocumentReader(const Tagset& tagset, const std::string& corpus_type,const std::string& corpus_file_path);
     boost::shared_ptr<Document> read();
-
-    void set_option(const std::string& option);
-    std::string get_option(const std::string& option) const;
-
-    /* --------------------------------------------------------------------- */
-    ~DocumentReader();
   };
 } // whole ns
 } // Corpus2 ns
@@ -47,4 +30,4 @@ using namespace std;
 using namespace Corpus2;
 using namespace Corpus2::whole;
 
-#endif /* SWIG_LIBCORPUS2_DOCUMENTREADER_I */
+#endif /* SWIG_LIBCORPUS2_CORPUS_READER_I */
