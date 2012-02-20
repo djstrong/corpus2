@@ -304,11 +304,15 @@ class TokComp:
 		"""Returns the percentage of reference tokens that have the given
 		features. By default all the reference tokens are treated as the
 		denominator. If wrt_to given, will be used as a reference feat set."""
-		if wrt_to:
-			return 100.0 * self.count_with(feats) / self.count_with(wrt_to)
+		count = self.count_with(feats)
+		if wrt_to is not None:
+			denom = self.count_with(wrt_to)
 		else:
-			return 100.0 * self.count_with(feats) / self.ref_toks
-	
+			denom = self.ref_toks
+		if denom == 0:
+			return 0.0 # what else can we do? should be labelled N/A
+		return 100.0 * count / denom
+
 	def value_of(self, metric):
 		"""Calculates the value of the given metric, being a tuple of
 		features for tokens counted as hit and features for tokens counted
