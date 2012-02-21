@@ -142,6 +142,12 @@ class Metric:
 	UNK_SC = ([Feat.STRONG_TAG_HIT, Feat.UNKNOWN], [Feat.UNKNOWN])
 	KN_POS_SC = ([Feat.STRONG_POS_HIT, Feat.KNOWN], [Feat.KNOWN])
 	UNK_POS_SC = ([Feat.STRONG_POS_HIT, Feat.UNKNOWN], [Feat.UNKNOWN])
+
+	KN_WC_LOWER = ([Feat.WEAK_TAG_HIT, Feat.SEG_NOCHANGE, Feat.KNOWN], [Feat.KNOWN])
+	UNK_WC_LOWER = ([Feat.WEAK_TAG_HIT, Feat.SEG_NOCHANGE, Feat.UNKNOWN], [Feat.UNKNOWN])
+	KN_SEG_CHANGE = ([Feat.SEG_CHANGE, Feat.KNOWN], [Feat.KNOWN])
+	UNK_SEG_CHANGE = ([Feat.SEG_CHANGE, Feat.UNKNOWN], [Feat.UNKNOWN])
+	
 	# heur recover
 	PUNCHIT_PUNCONLY = ([Feat.ALLPUNC_HIT], None)
 	PUNCHIT_AROUND = ([Feat.PUNCAROUND_HIT], None)
@@ -373,6 +379,10 @@ def go():
 
 	unk_weak = 0.0
 	unk_strong_pos = 0.0
+	unk_weak_lower = 0.0
+	unk_weak_upper = 0.0
+	kn_weak_lower = 0.0
+	kn_weak_upper = 0.0
 	
 	perc_unk = 0.0
 	perc_segchange = 0.0
@@ -393,6 +403,10 @@ def go():
 			res.dump()
 		weak_lower_bound += res.value_of(Metric.WC_LOWER)
 		weak_upper_bound += res.value_of(Metric.WC_LOWER) + res.value_of(Metric.SEG_CHANGE)
+		unk_weak_lower += res.value_of(Metric.UNK_WC_LOWER)
+		unk_weak_upper += res.value_of(Metric.UNK_WC_LOWER) + res.value_of(Metric.UNK_SEG_CHANGE)
+		kn_weak_lower += res.value_of(Metric.KN_WC_LOWER)
+		kn_weak_upper += res.value_of(Metric.KN_WC_LOWER) + res.value_of(Metric.KN_SEG_CHANGE)
 		weak += res.value_of(Metric.WC)
 		strong_pos += res.value_of(Metric.POS_SC)
 		unk_weak += res.value_of(Metric.UNK_WC)
@@ -403,6 +417,10 @@ def go():
 	print 'AVG weak corr lower bound\t%.4f%%' % (weak_lower_bound / num_folds)
 	print 'AVG weak corr upper bound\t%.4f%%' % (weak_upper_bound / num_folds)
 	print 'AVG weak corr (heur)\t%.4f%%' % (weak / num_folds)
+	print 'AVG UNK weak corr lower bound\t%.4f%%' % (unk_weak_lower / num_folds)
+	print 'AVG UNK weak corr upper bound\t%.4f%%' % (unk_weak_upper / num_folds)
+	print 'AVG KN  weak corr lower bound\t%.4f%%' % (kn_weak_lower / num_folds)
+	print 'AVG KN  weak corr upper bound\t%.4f%%' % (kn_weak_upper / num_folds)
 	print 'AVG POS strong corr\t%.4f%%' % (strong_pos / num_folds)
 	print 'AVG UNK weak corr (heur)\t%.4f%%' % (unk_weak / num_folds)
 	print 'AVG UNK POS strong corr\t%.4f%%' % (unk_strong_pos / num_folds)
