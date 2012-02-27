@@ -54,20 +54,20 @@ else (Libedit_LIBRARIES AND Libedit_INCLUDE_DIRS)
       /sw/lib
   )
 
-  if (Libedit_LIBRARY)
-    set(Libedit_FOUND TRUE)
-  endif (Libedit_LIBRARY)
+  #if (Libedit_LIBRARY)
+  #  set(Libedit_FOUND TRUE)
+  #endif (Libedit_LIBRARY)
 
   set(Libedit_INCLUDE_DIRS
     ${Libedit_INCLUDE_DIR}
   )
 
-  if (Libedit_FOUND)
+  if (Libedit_LIBRARY)
     set(Libedit_LIBRARIES
       ${Libedit_LIBRARIES}
       ${Libedit_LIBRARY}
     )
-  endif (Libedit_FOUND)
+  endif (Libedit_LIBRARY)
 
   if (Libedit_INCLUDE_DIRS AND Libedit_LIBRARIES)
      set(Libedit_FOUND TRUE)
