@@ -6,6 +6,15 @@
   #include <libcorpus2_whole/io/relreader.h>
 %}
 
+%constant std::string RELATION_TAG = Corpus2::whole::RELATION_TAG;
+%constant std::string RELATIONS_TAG = Corpus2::whole::RELATIONS_TAG;
+%constant std::string RELATION_DIRECT_FROM = Corpus2::whole::RELATION_DIRECT_FROM;
+%constant std::string RELATION_DIRECT_TO = Corpus2::whole::RELATION_DIRECT_TO;
+
+%constant std::string RELATION_NAME = Corpus2::whole::RELATION_NAME;
+%constant std::string RELATION_SENTENCE_ID = Corpus2::whole::RELATION_SENTENCE_ID;
+%constant std::string RELATION_CHANNEL_NAME = Corpus2::whole::RELATION_CHANNEL_NAME;
+
 namespace Corpus2 {
 namespace whole {
   class RelationReader {
