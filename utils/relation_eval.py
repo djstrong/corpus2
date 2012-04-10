@@ -67,36 +67,39 @@ class RelStats :
 
 	#if there was a hit on both sides of relation (dir_from, dir_to) then update counters
 	def update_stats(self, both, chun, head) : 
-		if chun == 2 : 
-			self.any_hits += 1
-			if head == 2 :
-				self.both_hits += 1
-			else :
-				self.chun_hits += 1				
-		elif head == 2 : 	
-			self.any_hits += 1
+		if chun == 2 :
+			self.chun_hits+=1
+		if head == 2 :
 			self.head_hits += 1
+		if chun == 2 and head == 2 :
+			self.both_hits += 1
+		if chun == 2 or head == 2:
+			self.any_hits+=1
 
-	def print_stats(self,ref_rels_count, target_rels_count):
+	def print_stats(self,ref_rels_count, target_rels_count, stat_mode):
 		p = 0.0 if target_rels_count == 0 else 100.0 * self.any_hits / target_rels_count
 		r = 0.0 if ref_rels_count == 0 else 100.0 * self.any_hits / ref_rels_count
 		f = 0.0 if p + r == 0.0 else 2.0 * p * r / (p + r)
-		print ('Any chunk or head match:\t')
+		if not stat_mode : 
+			print ('Any chunk or head match:\t')
 		print '%.2f\t%.2f\t%.2f' % (p, r, f) 
 		p = 0.0 if target_rels_count == 0 else 100.0 * self.both_hits / target_rels_count
 		r = 0.0 if ref_rels_count == 0 else 100.0 * self.both_hits / ref_rels_count
 		f = 0.0 if p + r == 0.0 else 2.0 * p * r / (p + r)
-		print ('Chunk and head match:\t')
+		if not stat_mode : 
+			print ('Chunk and head match:\t')
 		print '%.2f\t%.2f\t%.2f' % (p, r, f) 
 		p = 0.0 if target_rels_count == 0 else 100.0 * self.chun_hits / target_rels_count
 		r = 0.0 if ref_rels_count == 0 else 100.0 * self.chun_hits / ref_rels_count
 		f = 0.0 if p + r == 0.0 else 2.0 * p * r / (p + r)
-		print ('Chunk match:\t')
+		if not stat_mode : 
+			print ('Chunk match:\t')
 		print '%.2f\t%.2f\t%.2f' % (p, r, f) 
 		p = 0.0 if target_rels_count == 0 else 100.0 * self.head_hits / target_rels_count
 		r = 0.0 if ref_rels_count == 0 else 100.0 * self.head_hits / ref_rels_count
 		f = 0.0 if p + r == 0.0 else 2.0 * p * r / (p + r)
-		print ('Head match:\t')
+		if not stat_mode : 
+			print ('Head match:\t')
 		print '%.2f\t%.2f\t%.2f' % (p, r, f) 
 
 def compare(rel1, rel2) : 
@@ -137,14 +140,18 @@ def go():
 	parser.add_option('-t', '--tagset', type='string', action='store',
 		dest='tagset', default='nkjp',
 		help='set the tagset used in input; default: nkjp')
+	parser.add_option('-s', '--stat', action='store_true',
+		dest='stat_mode',
+		help='output P,R,f with no text labels, order like in normal mode: \n Chunks or heads \n Chunks and heads \n Chunks match \n Heads match')
 	(options, args) = parser.parse_args()
+	
+	stat_mode = options.stat_mode
 	
 	if len(args) != 3:
 		sys.stderr.write('No args. See --help\n')
 		sys.exit(1)
 
 	batch_ref, batch_target, rel_name = args
-
 
 	rel_stats = RelStats()
 
@@ -198,7 +205,7 @@ def go():
 		line_ref = ref_file.readline()
 		line_target = target_file.readline()
 	
-	rel_stats.print_stats(ref_count, target_count)
+	rel_stats.print_stats(ref_count, target_count, stat_mode)
 
 if __name__ == '__main__':
 	go()
