@@ -17,12 +17,11 @@ def go():
 	parser.add_option('-t', '--tagset', type='string', action='store',
 		dest='tagset', default='nkjp',
 		help='set the tagset used in input; default: nkjp')
-	parser.add_option('-s', '--sent-sep', type='string', action='store',
-		dest='sent_sep', default='',
-		help='set the sentence separator; default: (empty)')
 	parser.add_option('-p', '--par-sep', type='string', action='store',
 		dest='par_sep', default='\n\n',
-		help='set the sentence separator; default: (two newlines)')
+		help='set the paragraph separator; default: (two newlines)')
+	parser.add_option('--ignore-ns-sent', action='store_true', default=False,
+		dest='ignore_ns_sent', help='ignore no-space markers on sent boundaries')
 	(options, args) = parser.parse_args()
 	if len(args) != 2:
 		print 'Need to provide input and output.'
@@ -38,19 +37,17 @@ def go():
 		first = True
 		while True:
 			par = rdr.get_next_chunk()
-			if options.par_sep:
-				first = True # if non-empty par separator, skip pre-spaces
+			parfirst = True
 			if not par:
 				break
 			for sent in par.sentences():
-				if options.sent_sep:
-					first = True # if non-empty sent sep, skip pre-spaces
+				sentfirst = True # if non-empty sent sep, skip pre-spaces
 				for tok in sent.tokens():
-					if not first and tok.after_space():
+					if not parfirst and ((sentfirst and options.ignore_ns_sent) or tok.after_space()):
 						out.write(' ')
 					out.write(unicode(tok.orth()))
-					first = False
-				out.write(options.sent_sep)
+					sentfirst = False
+					parfirst = False
 			out.write(options.par_sep)
 
 if __name__ == '__main__':
