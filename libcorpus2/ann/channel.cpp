@@ -35,8 +35,8 @@ void AnnotationChannel::make_iob_from_segments()
 			iobs_[i] = IOB::I;
 		} else {
 			iobs_[i] = IOB::B;
-			prev_seg = segments_[i];
 		}
+		prev_seg = segments_[i];
 	}
 }
 
