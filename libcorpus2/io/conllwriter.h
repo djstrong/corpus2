@@ -19,6 +19,7 @@ public:
 
 	void write_chunk(const Chunk &c);
 
+	const static std::string SUPERPOS_ATTR;
 	static bool registered;
 
 protected:
