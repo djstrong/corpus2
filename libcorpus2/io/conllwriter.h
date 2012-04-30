@@ -5,6 +5,14 @@
 
 namespace Corpus2 {
 
+/**
+ * Writer in the CONLL format (as required by MALT parser). The writer
+ * assumes that the tagset used employs an attribute named 'superpos'
+ * (this naming is obligatory) and the attribute is defined as first
+ * and required for each grammatical class. This attribute is used to
+ * designate a more general POS category for each token (e.g. all verb
+ * classes could be marked as VERB there).
+ */
 class ConllWriter : public TokenWriter
 {
 public:
