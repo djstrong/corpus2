@@ -16,6 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <boost/make_shared.hpp>
 #include <libcorpus2_whole/relation.h>
+#include <stdio.h>
 
 namespace Corpus2 {
 namespace whole {
@@ -25,6 +26,27 @@ Relation::Relation(const std::string& name,
 				   const boost::shared_ptr<const DirectionPoint> to)
 	: name_(name), from_(from), to_(to)
 {
+}
+
+boost::shared_ptr<Relation> Relation::rel_pt(){
+	relation_=boost::shared_ptr<Relation>(new Relation(name_,from_,to_));
+	return relation_;
+}
+
+void Relation::set_to(const DirectionPoint& dp){
+	boost::shared_ptr<const DirectionPoint> temp(new DirectionPoint(dp.sentence_id(),dp.channel_name(),dp.annotation_number()));
+	to_=temp;
+
+}
+
+void Relation::set_from(const DirectionPoint& dp){
+	boost::shared_ptr<const DirectionPoint> temp(new DirectionPoint(dp.sentence_id(),dp.channel_name(),dp.annotation_number()));
+        from_=temp;
+
+}
+
+void Relation::set_name(const std::string& s){
+	name_=s;
 }
 
 Relation::Relation(const std::string& name,

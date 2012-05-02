@@ -94,6 +94,15 @@ public:
 
 	~Relation();
 
+	//Setter of "form" direction point
+	void set_from(const DirectionPoint& dp);
+
+	//Setter of "to" direction point
+	void set_to(const DirectionPoint& dp);
+
+	//Setterf of name
+	void set_name(const std::string& s); 
+
 	/// Accessor to "from" direction point
 	const boost::shared_ptr<const DirectionPoint>& from() const {
 		return from_;
@@ -109,13 +118,17 @@ public:
 		return name_;
 	}
 
+	boost::shared_ptr<Relation> rel_pt();
+
 private:
 	/// Direction name
-	const std::string name_;
-
+	std::string name_;
+	
+	///Pointer to relation
+	boost::shared_ptr<Relation> relation_;
 	/// Direction points: from and to
-	const boost::shared_ptr<const DirectionPoint> from_;
-	const boost::shared_ptr<const DirectionPoint> to_;
+	boost::shared_ptr<const DirectionPoint> from_;
+	boost::shared_ptr<const DirectionPoint> to_;
 };
 
 } // whole ns
