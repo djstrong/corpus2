@@ -1,5 +1,18 @@
 #!/usr/bin/perl
 
+#Script takes two arguments: corpus directory (DIR) and relation name (REL) that is going to be swapped.  
+#In all files within DIR swap direction of all relations with name REL by swapping chan attributes of nodes: <from> and <to>  and it's text nodes
+#e.g. 
+#<rel name="cop">
+#	<from chan="NP">3</from>
+#	<to chan="VP">1</to>
+#</rel>
+# swap: NP with VP and 3 with 1:
+#<rel name="cop">
+#	<from chan="VP">1</from>
+#	<to chan="NP">3</to>
+#</rel>
+
 use File::Find;
 
 if ( @ARGV == 2 ){
@@ -54,6 +67,6 @@ sub wanted{
 }
 
 }else{
-
-	print "USAGE: swapchans.pl directory relation_name\n";
+	print "In given directory (DIR) change direction of all relations with name REL by swapping attribute chan between <from> and <to> nodes";
+	print "\n\nUSAGE: swapchans.pl DIR REL\n";
 }
