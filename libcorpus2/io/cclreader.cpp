@@ -100,8 +100,8 @@ private:
 	unsigned int chunk_number_;
 	static const std::string CHUNK_ID_PREFFIX;
 };
-const std::string CclReaderImpl::SENT_ID_PREFFIX = "sentence";
-const std::string CclReaderImpl::CHUNK_ID_PREFFIX = "chunk";
+const std::string CclReaderImpl::SENT_ID_PREFFIX = "s";
+const std::string CclReaderImpl::CHUNK_ID_PREFFIX = "ch";
 
 CclReader::CclReader(const Tagset& tagset, std::istream& is,
 		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
