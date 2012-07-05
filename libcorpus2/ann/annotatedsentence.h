@@ -96,6 +96,19 @@ public:
 		return i->second;
 	}
 
+	/**
+	 * Add a copy of the given annotation channel.
+	 * If a channel of the given name already exists, will do nothing and return false.
+	 * Otherwise, will add the channel and return true.
+	 */
+	bool add_channel(const std::string& name, const AnnotationChannel& chan) {
+		if (has_channel(name)) {
+			return false;
+		}
+		channels_.insert(std::make_pair(name, chan));
+		return true;
+	}
+
 	const chan_map_t& all_channels() const {
 		return channels_;
 	}
