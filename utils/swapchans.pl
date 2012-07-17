@@ -1,5 +1,17 @@
 #!/usr/bin/perl
 
+# Copyright (C) 2012 Paweł Orłowicz.
+# This program is free software; you can redistribute and/or modify it
+# under the terms of the GNU Lesser General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# See the LICENCE and COPYING files for more details
+
 #Script takes two arguments: corpus directory (DIR) and relation name (REL) that is going to be swapped.  
 #In all files within DIR swap direction of all relations with name REL by swapping chan attributes of nodes: <from> and <to>  and it's text nodes
 #e.g. 

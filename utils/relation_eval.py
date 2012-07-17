@@ -1,5 +1,17 @@
 #!/usr/bin/python
 
+# Copyright (C) 2012 Paweł Orłowicz.
+# This program is free software; you can redistribute and/or modify it
+# under the terms of the GNU Lesser General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# See the LICENCE and COPYING files for more details
+
 descr = """%prog [options] BATCH_REF BATCH_TARGET REL_NAME
 
 Reads the two files BATCH_REF and BATCH_TARGET which contain lists of pairs 
@@ -131,6 +143,11 @@ def compare(rel1, rel2) :
 	if cmp(dp1_to.annotation_number(), dp2_to.annotation_number()) < 0:
 		return -1
 	elif cmp(dp1_to.annotation_number(), dp2_to.annotation_number()) > 0 : 
+		return 1
+
+	if rel1.rel_name() < rel2.rel_name():
+		return -1
+	elif rel1.rel_name() > rel2.rel_name():
 		return 1
 
 	return 0

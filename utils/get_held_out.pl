@@ -1,5 +1,17 @@
 #!/usr/bin/perl
 
+# Copyright (C) 2012 Paweł Orłowicz.
+# This program is free software; you can redistribute and/or modify it
+# under the terms of the GNU Lesser General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# See the LICENCE and COPYING files for more details
+
 #Assume that SOURCE_DIR contains pairs of files ccl-NAME.xml.* + rel-NAME.xml
 #According to the measure: option -n NUMBER_OF_DOCUMENTS_TO_HOLD_OUT or RATIO percentage of all documents to be hold out
 #copy appropriate number of documents (1 document == 1 pair (ccl-NAME.xml.* + rel-NAME.xml) into HELD_OUT_PART_DIR
