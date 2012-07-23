@@ -1,18 +1,19 @@
 /*
-	Copyright (C) 2010 Tomasz ¦niatowski, Adam Radziszewski, Pawe³ Kêdzia
-	Part of the libcorpus2 project
+        Copyright (C) 2010 Tomasz Åniatowski, Adam Radziszewski, PaweÅ KÄdzia
+        Part of the libcorpus2 project
 
-	This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the Free
+        This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by the Free
 Software Foundation; either version 3 of the License, or (at your option)
 any later version.
 
-	This program is distributed in the hope that it will be useful, but
+        This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE.
 
-	See the LICENSE and COPYING files for more details.
+        See the LICENSE.CORPUS2, LICENSE.POLIQARP, COPYING.LESSER and COPYING files for more details.
 */
+
 
 #ifndef LIBCORPUS2_WHOLE_RELWRITER_H
 #define LIBCORPUS2_WHOLE_RELWRITER_H
