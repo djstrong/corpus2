@@ -3,7 +3,7 @@
     Part of the libcorpus2 project
 
     This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the Free
+under the terms of the GNU Lesser General Public License as published by the Free
 Software Foundation; either version 3 of the License, or (at your option)
 any later version.
 
@@ -11,7 +11,7 @@ any later version.
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. 
 
-    See the LICENSE and COPYING files for more details.
+    See the LICENSE.CORPUS2, LICENSE.POLIQARP, COPYING.LESSER and COPYING files for more details.
 */
 
 #include <libcorpus2/io/cclreader.h>
@@ -100,8 +100,8 @@ private:
 	unsigned int chunk_number_;
 	static const std::string CHUNK_ID_PREFFIX;
 };
-const std::string CclReaderImpl::SENT_ID_PREFFIX = "sentence";
-const std::string CclReaderImpl::CHUNK_ID_PREFFIX = "chunk";
+const std::string CclReaderImpl::SENT_ID_PREFFIX = "s";
+const std::string CclReaderImpl::CHUNK_ID_PREFFIX = "ch";
 
 CclReader::CclReader(const Tagset& tagset, std::istream& is,
 		bool disamb_only, bool disamb_sh, bool autogen_sent_id,

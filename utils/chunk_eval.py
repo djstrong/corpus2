@@ -1,6 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Copyright (C) 2012 Adam Radziszewski.
+# This program is free software; you can redistribute and/or modify it
+# under the terms of the GNU Lesser General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# See the LICENCE and COPYING files for more details
+
 descr = """%prog [options] CHUNKED REF CHAN_NAME
 
 Reads the two chunk-annotated corpora: CHUNKED (chunker output) and REF

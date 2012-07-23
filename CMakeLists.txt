@@ -16,7 +16,8 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 set(CORPUS2_BUILD_SWIG True CACHE BOOL "Build SWIG Python wrappers")
-set(CORPUS2_BUILD_POLIQARP True CACHE BOOL "Build Poliqarp library and wraper")
+set(CORPUS2_BUILD_POLIQARP False CACHE BOOL "Build Poliqarp library and wrapper (forces GPL)")
+mark_as_advanced(CLEAR CORPUS2_BUILD_POLIQARP)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	# Set our own default flags at first run.
@@ -70,6 +71,7 @@ FIND_PATH(LIBCORPUS2_SRC_DATA_DIR
 MARK_AS_ADVANCED(LIBCORPUS2_SRC_DATA_DIR)
 
 if(CORPUS2_BUILD_POLIQARP)
+	message(STATUS "Building Poliqarp library and wrapper")	
 	add_subdirectory(poliqarp-library)
 	add_subdirectory(poliqarp)
 	add_definitions( -DWITH_POLIQARP )
@@ -94,4 +96,16 @@ if(CORPUS2_BUILD_SWIG)
 else()
 	message(STATUS "Not building SWIG Python wrappers")
 endif(CORPUS2_BUILD_SWIG)
+
+if(NOT CORPUS2_BUILD_POLIQARP)
+	message(STATUS "*****************************************************")
+	message(STATUS "GPL Component: Poliqarp library; has not been built.")
+	message(STATUS "Use cmake wizard mode: -i; to include it into build.")
+	message(STATUS "*****************************************************")
+else(NOT CORPUS2_BUILD_POLIQARP)
+	message(STATUS "*****************************************************")
+	message(STATUS "GPL Components: Poliqarp library; has been built.")
+	message(STATUS "Use cmake wizard mode: -i; to exclude it from the build.")
+	message(STATUS "*****************************************************")
+endif(NOT CORPUS2_BUILD_POLIQARP)
 

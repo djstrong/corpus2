@@ -1,6 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Copyright (C) 2011 Adam Radziszewski.
+# This program is free software; you can redistribute and/or modify it
+# under the terms of the GNU Lesser General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# See the LICENCE and COPYING files for more details
+
 from optparse import OptionParser
 import sys
 import corpus2
@@ -135,6 +147,7 @@ class Metric:
 	# as above but metric for POS hits
 	POS_WC = ([Feat.WEAK_POS_HIT], None)
 	POS_SC = ([Feat.STRONG_POS_HIT], None)
+	POS_WC_LOWER = ([Feat.WEAK_POS_HIT, Feat.SEG_NOCHANGE], None) # lower bound for POS WC
 	# separate stats for known and unknown forms
 	KN_WC = ([Feat.WEAK_TAG_HIT, Feat.KNOWN], [Feat.KNOWN])
 	UNK_WC = ([Feat.WEAK_TAG_HIT, Feat.UNKNOWN], [Feat.UNKNOWN])

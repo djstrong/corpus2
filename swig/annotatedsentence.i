@@ -49,6 +49,7 @@ namespace Corpus2 {
     
     AnnotationChannel& get_channel(const std::string& name);
     const AnnotationChannel& get_channel(const std::string& name) const;
+    bool add_channel(const std::string& name, const AnnotationChannel& chan);
     const chan_map_t& all_channels() const;
 
     /* --------------------------------------------------------------------- */

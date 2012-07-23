@@ -1,3 +1,19 @@
+/*
+    Copyright (C) 2010 Tomasz Śniatowski, Adam Radziszewski
+    Part of the libcorpus2 project
+
+    This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by the Free
+Software Foundation; either version 3 of the License, or (at your option)
+any later version.
+
+    This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. 
+
+    See the LICENSE.CORPUS2, LICENSE.POLIQARP, COPYING.LESSER and COPYING files for more details.
+*/
+
 #ifndef LIBCORPUS2_ANN_ANNOTATEDSENTENCE_H
 #define LIBCORPUS2_ANN_ANNOTATEDSENTENCE_H
 
@@ -94,6 +110,19 @@ public:
 			throw MissingAnnotationChannel(name);
 		}
 		return i->second;
+	}
+
+	/**
+	 * Add a copy of the given annotation channel.
+	 * If a channel of the given name already exists, will do nothing and return false.
+	 * Otherwise, will add the channel and return true.
+	 */
+	bool add_channel(const std::string& name, const AnnotationChannel& chan) {
+		if (has_channel(name)) {
+			return false;
+		}
+		channels_.insert(std::make_pair(name, chan));
+		return true;
 	}
 
 	const chan_map_t& all_channels() const {
