@@ -290,6 +290,7 @@ Token* BufferedSentenceReader::get_next_token()
 		if (s) {
 			std::copy(s->tokens().begin(), s->tokens().end(),
 				std::back_inserter(token_buf_));
+			s->release_tokens();
 		} else {
 			more = false;
 		}
