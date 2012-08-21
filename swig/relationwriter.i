@@ -9,14 +9,11 @@
 
 namespace Corpus2 {
 namespace whole {
-  class RelationWriter {
-  public:
-    RelationWriter(const std::string &rela_path);
-    void write(const std::vector< boost::shared_ptr<Relation> > relations);
-  private:
-    void do_header();
-    void do_footer();
-    //void write_relation(const boost::shared_ptr<Relation>& r);
+	class RelationWriter {
+  	public:
+  		RelationWriter(const std::string &rela_path);
+		void write(const std::vector< boost::shared_ptr<Relation> > relations);
+
 };
 } // whole ns
 } // Corpus2 ns
