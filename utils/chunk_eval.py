@@ -167,8 +167,7 @@ def main(ch_path, ref_path, chan_names, input_format, out_path, tagset, verbose,
             results[chan_name] = stats.getStats()
             
         csvTable.addRow(results)
-    if folds > 1:
-        csvTable.countAvg()
+    csvTable.countAvg()
     
     if out_path != '':
         out = codecs.open(out_path, "w", "utf-8")
