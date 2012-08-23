@@ -2,6 +2,8 @@
 #-*- coding: utf-8 -*-
 '''
 Created on 01-08-2012
+
+@author: Adam Pawlaczek
 '''
 # Copyright (C) 2012 Adam Pawlaczek.
 # This program is free software; you can redistribute and/or modify it
@@ -15,6 +17,12 @@ Created on 01-08-2012
 #
 # See the LICENCE and COPYING files for more details
 
+from optparse import OptionParser
+import corpus2
+import sys, os
+from CSVTable import CSVTable
+import codecs
+
 descr = """%prog [options] CHUNKED REF
 
 Reads the two chunk-annotated corpora: CHUNKED (chunker output) and REF
@@ -26,10 +34,6 @@ for the following settings:
 
 NOTE: this script treats discontinuous chunks as whole annotations.
 """
-from optparse import OptionParser
-import corpus2
-import sys, os
-from CSVWriter import CSVWriter
 
 class Stats:
     def __init__(self):
@@ -58,13 +62,17 @@ class Stats:
         self.head_hits += len(ch.intersection(ref))
     
     def getPRF(self, hits):
+        result = {}
         p = 0.0 if self.ch_chunks == 0 else 100.0 * hits / self.ch_chunks
         r = 0.0 if self.ref_chunks == 0 else 100.0 * hits / self.ref_chunks
         f = 0.0 if p + r == 0.0 else 2.0 * p * r / (p + r)
-        return [p, r, f]
+        result['P'] = p
+        result['R'] = r
+        result['F'] = f
+        return result
     
     def getStats(self):
-        return [self.getPRF(self.chunk_hits)]
+        return self.getPRF(self.chunk_hits)
 
 def get_annots(sent, chan_name):
     # wrap the sentence as an AnnotatedSentence
@@ -106,12 +114,18 @@ def go():
     ch_path, ref_path = args
     main(ch_path, ref_path, options.chunk_names, options.input_format, options.out_path, options.tagset, options.verbose, options.folds)
     
-def main(ch_path, ref_path, chan_name, input_format, out_path, tagset, verbose, folds):
+def main(ch_path, ref_path, chan_names, input_format, out_path, tagset, verbose, folds):
+
+    chan_names = chan_names.split(",")
     
-    csvWriter = CSVWriter(",")
-            
-    csvWriter.addColumns(["Nr ","Chunk"])
-    csvWriter.addSubColumnsByName("Chunk", ["P", "R", "F"])
+    csvTable = CSVTable(";")
+    csvTable.addColumn('Nr')
+    
+    for chan_name in chan_names:        
+        csvTable.addColumn(chan_name)
+        csvTable.addSubColumn(chan_name, "P", type="float")
+        csvTable.addSubColumn(chan_name, "R", type="float")
+        csvTable.addSubColumn(chan_name, "F", type="float")
     
     tagset = corpus2.get_named_tagset(tagset)
     
@@ -122,35 +136,46 @@ def main(ch_path, ref_path, chan_name, input_format, out_path, tagset, verbose, 
         else:
             ch_path_fold = ch_path
             ref_path_fold = ref_path
-                
-        ch_rdr = corpus2.TokenReader.create_path_reader(
+
+        results = {}
+        
+        for chan_name in chan_names:
+            
+            ch_rdr = corpus2.TokenReader.create_path_reader(
                 input_format, tagset, ch_path_fold)
-        ref_rdr = corpus2.TokenReader.create_path_reader(
+            ref_rdr = corpus2.TokenReader.create_path_reader(
                 input_format, tagset, ref_path_fold)
-        
-        stats = Stats()
-        
-        while True:
-            # iterate over paragraphs (note that they are called "chunks" here)
-            ref_chunk = ref_rdr.get_next_chunk()
-            ch_chunk = ch_rdr.get_next_chunk()
-            assert (not ref_chunk) == (not ch_chunk), 'corpora of different length'
             
-            if not ref_chunk:
-                break # end of input
+            stats = Stats()
             
-            # process each sentence separately
-            for ch_sent, ref_sent in zip(ch_chunk.sentences(), ref_chunk.sentences()):
-                assert ch_sent.size() == ref_sent.size()
-                ch_annots = get_annots(ch_sent, chan_name)
-                ref_annots = get_annots(ref_sent, chan_name)
-                stats.update(ch_annots, ref_annots)
+            while True:
+                # iterate over paragraphs (note that they are called "chunks" here)
+                ref_chunk = ref_rdr.get_next_chunk()
+                ch_chunk = ch_rdr.get_next_chunk()
+                assert (not ref_chunk) == (not ch_chunk), 'corpora of different length'
+                
+                if not ref_chunk:
+                    break # end of input
+                
+                # process each sentence separately
+                for ch_sent, ref_sent in zip(ch_chunk.sentences(), ref_chunk.sentences()):
+                    assert ch_sent.size() == ref_sent.size()
+                    ch_annots = get_annots(ch_sent, chan_name)
+                    ref_annots = get_annots(ref_sent, chan_name)
+                    stats.update(ch_annots, ref_annots)
         
-        results = stats.getStats()
-        results[:0] = [fold]
-        csvWriter.addRow(results)
-    csvWriter.count_avg()
-    print csvWriter
+            results[chan_name] = stats.getStats()
+            
+        csvTable.addRow(results)
+    if folds > 1:
+        csvTable.countAvg()
+    
+    if out_path != '':
+        out = codecs.open(out_path, "w", "utf-8")
+        out.close()
+    else:
+        print csvTable
+    
     
 if __name__ == '__main__':
     go()
