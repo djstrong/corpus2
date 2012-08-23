@@ -24,8 +24,6 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2_whole/relation.h>
 
-#include <libcorpus2/io/xmlwriter.h>
-
 #include <iostream>
 
 namespace Corpus2 {
@@ -33,8 +31,7 @@ namespace whole {
 
 	
 /**
- * A reader for realtion documents. Note that document is read into memory
- * before any processing may take place.
+ * A writer for realtion documents. 
  */
 class RelationWriter {
 public:
@@ -43,6 +40,7 @@ public:
 	 * @param rela_path  path to file with relations
 	 */
 	RelationWriter(const std::string &rela_path);
+
 
 	/**
 	 * Lazy relations accessor.
@@ -54,29 +52,10 @@ public:
 
 private:
 
-  void write_relation(const boost::shared_ptr<Relation>& r);
-  
-  void do_header();
-
-	void do_footer();
-	
-
-	// -------------------------------------------------------------------------
-	/// List of the relations in given relation file
-	std::vector< boost::shared_ptr<Relation> > relations_;
-
 	/// Path to file with relations
 	std::string rela_path_;
 
-	/// File pointer
-	boost::shared_ptr<std::ofstream> file_;
 
-	// -------------------------------------------------------------------------
-	// Temporary information of actual parsing relation
-	std::string rel_name_;
-	std::string ann_number_;
-	boost::shared_ptr<DirectionPoint> rel_from_;
-	boost::shared_ptr<DirectionPoint> rel_to_;
 };
 
 } // whole ns
