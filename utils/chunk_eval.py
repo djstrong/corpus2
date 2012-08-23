@@ -164,10 +164,9 @@ def main(ch_path, ref_path, chan_names, input_format, out_path, tagset, verbose,
                     ref_annots = get_annots(ref_sent, chan_name)
                     stats.update(ch_annots, ref_annots)
         
-            results[chan_name] = stats.getStats()
-            
+            results[chan_name] = stats.getStats()    
         csvTable.addRow(results)
-    csvTable.countAvg()
+#    csvTable.countAvg()
     
     if out_path != '':
         out = codecs.open(out_path, "w", "utf-8")
