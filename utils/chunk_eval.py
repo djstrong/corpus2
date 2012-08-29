@@ -159,6 +159,7 @@ def main(ch_path, ref_path, chan_names, input_format, out_path, tagset, verbose,
                 
                 # process each sentence separately
                 for ch_sent, ref_sent in zip(ch_chunk.sentences(), ref_chunk.sentences()):
+                    print ch_sent.size(), ref_sent.size()
                     assert ch_sent.size() == ref_sent.size()
                     ch_annots = get_annots(ch_sent, chan_name)
                     ref_annots = get_annots(ref_sent, chan_name)
@@ -166,10 +167,11 @@ def main(ch_path, ref_path, chan_names, input_format, out_path, tagset, verbose,
         
             results[chan_name] = stats.getStats()    
         csvTable.addRow(results)
-#    csvTable.countAvg()
+    csvTable.countAvg()
     
     if out_path != '':
         out = codecs.open(out_path, "w", "utf-8")
+        out.write(csvTable.__str__())
         out.close()
     else:
         print csvTable

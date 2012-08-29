@@ -93,11 +93,12 @@ class CSVColumn:
                 self.recountWidths()
         else:
             assert type(data).__name__ != 'dict', 'You added dict to column with no subcolumns'
+            
             if len(self.content) == 0:
                 self.type = type(data).__name__
             self.content.append(data)
             if len(str(data)) > self.width and self.isSubColumn():
-                self.parent.recountWidths()
+                self.parent.recountWidths(self.parent.content.index(self))
             elif len(str(data) + self.separator) > self.width:
                 self.width = len(str(data))
         
@@ -113,7 +114,7 @@ class CSVColumn:
                     result += row
         return result
         
-    def recountWidths(self):
+    def recountWidths(self, sub=''):
         subColsStr = ''
         for subColumn in self.content:
             subColsStr += subColumn.name + self.separator
@@ -122,10 +123,23 @@ class CSVColumn:
             self.width = len(subColsStr)
             for subColumn in self.content:
                 subColumn.width = len(subColumn.name + self.separator) 
-        elif self.parent.rows > 0:
+        if len(self.content[0].content) > 0:
             widths = 0
-            for i in range(0,len(self.content)): #Dla każdej podkolumny
-                for j in range(0, self.parent.rows): #Dla każdego wiersza 
+            if sub == '':
+                for i in range(0,len(self.content)): #Dla każdej podkolumny
+                    for j in range(0, len(self.content[0].content)): #Dla każdego wiersza
+                        if i == len(self.content) - 1:
+                            if self.width - widths > 0:
+                                self.content[i].width = self.width - widths
+                            else:
+                                self.content[i].width = len(self.parent.ptr(self.content[i].content[j], 1))
+                            break
+                        elif len(self.parent.ptr(self.content[i].content[j], 1)) > self.content[i].width:
+                            self.content[i].width = len(self.parent.ptr(self.content[i].content[j], 1))
+                    widths += self.content[i].width
+            else:
+                i = sub
+                for j in range(0, len(self.content[0].content)): #Dla każdego wiersza
                     if i == len(self.content) - 1:
                         if self.width - widths > 0:
                             self.content[i].width = self.width - widths
