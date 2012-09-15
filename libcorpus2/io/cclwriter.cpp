@@ -108,7 +108,7 @@ void CclWriter::do_header()
 	XmlWriter::do_header();
 	os() << "<!DOCTYPE cesAna SYSTEM \"ccl.dtd\">\n";
 	os() << "<chunkList";
-	os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
+	//os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
 	os() << ">\n";
 	if (use_indent_) indent_more();
 }
