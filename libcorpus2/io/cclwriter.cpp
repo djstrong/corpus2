@@ -106,7 +106,7 @@ void CclWriter::write_chunk(const Chunk &c)
 void CclWriter::do_header()
 {
 	XmlWriter::do_header();
-	os() << "<!DOCTYPE cesAna SYSTEM \"ccl.dtd\">\n";
+	os() << "<!DOCTYPE chunkList SYSTEM \"ccl.dtd\">\n";
 	os() << "<chunkList";
 	//os() << " xmlns:xlink=\"http://www.w3.org/1999/xlink\"";
 	os() << ">\n";
