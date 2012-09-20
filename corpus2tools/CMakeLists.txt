@@ -9,13 +9,16 @@ endif (Libedit_FOUND)
 
 include_directories( ${CMAKE_SOURCE_DIR} )
 include_directories(${corpus2_BINARY_DIR}/include)
+set(LIBS ${LIBS} ${ICU_LIBRARIES})
+
+
+include_directories(${ICU_INCLUDE_DIR})
+include_directories(${Boost_INCLUDE_DIR})
+link_directories(${Boost_LIBRARY_DIRS})
+link_directories(${ICU_LIBRARY_DIRS})
 
 add_executable( tagset-tool tagset-tool.cpp )
 target_link_libraries ( tagset-tool corpus2 pwrutils ${Boost_LIBRARIES} ${LIBS})
-
-include_directories(${Boost_INCLUDE_DIR})
-link_directories(${Boost_LIBRARY_DIRS})
-
 if(UNIX)
 
 	install(TARGETS tagset-tool

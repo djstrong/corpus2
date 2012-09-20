@@ -13,7 +13,9 @@ or FITNESS FOR A PARTICULAR PURPOSE.
     See the LICENCE, COPYING.LESSER and COPYING files for more details.
 */
 #include <libpwrutils/plugin.h>
+#ifdef __UNIX__
 #include <dlfcn.h>
+#endif
 #include <iostream>
 
 namespace PwrNlp {
@@ -30,6 +32,7 @@ std::string make_soname(const std::string &scope, const std::string &name)
 
 bool load(const std::string &scope, const std::string &name, bool quiet)
 {
+#ifdef __UNIX__
 	std::string soname = make_soname(scope, name);
 	// std::cerr << "PLUGIN LOAD " << scope << " " << name << " " << soname << "\n";
 	// first check if the plugin was already loaded
@@ -65,12 +68,14 @@ bool load(const std::string &scope, const std::string &name, bool quiet)
 	if (!quiet) {
 		std::cerr << "Loaded " << scope << " plugin '" << name << "'\n";
 	}
+#endif
 	return true;
 }
 
 bool load_check(const std::string &scope, const std::string &name, bool quiet,
 		boost::function<size_t (void)> counter, const std::string &what)
 {
+#ifdef __UNIX__
 	size_t before = counter();
 	if (load(scope, name, quiet)) {
 		size_t after = counter();
@@ -86,6 +91,9 @@ bool load_check(const std::string &scope, const std::string &name, bool quiet,
 	} else {
 		return false;
 	}
+#else
+	return true;
+#endif
 }
 
 } /* end ns Plugin */

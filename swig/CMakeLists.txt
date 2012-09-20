@@ -18,6 +18,7 @@ INCLUDE(${SWIG_USE_FILE})
 
 FIND_PACKAGE(LibXML++ REQUIRED QUIET)
 include_directories(${LibXML++_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 
 
 find_package(PythonLibs)

@@ -19,6 +19,7 @@ include_directories( ${CMAKE_SOURCE_DIR} )
 
 find_package(ICU REQUIRED)
 include_directories(${ICU_INCLUDE_DIR})
+include_directories(${Boost_INCLUDE_DIR})
 link_directories(${ICU_LIBRARY_DIRS})
 set(LIBS ${LIBS} icuuc icuio)
 

@@ -2,6 +2,7 @@ PROJECT(corpus2_whole)
 
 find_package(LibXML++ REQUIRED QUIET)
 include_directories(${LibXML++_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${LibXML++_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${LibXML++_LIBRARIES})
 
