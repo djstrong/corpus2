@@ -8,6 +8,14 @@ if(CORPUS2_BUILD_POLIQARP)
 	set(LIBS ${LIBS} "corpus2_poliqarpreader" )
 endif(CORPUS2_BUILD_POLIQARP)
 
+find_package(ICU REQUIRED QUIET)
+include_directories(${ICU_INCLUDE_DIR})
+link_directories(${ICU_LIBRARY_DIRS})
+set(LIBS ${LIBS} icuuc icuio)
+
+find_package(Loki REQUIRED QUIET)
+
+
 include_directories (${corpus2_SOURCE_DIR})
 include_directories (${pwrutils_SOURCE_DIR})
 
@@ -19,6 +27,7 @@ INCLUDE(${SWIG_USE_FILE})
 FIND_PACKAGE(LibXML++ REQUIRED QUIET)
 include_directories(${LibXML++_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})
 
 
 find_package(PythonLibs)
