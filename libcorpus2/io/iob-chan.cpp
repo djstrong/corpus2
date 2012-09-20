@@ -145,13 +145,14 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 		}
 		std::vector<std::string> spl;
 		boost::algorithm::split(spl, line, boost::is_any_of("\t"));
-		if (spl.size() != 4) {
+		if (spl.size() != 3 and spl.size() != 4) {
 			std::cerr << "Invalid line: " << line << "(" << spl.size() << ")\n";
 		} else {
 			const std::string& orth = spl[0];
 			const std::string& lemma = spl[1];
 			const std::string& tag_string = spl[2];
-			const std::string& anns = spl[3];
+			// if no annotations, let anns = ""
+			const std::string& anns = (spl.size() == 4) ? spl[3] : "";
 			Tag tag = parse_tag(tag_string);
 			Token* t = new Token();
 			t->set_orth(UnicodeString::fromUTF8(orth));
@@ -165,24 +166,26 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 				t->set_wa(PwrNlp::Whitespace::Newline);
 			}
 			s->append(t);
-			std::vector<std::string> annsplit;
-			boost::algorithm::split(annsplit, anns, boost::is_any_of(","));
-			foreach (const std::string& a, annsplit) {
-				std::vector<std::string> one_ann_split;
-				boost::algorithm::split(one_ann_split, a, boost::is_any_of("-"));
-				if (one_ann_split.size() != 2) {
-					std::cerr << "Invalid annotation:" << a << "\n";
-				} else {
-					const std::string& aname = one_ann_split[0];
-					const std::string& aiob = one_ann_split[1];
-					Corpus2::IOB::Enum iob = Corpus2::IOB::from_string(aiob);
-					if (iob == Corpus2::IOB::PostLast) {
-						std::cerr << "Invalid IOB tag: " << aiob << "\n";
+			if (!anns.empty()) {
+				std::vector<std::string> annsplit;
+				boost::algorithm::split(annsplit, anns, boost::is_any_of(","));
+				foreach (const std::string& a, annsplit) {
+					std::vector<std::string> one_ann_split;
+					boost::algorithm::split(one_ann_split, a, boost::is_any_of("-"));
+					if (one_ann_split.size() != 2) {
+						std::cerr << "Invalid annotation:" << a << "\n";
 					} else {
-						if (!s->has_channel(aname)) {
-							s->create_channel(aname);
+						const std::string& aname = one_ann_split[0];
+						const std::string& aiob = one_ann_split[1];
+						Corpus2::IOB::Enum iob = Corpus2::IOB::from_string(aiob);
+						if (iob == Corpus2::IOB::PostLast) {
+							std::cerr << "Invalid IOB tag: " << aiob << "\n";
+						} else {
+							if (!s->has_channel(aname)) {
+								s->create_channel(aname);
+							}
+							s->get_channel(aname).set_iob_at(s->size() - 1, iob);
 						}
-						s->get_channel(aname).set_iob_at(s->size() - 1, iob);
 					}
 				}
 			}
