@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/xcescommon.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <sstream>
 
 namespace Corpus2 {
@@ -68,19 +68,19 @@ void token_as_xces_xml_body(std::ostream& os, const Tagset& tagset,
 	encode_xml_entities_into(os, t.orth_utf8());
 	os << "</orth>\n";
 	if (!sort) {
-		foreach (const Lexeme& l, t.lexemes()) {
+		BOOST_FOREACH(const Lexeme& l, t.lexemes()) {
 			lexeme_as_xces_xml(osi(os, indent), tagset, l, output_disamb);
 		}
 	} else {
 		std::stringstream ss;
 		std::vector<std::string> vss;
-		foreach (const Lexeme& l, t.lexemes()) {
+		BOOST_FOREACH(const Lexeme& l, t.lexemes()) {
 			lexeme_as_xces_xml(osi(ss, indent), tagset, l, output_disamb);
 			vss.push_back(ss.str());
 			ss.str("");
 		}
 		std::sort(vss.begin(), vss.end());
-		foreach (const std::string& s, vss) {
+		BOOST_FOREACH(const std::string& s, vss) {
 			os << s;
 		}
 	}

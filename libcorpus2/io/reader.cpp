@@ -193,7 +193,7 @@ std::string TokenReader::reader_help(const std::string& class_id)
 std::vector<std::string> TokenReader::available_reader_types_help()
 {
 	std::vector<std::string> v = available_reader_types();
-	foreach (std::string& id, v) {
+	BOOST_FOREACH(std::string& id, v) {
 		std::stringstream ss;
 		std::map<std::string, std::string>::const_iterator c;
 		c = detail::TokenReaderFactorySingleton::Instance().help.find(id);
@@ -214,7 +214,7 @@ BufferedChunkReader::BufferedChunkReader(const Tagset& tagset)
 
 BufferedChunkReader::~BufferedChunkReader()
 {
-	foreach (Token* t, token_buf_) {
+	BOOST_FOREACH(Token* t, token_buf_) {
 		delete t;
 	}
 }

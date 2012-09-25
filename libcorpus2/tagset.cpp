@@ -21,7 +21,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/util/settings.h>
 #include <libcorpus2/tagsetparser.h>
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libpwrutils/util.h>
 
 #include <boost/algorithm/string.hpp>
@@ -136,7 +136,7 @@ Tag Tagset::parse_symbol_string(const std::string &s) const
 	Tag t;
 	std::vector<std::string> parts;
 	boost::algorithm::split(parts, s, boost::is_any_of(","));
-	foreach (const std::string& ss, parts) {
+	BOOST_FOREACH(const std::string& ss, parts) {
 		t.combine_with(parse_symbol(ss));
 	}
 	return t;
@@ -201,7 +201,7 @@ void Tagset::parse_tag(const string_range_vector &fields,
 			boost::algorithm::split(dots, r, boost::is_any_of("."));
 			std::vector<mask_t> values;
 			mask_t amask;
-			foreach (string_range& dot, dots) {
+			BOOST_FOREACH(string_range& dot, dots) {
 				if (dot.empty()) continue;
 				mask_t v = get_value_mask(boost::copy_range<std::string>(dot));
 				mask_t curr = get_attribute_mask(get_value_attribute(v));
@@ -245,7 +245,7 @@ void Tagset::parse_tag(const string_range_vector &fields,
 			append_to_multi_tag(all_variants, attribute_values_[attr], amask);
 		} // else empty, do nothing
 	}
-	foreach (mask_t variant, all_variants) {
+	BOOST_FOREACH(mask_t variant, all_variants) {
 		sink(make_tag(pos_idx, variant, mode));
 	}
 }
@@ -331,7 +331,7 @@ Tag Tagset::make_tag(idx_t pos_idx, mask_t values,
 	if (mode & ParseCheckRequired) {
 		size_t has_req = PwrNlp::count_bits_set(required_values & values);
 		if (has_req != pos_required_attributes_idx_[pos_idx].size()) {
-			foreach (idx_t a, get_pos_attributes(pos_idx)) {
+			BOOST_FOREACH(idx_t a, get_pos_attributes(pos_idx)) {
 				if (pos_requires_attribute(pos_idx, a)) {
 					mask_t amask = get_attribute_mask(a);
 					if ((values & amask).none()) {
@@ -444,7 +444,7 @@ std::string Tagset::tag_to_string(const Tag &tag) const
 	idx_t pos_idx = tag.get_pos_index();
 	ss << get_pos_name(pos_idx);
 	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
-	foreach (const idx_t& a, attrs) {
+	BOOST_FOREACH(const idx_t& a, attrs) {
 		mask_t value = tag.get_values_for(get_attribute_mask(a));
 		if (pos_requires_attribute(pos_idx, a) || value.any()) {
 			ss << ":";
@@ -471,7 +471,7 @@ std::string Tagset::tag_to_no_opt_string(const Tag &tag) const
 	idx_t pos_idx = tag.get_pos_index();
 	ss << get_pos_name(pos_idx);
 	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
-	foreach (const idx_t& a, attrs) {
+	BOOST_FOREACH(const idx_t& a, attrs) {
 		mask_t value = tag.get_values_for(get_attribute_mask(a));
 		ss << ":";
 		if (value.any()) {
@@ -487,7 +487,7 @@ std::vector<std::string> Tagset::tag_to_symbol_string_vector(const Tag& tag,
 		bool compress_attributes /* = true */) const
 {
 	std::vector<std::string> ret;
-	foreach (mask_t p, PwrNlp::set_bits(tag.get_pos())) {
+	BOOST_FOREACH(mask_t p, PwrNlp::set_bits(tag.get_pos())) {
 		ret.push_back(get_pos_name(p));
 	}
 	mask_t vals = tag.get_values();
@@ -500,7 +500,7 @@ std::vector<std::string> Tagset::tag_to_symbol_string_vector(const Tag& tag,
 			}
 		}
 	}
-	foreach (mask_t p, PwrNlp::set_bits(vals)) {
+	BOOST_FOREACH(mask_t p, PwrNlp::set_bits(vals)) {
 		ret.push_back(get_value_name(p));
 	}
 	return ret;
@@ -516,7 +516,7 @@ std::string Tagset::tag_to_symbol_string(const Tag& tag,
 size_t Tagset::tag_size(const Tag& tag) const
 {
 	size_t s = PwrNlp::count_bits_set(tag.get_pos());
-	foreach (mask_t attribute_mask, all_attribute_masks()) {
+	BOOST_FOREACH(mask_t attribute_mask, all_attribute_masks()) {
 		mask_t values = tag.get_values_for(attribute_mask);
 		size_t x = PwrNlp::count_bits_set(values);
 		if (x > 1) {
@@ -529,7 +529,7 @@ size_t Tagset::tag_size(const Tag& tag) const
 bool Tagset::tag_is_singular(const Tag& tag) const
 {
 	if (PwrNlp::count_bits_set(tag.get_pos()) > 1) return false;
-	foreach (mask_t attribute_mask, all_attribute_masks()) {
+	BOOST_FOREACH(mask_t attribute_mask, all_attribute_masks()) {
 		mask_t values = tag.get_values_for(attribute_mask);
 		if (PwrNlp::count_bits_set(values) > 1) return false;
 	}
@@ -553,7 +553,7 @@ std::vector<Tag> Tagset::split_tag(const Tag& tag) const
 		if (ma.any()) {
 			bool dup = false;
 			size_t sz = tags.size();
-			foreach (mask_t vm, get_attribute_values(a)) {
+			BOOST_FOREACH(mask_t vm, get_attribute_values(a)) {
 				if ((v & vm).any()) {
 					if (dup) {
 						for (size_t i = 0; i < sz; ++i) {
@@ -588,7 +588,7 @@ Tag Tagset::select_singular(const Tag& tag) const
 	new_tag.set_pos(pos_mask);
 	// now iterate over attrs
 	const std::vector<idx_t>& attrs = get_pos_attributes(pos_idx);
-	foreach (const idx_t& a, attrs) {
+	BOOST_FOREACH(const idx_t& a, attrs) {
 		mask_t attr_mask = get_attribute_mask(a);
 		mask_t value = tag.get_values_for(attr_mask);
 		// check if the attr is multi-value
@@ -616,7 +616,7 @@ Tag Tagset::expand_optional_attrs(const Tag& tag) const
 {
 	Tag new_tag(tag);
 	idx_t pos_idx = tag.get_pos_index();
-	foreach (idx_t a, get_pos_attributes(pos_idx)) {
+	BOOST_FOREACH(idx_t a, get_pos_attributes(pos_idx)) {
 		mask_t attr_mask = get_attribute_mask(a);
 		mask_t value = tag.get_values_for(attr_mask);
 		if (!value.any()) { // no value given
@@ -851,7 +851,7 @@ void Tagset::lexemes_into_token(Token& tok, const UnicodeString& lemma,
 	func = boost::bind(&Token::add_lexeme, boost::ref(tok),
 			boost::bind(lex, _1));
 
-	foreach (const string_range& o, options) {
+	BOOST_FOREACH(const string_range& o, options) {
 		parse_tag(o, func);
 	}
 }

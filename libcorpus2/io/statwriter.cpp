@@ -17,7 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/io/statwriter.h>
 #include <libcorpus2/ann/annotatedsentence.h>
 #include <iomanip>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 namespace Corpus2 {
 
@@ -44,13 +44,13 @@ void StatWriter::write_token(const Token& t)
 void StatWriter::write_sentence(const Sentence& s)
 {
 	os() << std::setw(8) << "tokens" << " ";
-	foreach (const Token* t, s.tokens()) {
+	BOOST_FOREACH(const Token* t, s.tokens()) {
 		write_token(*t);
 	}
 	os() << "\n";
 	const AnnotatedSentence* as = dynamic_cast<const AnnotatedSentence*>(&s);
 	if (as) {
-		foreach (const AnnotatedSentence::chan_map_t::value_type& vt, as->all_channels()) {
+		BOOST_FOREACH(const AnnotatedSentence::chan_map_t::value_type& vt, as->all_channels()) {
 			os() << std::setw(8) << vt.first << " ";
 			os() << vt.second.dump_alpha();
 			os() << "\n";
@@ -61,7 +61,7 @@ void StatWriter::write_sentence(const Sentence& s)
 
 void StatWriter::write_chunk(const Chunk& c)
 {
-	foreach (const Sentence::Ptr s, c.sentences()) {
+	BOOST_FOREACH(const Sentence::Ptr s, c.sentences()) {
 		write_sentence(*s);
 	}
 	os() << "\n";

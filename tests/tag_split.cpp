@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <boost/test/unit_test.hpp>
 #include <set>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libpwrutils/bitset.h>
 #include <libcorpus2/tagset.h>
 #include <libcorpus2/token.h>
@@ -47,7 +47,7 @@ struct F {
 			throw;
 		}
 
-		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
+		BOOST_FOREACH(const Corpus2::Lexeme& lex, t.lexemes()) {
 			const Corpus2::Tag& tag = lex.tag();
 			BOOST_WARN(tagset->validate_tag(tag, Corpus2::Tagset::ParseStrict, &std::cerr));
 			actual.insert(tagset->tag_to_string(tag));
@@ -157,7 +157,7 @@ BOOST_FIXTURE_TEST_CASE( underscores, F )
 	r0.insert("some:other:data");
 	r0.insert("some:a3:data");
 	std::set<std::string> r;
-	foreach (const std::string& s, r0) {
+	BOOST_FOREACH(const std::string& s, r0) {
 		r.insert(s + ":a");
 		r.insert(s + ":b");
 		r.insert(s + ":c");
@@ -175,7 +175,7 @@ BOOST_FIXTURE_TEST_CASE( underscore_dots, F )
 	r0.insert("some:other:data");
 	r0.insert("some:a3:data");
 	std::set<std::string> r;
-	foreach (const std::string& s, r0) {
+	BOOST_FOREACH(const std::string& s, r0) {
 		r.insert(s + ":a");
 		r.insert(s + ":c");
 	}
@@ -207,7 +207,7 @@ BOOST_FIXTURE_TEST_CASE( tag_size, F )
 	std::vector<Corpus2::Tag> tags = tagset->split_tag(t);
 	BOOST_CHECK_EQUAL(tags.size(), 6);
 	Corpus2::Tag tt;
-	foreach (Corpus2::Tag t, tags) {
+	BOOST_FOREACH(Corpus2::Tag t, tags) {
 		tt.combine_with(t);
 	}
 	BOOST_CHECK(tt == t);
@@ -248,7 +248,7 @@ BOOST_FIXTURE_TEST_CASE( symbols, F )
 
 BOOST_FIXTURE_TEST_CASE(attribute_mask_to_name, F)
 {
-	foreach (Corpus2::mask_t a, tagset->all_attribute_masks()) {
+	BOOST_FOREACH(Corpus2::mask_t a, tagset->all_attribute_masks()) {
 		std::string aname = tagset->get_attribute_name(a);
 		BOOST_CHECK(!aname.empty());
 		Corpus2::mask_t aa = tagset->get_attribute_mask(aname);
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(bs_split)
 {
 	std::bitset<32> x(0xf6543);
 	std::bitset<32> y(0);
-	foreach (std::bitset<32> b, PwrNlp::set_bits(x)) {
+	BOOST_FOREACH(std::bitset<32> b, PwrNlp::set_bits(x)) {
 		BOOST_CHECK_EQUAL(b.count(), 1);
 		y |= b;
 	}

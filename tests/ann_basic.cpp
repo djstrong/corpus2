@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE( make_ann )
 	ch.make_segments_from_iob();
 	std::vector<Corpus2::Annotation> anns = ch.make_annotation_vector();
 	BOOST_REQUIRE_EQUAL(anns.size(), 4);
-	foreach (const Corpus2::Annotation& a, anns) {
+	BOOST_FOREACH(const Corpus2::Annotation& a, anns) {
 		BOOST_REQUIRE(!a.empty());
 		BOOST_REQUIRE(a.sane());
 	}
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE( split_ann )
 	BOOST_CHECK_EQUAL(ch.get_iob_at(5), Corpus2::IOB::O);
 	std::vector<Corpus2::Annotation> anns = ch.make_annotation_vector();
 	BOOST_REQUIRE_EQUAL(anns.size(), 2);
-	foreach (const Corpus2::Annotation& a, anns) {
+	BOOST_FOREACH(const Corpus2::Annotation& a, anns) {
 		BOOST_REQUIRE(!a.empty());
 		BOOST_REQUIRE(a.sane());
 	}

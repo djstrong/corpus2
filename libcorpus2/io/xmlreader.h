@@ -23,7 +23,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <deque>
 #include <boost/scoped_ptr.hpp>
 #include <libcorpus2/io/sax.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 namespace Corpus2 {
 

@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/chunk.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 namespace Corpus2 {
@@ -31,7 +31,7 @@ Chunk::~Chunk()
 boost::shared_ptr<Chunk> Chunk::clone_shared() const
 {
 	boost::shared_ptr<Chunk> copy = boost::make_shared<Chunk>();
-	foreach (const boost::shared_ptr<Sentence>& s, sentences_) {
+	BOOST_FOREACH(const boost::shared_ptr<Sentence>& s, sentences_) {
 		copy->append(s->clone_shared());
 	}
 	copy->attributes_ = attributes_;

@@ -14,7 +14,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 	See the LICENSE.CORPUS2, LICENSE.POLIQARP, COPYING.LESSER and COPYING files for more details.
 */
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libcorpus2/exception.h>
 #include <libcorpus2_whole/io/relreader.h>
 
@@ -191,7 +191,7 @@ void RelationReader::parse_direction(const AttributeList& attributes,
 std::string RelationReader::get_attribute_value(
 		const AttributeList& attributes, const std::string& name)
 {
-	foreach (const Attribute& a, attributes) {
+	BOOST_FOREACH(const Attribute& a, attributes) {
 		if (a.name == name) {
 			return a.value;
 		}

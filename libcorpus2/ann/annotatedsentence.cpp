@@ -35,7 +35,7 @@ Sentence::Ptr AnnotatedSentence::clone_shared() const
 {
 	boost::shared_ptr<AnnotatedSentence> copy;
 	copy = boost::make_shared<AnnotatedSentence>();
-	foreach (const Token* t, tokens_) {
+	BOOST_FOREACH(const Token* t, tokens_) {
 		copy->append(t->clone());
 	}
 	copy->channels_ = channels_;
@@ -49,7 +49,7 @@ boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence(
 	a = boost::dynamic_pointer_cast<AnnotatedSentence>(s);
 	if (!a) {
 		a = boost::make_shared<AnnotatedSentence>();
-		foreach (Token* t, s->tokens()) {
+		BOOST_FOREACH(Token* t, s->tokens()) {
 			a->append(t);
 		}
 		s->release_tokens();
@@ -64,7 +64,7 @@ boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence_clone(
 	a = boost::dynamic_pointer_cast<AnnotatedSentence>(s);
 	if (!a) {
 		a = boost::make_shared<AnnotatedSentence>();
-		foreach (Token* t, s->tokens()) {
+		BOOST_FOREACH(Token* t, s->tokens()) {
 			a->append(t->clone());
 		}
 	} else {
@@ -87,7 +87,7 @@ boost::shared_ptr<AnnotationView> create_view(
 	std::vector<Annotation> ann = chan.make_annotation_vector(AnnotationChannel::O_INCLUSIVE);
 	boost::shared_ptr<AnnotationView> view;
 	view = boost::make_shared<AnnotationView>(s, ann_name);
-	foreach (const Annotation& a, ann) {
+	BOOST_FOREACH(const Annotation& a, ann) {
 		UnicodeString orth;
 		orth = s->tokens()[a.indices[0]]->orth();
 		for (size_t idxi = 1; idxi < a.indices.size(); ++idxi) {
@@ -107,7 +107,7 @@ boost::shared_ptr<AnnotationView> create_view(
 void AnnotatedSentence::append(Token *t)
 {
 	Sentence::append(t);
-	foreach (chan_map_t::value_type& v, channels_) {
+	BOOST_FOREACH(chan_map_t::value_type& v, channels_) {
 		v.second.resize(size());
 	}
 }
@@ -115,7 +115,7 @@ void AnnotatedSentence::append(Token *t)
 std::string AnnotatedSentence::annotation_info() const
 {
 	std::stringstream ss;
-	foreach (const chan_map_t::value_type& v, channels_) {
+	BOOST_FOREACH(const chan_map_t::value_type& v, channels_) {
 		ss << "Channel " << v.first << ": \t";
 		int ann, disj, un;
 		v.second.do_counts(ann, disj, un);

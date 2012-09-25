@@ -26,7 +26,7 @@ Sentence::Sentence(const std::string &id)
 
 Sentence::~Sentence()
 {
-	foreach (const Token* t, tokens_) {
+	BOOST_FOREACH(const Token* t, tokens_) {
 		delete t;
 	}
 }
@@ -34,7 +34,7 @@ Sentence::~Sentence()
 Sentence::Ptr Sentence::clone_shared() const
 {
 	Sentence::Ptr s = boost::make_shared<Sentence>();
-	foreach (const Token* t, tokens_) {
+	BOOST_FOREACH(const Token* t, tokens_) {
 		s->append(t->clone());
 	}
 	return s;

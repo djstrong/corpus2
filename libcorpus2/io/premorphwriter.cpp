@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/premorphwriter.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 namespace Corpus2 {
 
@@ -26,7 +26,7 @@ PremorphWriter::PremorphWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
 	: TokenWriter(os, tagset, params), cid_(0), force_chunk_(false)
 {
-	foreach (const string_range& param, params) {
+	BOOST_FOREACH(const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "chunk") {
 			force_chunk_ = true;
@@ -60,7 +60,7 @@ void PremorphWriter::write_sentence(const Sentence &s)
 void PremorphWriter::write_chunk(const Chunk &c)
 {
 	paragraph_head(c);
-	foreach (const Sentence::ConstPtr& s, c.sentences()) {
+	BOOST_FOREACH(const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence(*s);
 	}
 	os() << "</chunk>\n";
@@ -97,7 +97,7 @@ void PremorphWriter::paragraph_head()
 void PremorphWriter::paragraph_head(const Chunk& c)
 {
 	os() << "<chunk";
-	foreach (const Chunk::attr_map_t::value_type& v, c.attributes()) {
+	BOOST_FOREACH(const Chunk::attr_map_t::value_type& v, c.attributes()) {
 		os() << " " << v.first << "=\"" << v.second << "\"";
 	}
 	os() << ">\n";

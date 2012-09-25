@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/writer.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <libcorpus2/exception.h>
 #include <libcorpus2/io/pathwriter.h>
@@ -144,7 +144,7 @@ std::string TokenWriter::writer_help(const std::string& class_id)
 std::vector<std::string> TokenWriter::available_writer_types_help()
 {
 	std::vector<std::string> v = available_writer_types();
-	foreach (std::string& id, v) {
+	BOOST_FOREACH(std::string& id, v) {
 		std::stringstream ss;
 		std::map<std::string, std::string>::const_iterator c;
 		c = detail::TokenWriterFactorySingleton::Instance().help.find(id);

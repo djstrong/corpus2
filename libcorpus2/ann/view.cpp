@@ -35,7 +35,7 @@ Sentence::Ptr AnnotationView::clone_shared() const
 {
 	boost::shared_ptr<AnnotationView> copy;
 	copy = boost::make_shared<AnnotationView>(original_, ann_name_);
-	foreach (const Token* t, tokens_) {
+	BOOST_FOREACH(const Token* t, tokens_) {
 		copy->append(t->clone());
 	}
 	return copy;

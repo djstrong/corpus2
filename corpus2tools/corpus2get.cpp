@@ -23,7 +23,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/io/reader.h>
 #include <libcorpus2/io/writer.h>
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 #include <boost/program_options.hpp>
 #include <boost/bind.hpp>

@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/xmlreader.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libxml++/libxml++.h>
 #include <libxml2/libxml/parser.h>
 #include <boost/make_shared.hpp>
@@ -44,7 +44,7 @@ XmlReader::~XmlReader()
 std::string XmlReader::get_type_from_attributes(const AttributeList& attributes) const
 {
 	std::string type;
-	foreach (const Attribute& a, attributes) {
+	BOOST_FOREACH(const Attribute& a, attributes) {
 		if (a.name == "type") {
 			type = a.value;
 		}
@@ -54,7 +54,7 @@ std::string XmlReader::get_type_from_attributes(const AttributeList& attributes)
 
 std::string XmlReader::get_id_from_attributes(const AttributeList& attributes) const
 {
-	foreach (const Attribute& a, attributes) {
+	BOOST_FOREACH(const Attribute& a, attributes) {
 		if (a.name == "id") {
 			return a.value;
 		}
@@ -141,7 +141,7 @@ void XmlReader::start_chunk(const AttributeList& attributes)
 		start_sentence(attributes);
 		chunkless_ = true;
 	} else {
-		foreach (const Attribute& a, attributes) {
+		BOOST_FOREACH(const Attribute& a, attributes) {
 			chunk_->set_attribute(a.name, a.value);
 		}
 		state_ = STATE_CHUNK;
@@ -171,14 +171,14 @@ void XmlReader::start_lexeme(const AttributeList &attributes)
 	assert(tok_ != NULL);
 	bool is_disamb = false;
 	if (!disamb_sh_) {
-		foreach (const Attribute& a, attributes) {
+		BOOST_FOREACH(const Attribute& a, attributes) {
 			if (a.name == "disamb" && a.value == "1") {
 				is_disamb = true;
 			}
 		}
 	} else {
 		is_disamb = true;
-		foreach (const Attribute& a, attributes) {
+		BOOST_FOREACH(const Attribute& a, attributes) {
 			if (a.name == "disamb_sh" && a.value == "0") {
 				is_disamb = false;
 			}

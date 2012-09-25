@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/xces.h>
 #include <libcorpus2/io/reader.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libxml++/libxml++.h>
 #include <libxml++/nodes/node.h>
 #include <libxml++/nodes/element.h>

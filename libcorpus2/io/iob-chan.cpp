@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/iob-chan.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libcorpus2/ann/annotatedsentence.h>
 
 #include <boost/algorithm/string.hpp>
@@ -32,7 +32,7 @@ IobChanWriter::IobChanWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
 	: TokenWriter(os, tagset, params), warn_on_no_lexemes_(true), force_(true)
 {
-	foreach (const string_range& param, params) {
+	BOOST_FOREACH(const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "nowarn") {
 			warn_on_no_lexemes_ = false;
@@ -63,7 +63,7 @@ void IobChanWriter::write_sentence(const Sentence& s)
 	if (ann && force_) {
 		// I sincerely apologize
 		AnnotatedSentence* hax = const_cast<AnnotatedSentence*>(ann);
-		foreach(const AnnotatedSentence::chan_map_t::value_type& v, hax->all_channels()) {
+		BOOST_FOREACH(const AnnotatedSentence::chan_map_t::value_type& v, hax->all_channels()) {
 			hax->get_channel(v.first).make_iob_from_segments();
 		}
 	}
@@ -84,7 +84,7 @@ void IobChanWriter::write_sentence(const Sentence& s)
 		}
 		if (ann) {
 			bool first = true;
-			foreach (const AnnotatedSentence::chan_map_t::value_type& v, ann->all_channels()) {
+			BOOST_FOREACH(const AnnotatedSentence::chan_map_t::value_type& v, ann->all_channels()) {
 				if (!first) {
 					os() << ",";
 				}
@@ -100,7 +100,7 @@ void IobChanWriter::write_sentence(const Sentence& s)
 
 void IobChanWriter::write_chunk(const Chunk& c)
 {
-	foreach (const Sentence::ConstPtr& s, c.sentences()) {
+	BOOST_FOREACH(const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence(*s);
 	}
 }
@@ -169,7 +169,7 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 			if (!anns.empty()) {
 				std::vector<std::string> annsplit;
 				boost::algorithm::split(annsplit, anns, boost::is_any_of(","));
-				foreach (const std::string& a, annsplit) {
+				BOOST_FOREACH(const std::string& a, annsplit) {
 					std::vector<std::string> one_ann_split;
 					boost::algorithm::split(one_ann_split, a, boost::is_any_of("-"));
 					if (one_ann_split.size() != 2) {
@@ -192,7 +192,7 @@ Sentence::Ptr IobChanReader::actual_next_sentence()
 		}
 	}
 	if (s) {
-		foreach (const AnnotatedSentence::chan_map_t::value_type& v, s->all_channels()) {
+		BOOST_FOREACH(const AnnotatedSentence::chan_map_t::value_type& v, s->all_channels()) {
 			s->get_channel(v.first).make_segments_from_iob();
 		}
 	}

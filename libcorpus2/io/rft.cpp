@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/rft.h>
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -33,7 +33,7 @@ RftWriter::RftWriter(std::ostream& os, const Tagset& tagset,
 	: TokenWriter(os, tagset, params), warn_on_no_lexemes_(true)
 	, mbt_dialect_(false), colon_(false), opt_(false), alltags_(false)
 {
-	foreach (const string_range& param, params) {
+	BOOST_FOREACH(const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "nowarn") {
 			warn_on_no_lexemes_ = false;
@@ -73,7 +73,7 @@ void RftWriter::write_token(const Token& t)
 			std::cerr << "No lexemes for token!";
 		}
 	} else if (alltags_) {
-		foreach (const Lexeme& lex, t.lexemes()) {
+		BOOST_FOREACH(const Lexeme& lex, t.lexemes()) {
 			os() << "\t";
 			write_tag(lex.tag());
 		}
@@ -87,7 +87,7 @@ void RftWriter::write_token(const Token& t)
 
 void RftWriter::write_sentence(const Sentence& s)
 {
-	foreach (const Token* t, s.tokens()) {
+	BOOST_FOREACH(const Token* t, s.tokens()) {
 		write_token(*t);
 	}
 	if (mbt_dialect_) {
@@ -98,7 +98,7 @@ void RftWriter::write_sentence(const Sentence& s)
 
 void RftWriter::write_chunk(const Chunk& c)
 {
-	foreach (const Sentence::ConstPtr& s, c.sentences()) {
+	BOOST_FOREACH(const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence(*s);
 	}
 }

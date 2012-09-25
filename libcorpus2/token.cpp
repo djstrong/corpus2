@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/token.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libcorpus2/tokenmetadata.h>
 #include <sstream>
 #include <boost/bind.hpp>
@@ -144,7 +144,7 @@ bool Token::orth_pos_match(mask_t pos, const UnicodeString &orth) const
 		if (orth.caseCompare(orth_, 0) != 0) return false;
 	}
 	if (pos.any()) {
-		foreach (const Lexeme& lex, lexemes_) {
+		BOOST_FOREACH(const Lexeme& lex, lexemes_) {
 			if (lex.tag().get_pos() != pos) return false;
 		}
 	}

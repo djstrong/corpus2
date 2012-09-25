@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/cclreader.h>
 #include <libcorpus2/io/xmlreader.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libxml++/libxml++.h>
 #include <libxml2/libxml/parser.h>
 #include <boost/make_shared.hpp>
@@ -182,7 +182,7 @@ void CclReaderImpl::start_chunk(const AttributeList& attributes)
 	if (type == "s") {
 		throw XcesError("Trying to parse XCES as CCL (<chunk type=\"s\">)");
 	}
-	foreach (const Attribute& a, attributes) {
+	BOOST_FOREACH(const Attribute& a, attributes) {
 		chunk_->set_attribute(a.name, a.value);
 	}
 	state_ = STATE_CHUNK;
@@ -194,7 +194,7 @@ void CclReaderImpl::start_sentence(const AttributeList &attributes)
 {
 	// find sentence id
 	std::string id = "";
-	foreach (const Attribute& a, attributes) {
+	BOOST_FOREACH(const Attribute& a, attributes) {
 		if (a.name == "id") {
 			id = a.value;
 			break;
@@ -228,7 +228,7 @@ bool CclReaderImpl::process_start_element(const Glib::ustring & name,
 		clear_buf();
 		ann_chan_ = "";
 		ann_head_ = false;
-		foreach (const Attribute& a, attributes) {
+		BOOST_FOREACH(const Attribute& a, attributes) {
 			if (a.name == "chan") {
 				ann_chan_ = a.value;
 			} else if (a.name == "head" && a.value == "1") {
@@ -244,7 +244,7 @@ bool CclReaderImpl::process_start_element(const Glib::ustring & name,
 		grab_characters_ = true;
 		clear_buf();
 		prop_key_ = "";
-		foreach (const Attribute& a, attributes) {
+		BOOST_FOREACH(const Attribute& a, attributes) {
 			if (a.name == "key") {
 				prop_key_ = a.value;
 			}
@@ -291,7 +291,7 @@ bool CclReaderImpl::process_end_element(const Glib::ustring & name)
 void CclReaderImpl::finish_token()
 {
 	XmlReader::finish_token();
-	foreach (const token_ann_t::value_type& v, token_anns_) {
+	BOOST_FOREACH(const token_ann_t::value_type& v, token_anns_) {
 		ann_sent_->get_channel(v.first).set_segment_at(sent_->size() - 1, v.second);
 		if (token_ann_heads_.find(v.first) != token_ann_heads_.end()) {
 			ann_sent_->get_channel(v.first).set_head_at(sent_->size() - 1, true);

@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libpwrutils/pathsearch.h>
 
 #include <libpwrutils/exception.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
@@ -86,7 +86,7 @@ std::string PathSearcherBase::find_file(const std::string& filename,
 		}
 		return "";
 	}
-	foreach (const std::string& s, paths_) {
+	BOOST_FOREACH(const std::string& s, paths_) {
 		boost::filesystem::path pi = s / i;
 		if (boost::filesystem::exists(pi) &&
 				!boost::filesystem::is_directory(pi)) {
@@ -115,7 +115,7 @@ std::vector<std::string> PathSearcherBase::list_files(const std::string& suffix)
 {
 	using boost::filesystem::directory_iterator;
 	std::vector<std::string> out;
-	foreach (const std::string& s, get_search_path()) {
+	BOOST_FOREACH(const std::string& s, get_search_path()) {
 		boost::filesystem::path p(s);
 		if (boost::filesystem::is_directory(s)) {
 			for (directory_iterator i(p); i != directory_iterator(); ++i) {

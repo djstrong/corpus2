@@ -19,7 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/tagsetmanager.h>
 #include <libcorpus2/token.h>
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 #include <boost/program_options.hpp>
 #include <boost/bind.hpp>
@@ -107,7 +107,7 @@ void tagset_info(const Corpus2::Tagset& tagset)
 	std::cerr << "Size is " << tagset.size()
 		<< " (extra size is " << tagset.size_extra() << ")\n";
 	std::cerr << "POSes: ";
-	foreach (const std::string& s, tagset.pos_dictionary()) {
+	BOOST_FOREACH(const std::string& s, tagset.pos_dictionary()) {
 		std::cerr << s << " ";
 	}
 	std::cerr << "\n";
@@ -124,7 +124,7 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s,
 			std::cout << tagset.get_pos_mask(pos) << " (" << (int)pos << ")\n";
 		}
 		std::cout << s << " -> POS ->" ;
-		foreach (Corpus2::idx_t a, tagset.get_pos_attributes(pos)) {
+		BOOST_FOREACH(Corpus2::idx_t a, tagset.get_pos_attributes(pos)) {
 			std::string astr = tagset.attribute_dictionary().get_string(a);
 			if (tagset.pos_requires_attribute(pos, a)) {
 				std::cout << " " << astr;
@@ -138,7 +138,7 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s,
 			std::cout << tagset.get_attribute_mask(atr) << " (" << (int)atr << ")\n";
 		}
 		std::cout << s << " -> attribute ->";
-		foreach (Corpus2::mask_t v, tagset.get_attribute_values(atr)) {
+		BOOST_FOREACH(Corpus2::mask_t v, tagset.get_attribute_values(atr)) {
 			std::cout << " " << tagset.get_value_name(v);
 		}
 		std::cout << "\nIn POSes:";
@@ -160,7 +160,7 @@ void tagset_query_cb(const Corpus2::Tagset& tagset, const std::string& s,
 		std::cout << s << " -> value -> attribute ";
 		std::cout << tagset.attribute_dictionary().get_string(a);
 		std::cout << " .";
-		foreach (Corpus2::mask_t v, tagset.get_attribute_values(a)) {
+		BOOST_FOREACH(Corpus2::mask_t v, tagset.get_attribute_values(a)) {
 			std::cout << " " << tagset.get_value_name(v);
 		}
 		std::cout << "\nIn POSes:";
@@ -185,7 +185,7 @@ void tag_parse_cb(const Corpus2::Tagset& tagset, bool validate, bool sort,
 		Corpus2::Token t;
 		tagset.lexemes_into_token(t, UnicodeString(), s);
 		std::vector<std::string> out;
-		foreach (const Corpus2::Lexeme& lex, t.lexemes()) {
+		BOOST_FOREACH(const Corpus2::Lexeme& lex, t.lexemes()) {
 			std::stringstream ss;
 			ss << tagset.tag_to_string(lex.tag());
 			if (validate) {

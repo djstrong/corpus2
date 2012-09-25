@@ -216,7 +216,7 @@ T* stream_reader_creator(const Tagset& tagset, std::istream& is,
 	const string_range_vector& params)
 {
 	T* reader = new T(tagset, is);
-	foreach (const string_range& sr, params) {
+	BOOST_FOREACH(const string_range& sr, params) {
 		reader->set_option(boost::copy_range<std::string>(sr));
 	}
 	reader->validate();
@@ -232,7 +232,7 @@ T* path_reader_creator(const Tagset& tagset, const std::string& path,
 	const string_range_vector& params)
 {
 	T* reader = new T(tagset, path);
-	foreach (const string_range& sr, params) {
+	BOOST_FOREACH(const string_range& sr, params) {
 		reader->set_option(boost::copy_range<std::string>(sr));
 	}
 	reader->validate();

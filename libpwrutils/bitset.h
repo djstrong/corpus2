@@ -17,7 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef PWRNLP_BITSET_H
 #define PWRNLP_BITSET_H
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <boost/range.hpp>
 #include <bitset>
 #include <boost/functional/hash.hpp>
@@ -169,7 +169,7 @@ private:
  * from the returned range.
  *
  * Example usage: \code
- * foreach (const bitset<32>& b, my_bitset) {
+ * BOOST_FOREACH(const bitset<32>& b, my_bitset) {
  *    foo_with(b);
  * }
  * \endcode

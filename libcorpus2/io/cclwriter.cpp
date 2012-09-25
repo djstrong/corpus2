@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/cclwriter.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libcorpus2/ann/annotatedsentence.h>
 #include <libcorpus2/io/xcescommon.h>
 #include <libcorpus2/tokenmetadata.h>
@@ -65,7 +65,7 @@ void CclWriter::write_sentence_int(const Sentence &s)
 			token_as_xces_xml_head(os(), *t, use_indent_ ? indent_level() : -1, whitespace_info_);
 			if (use_indent_) indent_more();
 			token_as_xces_xml_body(os(), tagset(), *t, use_indent_ ? indent_level() : -1, output_disamb_, sort_tags_);
-			foreach (const AnnotatedSentence::chan_map_t::value_type& v, ann->all_channels()) {
+			BOOST_FOREACH(const AnnotatedSentence::chan_map_t::value_type& v, ann->all_channels()) {
 				osi() << "<ann chan=\"" << v.first << "\"";
 				if (v.second.is_head_at(idx)) {
 					os() << " head=\"1\"";
@@ -76,7 +76,7 @@ void CclWriter::write_sentence_int(const Sentence &s)
 			}
 			boost::shared_ptr<TokenMetaData> md = t->get_metadata();
 			if (md) {
-				foreach (const TokenMetaData::attr_map_t::value_type& v, md->attributes()) {
+				BOOST_FOREACH(const TokenMetaData::attr_map_t::value_type& v, md->attributes()) {
 					osi() << "<prop key=\"" << v.first << "\"" << ">";
 					os() << v.second << "</prop>\n";
 				}
@@ -96,7 +96,7 @@ void CclWriter::write_chunk(const Chunk &c)
 {
 	paragraph_head(c);
 	if (use_indent_) indent_more();
-	foreach (const Sentence::ConstPtr& s, c.sentences()) {
+	BOOST_FOREACH(const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence_int(*s);
 	}
 	if (use_indent_) indent_less();
@@ -128,7 +128,7 @@ void CclWriter::paragraph_head()
 void CclWriter::paragraph_head(const Chunk& c)
 {
 	osi() << "<chunk";
-	foreach (const Chunk::attr_map_t::value_type& v, c.attributes()) {
+	BOOST_FOREACH(const Chunk::attr_map_t::value_type& v, c.attributes()) {
 		os() << " " << v.first << "=\"" << v.second << "\"";
 	}
 	os() << ">\n";

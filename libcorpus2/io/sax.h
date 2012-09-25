@@ -19,7 +19,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/xcescommon.h>
 #include <libcorpus2/util/tokentimer.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libxml++/parsers/saxparser.h>
 #include <vector>
 

@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/tokenmetadata.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 namespace Corpus2 {

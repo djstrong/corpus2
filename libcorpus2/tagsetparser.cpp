@@ -18,7 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 #include <fstream>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 namespace Corpus2 {
 
@@ -83,7 +83,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 			std::deque<std::string>& avalues = vmap[v[0]];
 			v.pop_front();
 			avalues = v;
-			foreach (const std::string& s, v) {
+			BOOST_FOREACH(const std::string& s, v) {
 				if (!symbols.insert(s).second) {
 					throw TagsetParseError("Duplicate symbol", line_no, s);
 				}
@@ -100,12 +100,12 @@ Tagset TagsetParser::load_ini(std::istream &is)
 	mask_t current_value = 1;
 	std::vector<std::string> vec;
 	idx_t current_attribute_index = 0;
-	foreach (const vmap_t::value_type v, vmap) {
+	BOOST_FOREACH(const vmap_t::value_type v, vmap) {
 		mask_t attribute_mask = 0;
 		vec.push_back(v.first);
 		tagset.attribute_values_.resize(
 				tagset.attribute_values_.size() + 1);
-		foreach (const std::string& s, v.second) {
+		BOOST_FOREACH(const std::string& s, v.second) {
 			tagset.attribute_values_.back().push_back(current_value);
 			tagset.value_mask_to_attribute_index_.insert(
 					std::make_pair(current_value, current_attribute_index));
@@ -140,7 +140,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 			std::vector<bool>& req_mask = reqmap[v[0]];
 			req_mask.resize(tagset.attribute_dict_.size());
 			v.pop_front();
-			foreach (std::string s, v) {
+			BOOST_FOREACH(std::string s, v) {
 				if (s.empty()) continue;
 				bool required = true;
 				if (s[0] == '[' && s[s.size() - 1] == ']') {
@@ -171,7 +171,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 	}
 
 	vec.clear();
-	foreach (const pmap_t::value_type v, pmap) {
+	BOOST_FOREACH(const pmap_t::value_type v, pmap) {
 		vec.push_back(v.first);
 		mask_t valid(0);
 		mask_t required(0);
@@ -180,7 +180,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 				tagset.pos_required_attributes_idx_.size() + 1);
 		tagset.pos_valid_attributes_.push_back(
 				std::vector<bool>(tagset.attribute_values_.size(), false));
-		foreach (idx_t a, v.second) {
+		BOOST_FOREACH(idx_t a, v.second) {
 			valid |= tagset.get_attribute_mask(a);
 			if (reqmap[v.first][a]) {
 				required |= tagset.get_attribute_mask(a);
@@ -212,7 +212,7 @@ void TagsetParser::save_ini(const Tagset &tagset, std::ostream &os)
 	idx_t a(0);
 	while (tagset.attribute_dict_.is_id_valid(a)) {
 		os << tagset.attribute_dict_.get_string(a) << "\t= ";
-		foreach (mask_t m, tagset.get_attribute_values(a)) {
+		BOOST_FOREACH(mask_t m, tagset.get_attribute_values(a)) {
 			os << tagset.get_value_name(m) << " ";
 		}
 		os << "\n";
@@ -222,7 +222,7 @@ void TagsetParser::save_ini(const Tagset &tagset, std::ostream &os)
 	idx_t p(0);
 	while (tagset.pos_dict_.is_id_valid(p)) {
 		os << tagset.pos_dict_.get_string(p) << "\t= ";
-		foreach (idx_t a, tagset.get_pos_attributes(p)) {
+		BOOST_FOREACH(idx_t a, tagset.get_pos_attributes(p)) {
 			if (tagset.pos_required_attributes_[p][a]) {
 				os << tagset.attribute_dict_.get_string(a) << " ";
 			} else {

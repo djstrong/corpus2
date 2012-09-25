@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <boost/test/unit_test.hpp>
 #include <set>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libcorpus2/tagsetparser.h>
 #include <libcorpus2/tagsetmanager.h>
 #include <libcorpus2/util/settings.h>

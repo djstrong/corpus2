@@ -17,7 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef PWRNLP_SENTENCE_H
 #define PWRNLP_SENTENCE_H
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <boost/range.hpp>
 #include <vector>
 
@@ -52,7 +52,7 @@ namespace PwrNlp {
 		/// Destructor
 		~SentenceTemplate()
 		{
-			foreach (TT* t, tokens_) {
+			BOOST_FOREACH(TT* t, tokens_) {
 				delete t;
 			}
 		}
@@ -106,7 +106,7 @@ namespace PwrNlp {
 	SentenceTemplate<TT>* SentenceTemplate<TT>::clone() const
 	{
 		SentenceTemplate<TT>* s = new SentenceTemplate<TT>;
-		foreach (const TT* t, tokens_) {
+		BOOST_FOREACH(const TT* t, tokens_) {
 			s->append(t->clone());
 		}
 		return s;

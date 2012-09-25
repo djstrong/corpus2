@@ -17,7 +17,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/tagsetmanager.h>
 #include <libcorpus2/tagsetparser.h>
 #include <libcorpus2/util/settings.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <fstream>
 #include <iostream>
 #include <sstream>

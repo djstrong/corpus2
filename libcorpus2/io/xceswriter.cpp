@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/xcescommon.h>
 #include <libcorpus2/io/xceswriter.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 namespace Corpus2 {
 
@@ -29,7 +29,7 @@ XcesWriter::XcesWriter(std::ostream& os, const Tagset& tagset,
 	, force_chunk_(false)
 	, split_chunks_on_newlines_(false)
 {
-	foreach (const string_range& param, params) {
+	BOOST_FOREACH(const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "chunk") {
 			force_chunk_ = true;
@@ -57,7 +57,7 @@ void XcesWriter::write_sentence(const Sentence& s)
 void XcesWriter::write_chunk(const Chunk &c)
 {
 	bool new_chunk = true;
-	foreach (const Sentence::ConstPtr& s, c.sentences()) {
+	BOOST_FOREACH(const Sentence::ConstPtr& s, c.sentences()) {
 		if (split_chunks_on_newlines_ && !s->tokens().empty()) {
 			const Token* first = s->first_token();
 			if (first->wa() == PwrNlp::Whitespace::ManyNewlines) {
@@ -114,7 +114,7 @@ void XcesWriter::do_footer()
 //void XcesWriter::paragraph_head(const Chunk& c)
 //{
 //	osi() << "<chunk";
-//	foreach (const Chunk::attr_map_t::value_type& v, c.attributes()) {
+//	BOOST_FOREACH(const Chunk::attr_map_t::value_type& v, c.attributes()) {
 //		os() << " " << v.first << "=\"" << v.second << "\"";
 //	}
 //	os() << ">\n";

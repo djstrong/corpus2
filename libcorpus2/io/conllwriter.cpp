@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include "conllwriter.h"
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <algorithm>
 
@@ -113,7 +113,7 @@ void ConllWriter::write_token(const Token &t)
 void ConllWriter::write_sentence(const Sentence& s)
 {
 	int i=1;
-	foreach (const Token* t, s.tokens()) {
+	BOOST_FOREACH(const Token* t, s.tokens()) {
 		os()<<i<<"\t";
 		write_token(*t);
 		os()<<"\n";
@@ -124,7 +124,7 @@ void ConllWriter::write_sentence(const Sentence& s)
 
 void ConllWriter::write_chunk(const Chunk &c)
 {
-	foreach (const Sentence::ConstPtr& s, c.sentences()) {
+	BOOST_FOREACH(const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence(*s);
 	}
 }

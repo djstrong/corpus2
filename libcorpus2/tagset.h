@@ -579,7 +579,7 @@ public:
 
 	/// Range getter for all the valid POS masks, in order, compatible with
 	/// boost's foreach
-	/// It is possible to use a foreach (mask_t m, tagset.all_*_masks()) {...}
+	/// It is possible to use a BOOST_FOREACH(mask_t m, tagset.all_*_masks()) {...}
 	boost::iterator_range<mask_iterator> all_pos_masks() const {
 		return boost::iterator_range<mask_iterator>(static_cast<mask_t>(1),
 				static_cast<mask_t>(1) << pos_count());

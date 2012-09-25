@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/xcesreader.h>
 #include <libcorpus2/io/xmlreader.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libxml++/libxml++.h>
 #include <libxml2/libxml/parser.h>
 #include <boost/make_shared.hpp>

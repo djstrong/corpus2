@@ -18,7 +18,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/lexeme.h>
 
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libpwrutils/bitset.h>
 
 namespace Corpus2 {
@@ -45,7 +45,7 @@ Tag get_attribute_mask(const Tagset& tagset, std::string attr_name)
 Tag mask_token(const Token& token, const Tag& mask, bool disamb_only)
 {
 	Tag t;
-	foreach (const Corpus2::Lexeme& lexeme, token.lexemes()) {
+	BOOST_FOREACH(const Corpus2::Lexeme& lexeme, token.lexemes()) {
 		if(lexeme.is_disamb() || !disamb_only) {
 			t.combine_with(lexeme.tag().get_masked(mask));
 		}
@@ -78,7 +78,7 @@ bool select_preferred_disamb(const Tagset& tagset, Token* token)
 
 void select_preferred_lexeme(const Tagset& tagset, Token* token)
 {
-	foreach (Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {
 		lex.set_disamb(true);
 	}
 	if (token->lexemes().size() > 1) {
@@ -94,7 +94,7 @@ bool select_preferred_disamb_tag(const Tagset& tagset, Token* token)
 	if(!prototypical.is_disamb()) {
 		return false; // disamb would've taken precedence => no disamb at all
 	}
-	foreach (Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {
 		if (lex.tag() != prototypical.tag()) {
 			lex.set_disamb(false);
 		}
@@ -104,13 +104,13 @@ bool select_preferred_disamb_tag(const Tagset& tagset, Token* token)
 
 void select_preferred_tag(const Tagset& tagset, Token* token)
 {
-	foreach (Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {
 		lex.set_disamb(true);
 	}
 	if (token->lexemes().size() > 1) {
 		const Corpus2::Tag tag_wanted = token->get_preferred_lexeme(tagset).tag();
 		std::vector<Lexeme> wanted;
-		foreach (const Lexeme& lex, token->lexemes()) {
+		BOOST_FOREACH(const Lexeme& lex, token->lexemes()) {
 			if (lex.tag() == tag_wanted) {
 				wanted.push_back(lex);
 			}
@@ -122,14 +122,14 @@ void select_preferred_tag(const Tagset& tagset, Token* token)
 
 void expand_optional_attrs(const Tagset& tagset, Token* token)
 {
-	foreach (Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {
 		lex.set_tag(tagset.expand_optional_attrs(lex.tag()));
 	}
 }
 
 void select_singular_tags(const Tagset& tagset, Token* token)
 {
-	foreach (Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {
 		lex.set_tag(tagset.select_singular(lex.tag()));
 	}
 }
@@ -138,7 +138,7 @@ bool disambiguate_equal(Token* token, const Tag& mask_where,
 						const Tag& mask_wanted)
 {
 	std::vector<Lexeme> wanted;
-	foreach (const Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(const Lexeme& lex, token->lexemes()) {
 		Tag mask_theirs = lex.tag().get_masked(mask_where);
 		if (mask_theirs == mask_wanted) {
 			wanted.push_back(lex);
@@ -155,7 +155,7 @@ bool disambiguate_subset(Token* token, const Tag& mask_where,
 						const Tag& mask_wanted)
 {
 	std::vector<Lexeme> wanted;
-	foreach (const Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(const Lexeme& lex, token->lexemes()) {
 		Tag mask_theirs = lex.tag().get_masked(mask_where);
 		if (mask_theirs.get_masked(mask_wanted) == mask_theirs) {
 			wanted.push_back(lex);
@@ -170,7 +170,7 @@ bool disambiguate_subset(Token* token, const Tag& mask_where,
 
 void set_disambs(Token *token, const Tag& wanted_tag)
 {
-	foreach (Lexeme& lex, token->lexemes()) {
+	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {
 		lex.set_disamb(lex.tag() == wanted_tag);
 	}
 }

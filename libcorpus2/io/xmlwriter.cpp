@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <libcorpus2/io/xcescommon.h>
 #include <libcorpus2/io/xmlwriter.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 namespace Corpus2 {
 
@@ -26,7 +26,7 @@ XmlWriter::XmlWriter(std::ostream& os, const Tagset& tagset,
 	, use_indent_(true), output_disamb_(true)
 	, sort_tags_(false), whitespace_info_(false)
 {
-	foreach (const string_range& param, params) {
+	BOOST_FOREACH(const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "flat") {
 			use_indent_ = false;
@@ -54,7 +54,7 @@ void XmlWriter::write_token(const Token &t)
 void XmlWriter::write_sentence(const Sentence& s)
 {
 	if (use_indent_) indent_more();
-	foreach (const Token* t, s.tokens()) {
+	BOOST_FOREACH(const Token* t, s.tokens()) {
 		write_token(*t);
 	}
 	if (use_indent_) indent_less();
@@ -79,7 +79,7 @@ void XmlWriter::paragraph_head()
 void XmlWriter::paragraph_head(const Chunk& c)
 {
 	osi() << "<chunk";
-	foreach (const Chunk::attr_map_t::value_type& v, c.attributes()) {
+	BOOST_FOREACH(const Chunk::attr_map_t::value_type& v, c.attributes()) {
 		os() << " " << v.first << "=\"" << v.second << "\"";
 	}
 	os() << ">\n";

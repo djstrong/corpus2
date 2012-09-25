@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <libcorpus2/exception.h>
 #include <libcorpus2_whole/io/relwriter.h>
 
@@ -42,7 +42,7 @@ void RelationWriter::write(const std::vector< boost::shared_ptr<Relation> >& rel
 	ofs<<"<relations>\n";
 	
 	//relations
-	foreach (const boost::shared_ptr<Relation>& r, relations){
+	BOOST_FOREACH(const boost::shared_ptr<Relation>& r, relations){
 		ofs<<"   <rel name=\"";
 		ofs<<r->name().c_str()<<"\">"<<endl;
 		ofs<<"      <from sent=\"";

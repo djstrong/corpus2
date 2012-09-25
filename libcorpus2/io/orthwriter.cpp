@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/orthwriter.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 namespace Corpus2 {
 
@@ -26,7 +26,7 @@ OrthWriter::OrthWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& params)
 	: TokenWriter(os, tagset, params), actual_ws_(false), end_nl_(false)
 {
-	foreach (const string_range& param, params) {
+	BOOST_FOREACH(const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "actual_ws") {
 			actual_ws_ = true;
@@ -67,7 +67,7 @@ void OrthWriter::write_sentence(const Sentence &s)
 
 void OrthWriter::write_chunk(const Chunk &c)
 {
-	foreach (const Sentence::Ptr& s, c.sentences()) {
+	BOOST_FOREACH(const Sentence::Ptr& s, c.sentences()) {
 		write_sentence(*s);
 		if (!actual_ws_) {
 			os() << "\n";

@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/plainwriter.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 
 namespace Corpus2 {
 
@@ -27,7 +27,7 @@ PlainWriter::PlainWriter(std::ostream& os, const Tagset& tagset,
 	: TokenWriter(os, tagset, params), ws_(true), disamb_(true)
 	, disamb_only_(false)
 {
-	foreach (const string_range& param, params) {
+	BOOST_FOREACH(const string_range& param, params) {
 		std::string p = boost::copy_range<std::string>(param);
 		if (p == "nows") {
 			ws_ = false;
@@ -49,7 +49,7 @@ void PlainWriter::write_token(const Token &t)
 		os() << "\t" << PwrNlp::Whitespace::to_string(t.wa());
 	}
 	os() << "\n";
-	foreach (const Lexeme& lex, t.lexemes()) {
+	BOOST_FOREACH(const Lexeme& lex, t.lexemes()) {
 		if (!disamb_only_ || lex.is_disamb()) {
 			os() << "\t" << lex.lemma_utf8() << "\t"
 				<< tagset().tag_to_string(lex.tag());
@@ -65,7 +65,7 @@ void PlainWriter::write_token(const Token &t)
 }
 void PlainWriter::write_sentence(const Sentence &s)
 {
-	foreach (const Token* t, s.tokens()) {
+	BOOST_FOREACH(const Token* t, s.tokens()) {
 		write_token(*t);
 	}
 	os() << "\n";
@@ -73,7 +73,7 @@ void PlainWriter::write_sentence(const Sentence &s)
 
 void PlainWriter::write_chunk(const Chunk& c)
 {
-	foreach (const boost::shared_ptr<Sentence>& s, c.sentences()) {
+	BOOST_FOREACH(const boost::shared_ptr<Sentence>& s, c.sentences()) {
 		write_sentence(*s);
 	}
 	os() << "\n";

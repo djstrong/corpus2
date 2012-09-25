@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/ann/channel.h>
-#include <libpwrutils/foreach.h>
+#include <boost/foreach.hpp>
 #include <algorithm>
 #include <boost/bind.hpp>
 #include <sstream>
@@ -97,7 +97,7 @@ int AnnotationChannel::get_new_segment_index() const
 {
 	//cache this?
 	std::vector<bool> used(segments_.size() + 1);
-	foreach (size_t sid, segments_) {
+	BOOST_FOREACH(size_t sid, segments_) {
 		if (sid < used.size()) {
 			used[sid] = true;
 		}
@@ -176,14 +176,14 @@ std::vector<Annotation> AnnotationChannel::make_annotation_vector(
 			not_annotated.push_back(i);
 		}
 	}
-	foreach (int na, not_annotated) {
+	BOOST_FOREACH(int na, not_annotated) {
 		rv.push_back(Annotation());
 		rv.back().indices.push_back(na);
 		rv.back().head_index = na;
 	}
 	rv.erase(std::remove_if(rv.begin(), rv.end(),
 		boost::bind(&Annotation::empty, _1)), rv.end());
-	foreach (Annotation& a, rv) {
+	BOOST_FOREACH(Annotation& a, rv) {
 		if (a.head_index == -1) {
 			a.head_index = a.indices[0];
 		}
@@ -195,7 +195,7 @@ std::vector<Annotation> AnnotationChannel::make_annotation_vector(
 std::string AnnotationChannel::dump_iob() const
 {
 	std::stringstream ss;
-	foreach (Corpus2::IOB::Enum e, iobs()) {
+	BOOST_FOREACH(Corpus2::IOB::Enum e, iobs()) {
 		ss << Corpus2::IOB::to_string(e);
 	}
 	return ss.str();
@@ -204,7 +204,7 @@ std::string AnnotationChannel::dump_iob() const
 std::string AnnotationChannel::dump_segments() const
 {
 	std::stringstream ss;
-	foreach (int s, segments_) {
+	BOOST_FOREACH(int s, segments_) {
 		ss << s;
 	}
 	return ss.str();
@@ -213,7 +213,7 @@ std::string AnnotationChannel::dump_segments() const
 std::string AnnotationChannel::dump_heads() const
 {
 	std::stringstream ss;
-	foreach (bool b, heads_) {
+	BOOST_FOREACH(bool b, heads_) {
 		ss << (b ? "H" : " ");
 	}
 	return ss.str();
@@ -248,7 +248,7 @@ void AnnotationChannel::do_counts(int& annotations, int& disjoint, int& unannota
 	annotations = 0;
 	disjoint = 0;
 	unannotated = 0;
-	foreach (int sid, segments_) {
+	BOOST_FOREACH(int sid, segments_) {
 		if (sid == 0) {
 			++unannotated;
 		} else if (!used_sids.insert(sid).second) { //was already there
