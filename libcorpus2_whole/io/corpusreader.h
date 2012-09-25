@@ -36,6 +36,8 @@ public:
 	 */
 	CorpusReader(const Tagset& tagset, const std::string& corpus_type);
 
+	virtual ~CorpusReader();	
+
 	/**
 	 * Reads corpus from given path
 	 * @arg corpus_file Path to file contains paths to corpus files.

@@ -30,6 +30,10 @@ CorpusReader::CorpusReader(const Tagset& tagset, const std::string& corpus_type)
 	//
 }
 
+CorpusReader::~CorpusReader()
+{
+}
+
 boost::shared_ptr<Corpus> CorpusReader::read(const std::string& corpus_file_path)
 {
 	try {
