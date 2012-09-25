@@ -105,8 +105,8 @@ install(
 # Install SWIG files
 # -----------------------------------------------------------------------------
 
-#install(
-#	FILES ${I_FILES}
-#	DESTINATION ${SWIG_SRC_DIR}
-#	PERMISSIONS ${PERM_SCRIPTS}
-#)
+install(
+	FILES ${I_FILES}
+        DESTINATION include/libcorpus2
+	PERMISSIONS ${PERM_SCRIPTS}
+)
