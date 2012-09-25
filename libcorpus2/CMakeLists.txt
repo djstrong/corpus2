@@ -90,11 +90,11 @@ if(WIN32)
 # by default.
 # For UNIX on the other hand everything is exported by default.
 # Until external API is specified explicitly, build STATIC for WIN32
-	add_library(corpus2 STATIC ${libcorpus2_STAT_SRC} ${INCS})
+	add_library(corpus2 SHARED ${libcorpus2_STAT_SRC} ${INCS})
 else(WIN32)
 	add_library(corpus2 SHARED ${libcorpus2_STAT_SRC} ${INCS})
 endif(WIN32)
-target_link_libraries(corpus2 ${LIBS})
+target_link_libraries(corpus2 pwrutils ${LIBS})
 set_target_properties(corpus2 PROPERTIES
 	VERSION "${corpus2_ver_major}.${corpus2_ver_minor}"
 	SOVERSION ${corpus2_ver_major})

@@ -43,7 +43,7 @@ if(WIN32)
 # by default.
 # For UNIX on the other hand everything is exported by default.
 # Until external API is specified explicitly, build STATIC for WIN32
-	add_library(pwrutils STATIC ${libpwrutils_STAT_SRC} ${INCS})
+	add_library(pwrutils SHARED ${libpwrutils_STAT_SRC} ${INCS})
 else(WIN32)
 	add_library(pwrutils SHARED ${libpwrutils_STAT_SRC} ${INCS})
 endif(WIN32)
