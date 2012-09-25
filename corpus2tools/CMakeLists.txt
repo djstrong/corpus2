@@ -21,7 +21,6 @@ add_executable( tagset-tool tagset-tool.cpp )
 add_executable( corpus2get corpus2get.cpp )
 target_link_libraries ( tagset-tool corpus2 pwrutils ${Boost_LIBRARIES} ${LIBS})
 target_link_libraries ( corpus2get corpus2 pwrutils ${Boost_LIBRARIES} ${LIBS})
-if(UNIX)
 
 	install(TARGETS tagset-tool corpus2get
 		RUNTIME DESTINATION bin)
@@ -29,4 +28,3 @@ if(UNIX)
 		DESTINATION bin
 		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 		GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-endif(UNIX)

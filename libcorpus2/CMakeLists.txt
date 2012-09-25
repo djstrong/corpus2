@@ -99,8 +99,8 @@ set_target_properties(corpus2 PROPERTIES
 	VERSION "${corpus2_ver_major}.${corpus2_ver_minor}"
 	SOVERSION ${corpus2_ver_major})
 
-if(UNIX)
 	install(TARGETS corpus2
+		ARCHIVE DESTINATION lib
 		LIBRARY DESTINATION lib)
 
 	install(
@@ -126,5 +126,4 @@ if(UNIX)
 		PATTERN ".svn" EXCLUDE
 		PATTERN "local/*" EXCLUDE
 	)
-endif(UNIX)
 

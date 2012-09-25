@@ -52,8 +52,8 @@ set_target_properties(pwrutils PROPERTIES
 	VERSION "${pwrutils_ver_major}.${pwrutils_ver_minor}"
 	SOVERSION ${pwrutils_ver_major})
 
-if(UNIX)
 	install(TARGETS pwrutils
+		ARCHIVE DESTINATION lib
 		LIBRARY DESTINATION lib)
 
 	install(
@@ -70,5 +70,4 @@ if(UNIX)
 		DESTINATION include
 		FILES_MATCHING PATTERN "version.h"
 	)
-endif(UNIX)
 
