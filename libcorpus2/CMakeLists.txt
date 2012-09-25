@@ -100,6 +100,7 @@ set_target_properties(corpus2 PROPERTIES
 	SOVERSION ${corpus2_ver_major})
 
 	install(TARGETS corpus2
+		RUNTIME DESTINATION bin
 		ARCHIVE DESTINATION lib
 		LIBRARY DESTINATION lib)
 

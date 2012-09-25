@@ -41,6 +41,8 @@ target_link_libraries(corpus2_whole corpus2 ${LIBS})
 
 if(UNIX)
 	install(TARGETS corpus2_whole
+		RUNTIME DESTINATION bin
+		ARCHIVE DESTINATION lib
 		LIBRARY DESTINATION lib)
 
 	install(

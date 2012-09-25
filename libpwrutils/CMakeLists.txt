@@ -53,6 +53,7 @@ set_target_properties(pwrutils PROPERTIES
 	SOVERSION ${pwrutils_ver_major})
 
 	install(TARGETS pwrutils
+		RUNTIME DESTINATION bin
 		ARCHIVE DESTINATION lib
 		LIBRARY DESTINATION lib)
 
