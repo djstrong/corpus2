@@ -77,10 +77,10 @@ void TokenTimer::register_signal_handler()
 	memset(&s, 0, sizeof(s));
 	s.sa_handler = &handler;
 	if (sigaction(SIGUSR1, &s, 0) != 0)
-#endif
 	{
 		std::cerr << "Signal handler registration error\n";
 	}
+#endif
 }
 
 } /* end ns Corpus2 */
