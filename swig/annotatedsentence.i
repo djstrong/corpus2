@@ -59,6 +59,14 @@ namespace Corpus2 {
     std::string annotation_info() const;
   };
 
+  %extend AnnotatedSentence {
+    static boost::shared_ptr<Sentence> cast_as_sentence(
+      const boost::shared_ptr<AnnotatedSentence>& a)
+    {
+      return a;
+    }
+  }
+
 boost::shared_ptr<Corpus2::AnnotationView> create_view(
         const boost::shared_ptr<AnnotatedSentence>& s,
         const std::string& ann_name);

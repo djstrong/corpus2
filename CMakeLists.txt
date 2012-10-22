@@ -1,8 +1,8 @@
 PROJECT(Corpus2Library)
 
 set(corpus2_ver_major "1")
-set(corpus2_ver_minor "1")
-set(corpus2_ver_patch "1")
+set(corpus2_ver_minor "2")
+set(corpus2_ver_patch "0")
 
 cmake_minimum_required(VERSION 2.8.0)
 
