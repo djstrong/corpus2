@@ -6,7 +6,7 @@
 <!ELEMENT sentence (tok|ns)+>
 <!ATTLIST sentence
    id ID #IMPLIED>
-<!ELEMENT tok (orth, lex+, ann*)>
+<!ELEMENT tok (orth, lex+, ann*, prop*)>
 <!ELEMENT ns EMPTY>
 <!ELEMENT orth (#PCDATA)>
 <!ELEMENT lex (base, ctag)>
@@ -16,14 +16,18 @@
 <!ATTLIST ann
    chan CDATA #REQUIRED
    head (1 | 0) "0">
+<!ELEMENT prop (#PCDATA)>
+<!ATTLIST prop
+   key CDATA #REQUIRED>
 <!ELEMENT base (#PCDATA)>
 <!ELEMENT ctag (#PCDATA)>
 
 
-<!ELEMENT relations (rel+)>
+<!ELEMENT relations (rel*)>
 <!ELEMENT rel (from,to)>
 <!ATTLIST rel
-   name CDATA #REQUIRED>
+   name CDATA #REQUIRED
+   set CDATA #IMPLIED>
 <!ELEMENT from (#PCDATA)>
 <!ATTLIST from
    chan CDATA #REQUIRED
