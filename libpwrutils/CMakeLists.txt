@@ -14,6 +14,9 @@ configure_file(version.in include/libpwrutils/version.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
 add_definitions(-DHAVE_VERSION_H)
 set(LIBS "")
+if(UNIX)
+    set(LIBS ${LIBS} dl)
+endif(UNIX)
 
 include_directories( ${CMAKE_SOURCE_DIR} )
 
