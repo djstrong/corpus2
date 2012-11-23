@@ -71,8 +71,14 @@ class Stats:
         result['F'] = f
         return result
     
-    def getStats(self):
+    def getChunkStats(self):
         return self.getPRF(self.chunk_hits)
+
+    def getHeadStats(self):
+        return self.getPRF(self.head_hits)
+
+    def getBothStats(self):
+        return self.getPRF(self.both_hits)
 
 def get_annots(sent, chan_name):
     # wrap the sentence as an AnnotatedSentence
@@ -118,15 +124,27 @@ def main(ch_path, ref_path, chan_names, input_format, out_path, tagset, verbose,
 
     chan_names = chan_names.split(",")
     
-    csvTable = CSVTable(";")
-    csvTable.addColumn('Nr')
-    
+    chunkTable = CSVTable(";")
+    chunkTable.addColumn('Nr')
+    headTable = CSVTable(";")
+    headTable.addColumn('Nr')
+    bothTable = CSVTable(";")
+    bothTable.addColumn('Nr')
+
     for chan_name in chan_names:        
-        csvTable.addColumn(chan_name)
-        csvTable.addSubColumn(chan_name, "P", type="float")
-        csvTable.addSubColumn(chan_name, "R", type="float")
-        csvTable.addSubColumn(chan_name, "F", type="float")
-    
+        chunkTable.addColumn(chan_name)
+        chunkTable.addSubColumn(chan_name, "P", type="float")
+        chunkTable.addSubColumn(chan_name, "R", type="float")
+        chunkTable.addSubColumn(chan_name, "F", type="float")
+        headTable.addColumn(chan_name)
+        headTable.addSubColumn(chan_name, "P", type="float")
+        headTable.addSubColumn(chan_name, "R", type="float")
+        headTable.addSubColumn(chan_name, "F", type="float")
+        bothTable.addColumn(chan_name)
+        bothTable.addSubColumn(chan_name, "P", type="float")
+        bothTable.addSubColumn(chan_name, "R", type="float")
+        bothTable.addSubColumn(chan_name, "F", type="float")
+
     tagset = corpus2.get_named_tagset(tagset)
     
     for fold in range(1, folds+1):    
@@ -137,8 +155,10 @@ def main(ch_path, ref_path, chan_names, input_format, out_path, tagset, verbose,
             ch_path_fold = ch_path
             ref_path_fold = ref_path
 
-        results = {}
-        
+        chunkResults = {}
+        headResults = {}
+        bothResults = {}
+
         for chan_name in chan_names:
             
             ch_rdr = corpus2.TokenReader.create_path_reader(
@@ -159,23 +179,39 @@ def main(ch_path, ref_path, chan_names, input_format, out_path, tagset, verbose,
                 
                 # process each sentence separately
                 for ch_sent, ref_sent in zip(ch_chunk.sentences(), ref_chunk.sentences()):
-                    print ch_sent.size(), ref_sent.size()
                     assert ch_sent.size() == ref_sent.size()
                     ch_annots = get_annots(ch_sent, chan_name)
                     ref_annots = get_annots(ref_sent, chan_name)
                     stats.update(ch_annots, ref_annots)
         
-            results[chan_name] = stats.getStats()    
-        csvTable.addRow(results)
-    csvTable.countAvg()
-    
+            chunkResults[chan_name] = stats.getChunkStats()
+            headResults[chan_name] = stats.getHeadStats()
+            bothResults[chan_name] = stats.getBothStats()
+
+        chunkTable.addRow(chunkResults)
+        headTable.addRow(headResults)
+        bothTable.addRow(bothResults)
+    if folds > 1:
+        chunkTable.countAvg()
+        headTable.countAvg()
+        bothTable.countAvg()
+
     if out_path != '':
         out = codecs.open(out_path, "w", "utf-8")
-        out.write(csvTable.__str__())
+        out.write("Chunks--------------------------------------------------\n")
+        out.write(chunkTable.__str__())
+        out.write("Heads---------------------------------------------------\n")
+        out.write(headTable.__str__())
+        out.write("Both----------------------------------------------------\n")
+        out.write(bothTable.__str__())
         out.close()
     else:
-        print csvTable
-    
+        print "Chunks--------------------------------------------------"
+        print chunkTable
+        print "Heads---------------------------------------------------"
+        print headTable
+        print "Both----------------------------------------------------"
+        print bothTable
     
 if __name__ == '__main__':
     go()
