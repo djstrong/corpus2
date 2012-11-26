@@ -118,7 +118,8 @@ public:
 		return name_;
 	}
 
-	boost::shared_ptr<Relation> rel_pt();
+	///Shared pointer to copy of the relation
+	boost::shared_ptr<Relation> clone_shared();
 
 private:
 	/// Direction name

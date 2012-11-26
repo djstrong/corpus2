@@ -36,16 +36,14 @@ namespace whole {
 class RelationWriter {
 public:
 	/**
-	 * Reads a document with relations
+	 * Writes a document with relations
 	 * @param rela_path  path to file with relations
 	 */
 	RelationWriter(const std::string &rela_path);
 
 
 	/**
-	 * Lazy relations accessor.
-	 * If relations are not readed then read relations and returns list of them.
-	 * @return List of readed relations
+	 * Writes given vector of Relations to the file specified before
 	 */
 	void write(const std::vector< boost::shared_ptr<Relation> >& relations);
 

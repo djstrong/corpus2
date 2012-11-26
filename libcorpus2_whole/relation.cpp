@@ -28,7 +28,7 @@ Relation::Relation(const std::string& name,
 {
 }
 
-boost::shared_ptr<Relation> Relation::rel_pt(){
+boost::shared_ptr<Relation> Relation::clone_shared(){
 	relation_=boost::shared_ptr<Relation>(new Relation(name_,from_,to_));
 	return relation_;
 }
