@@ -151,6 +151,10 @@ protected:
 		return indent_;
 	}
 
+	/**
+	 * Write indentation spaces to the output stream and return the stream
+	 * for writing. Convenience function useful when starting new lines
+	 * in the output. */
 	std::ostream& osi();
 
 private:
