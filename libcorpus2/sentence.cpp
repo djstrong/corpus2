@@ -33,7 +33,7 @@ Sentence::~Sentence()
 
 Sentence::Ptr Sentence::clone_shared() const
 {
-	Sentence::Ptr s = boost::make_shared<Sentence>();
+	Sentence::Ptr s = boost::make_shared<Sentence>(id_);
 	BOOST_FOREACH(const Token* t, tokens_) {
 		s->append(t->clone());
 	}

@@ -34,7 +34,7 @@ AnnotatedSentence::~AnnotatedSentence()
 Sentence::Ptr AnnotatedSentence::clone_shared() const
 {
 	boost::shared_ptr<AnnotatedSentence> copy;
-	copy = boost::make_shared<AnnotatedSentence>();
+	copy = boost::make_shared<AnnotatedSentence>(id_);
 	BOOST_FOREACH(const Token* t, tokens_) {
 		copy->append(t->clone());
 	}
