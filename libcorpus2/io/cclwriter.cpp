@@ -127,9 +127,20 @@ void CclWriter::paragraph_head()
 
 void CclWriter::paragraph_head(const Chunk& c)
 {
+	// in CCL format chunks may have at most two attributes:
+	// id (unique XML-style id) and type (typically p for paragraphs)
 	osi() << "<chunk";
-	BOOST_FOREACH(const Chunk::attr_map_t::value_type& v, c.attributes()) {
-		os() << " " << v.first << "=\"" << v.second << "\"";
+	if (c.has_attribute("id")) {
+		const std::string &val = c.get_attribute("id");
+		if (!val.empty()) {
+			os() << " id=\"" << val << "\"";
+		}
+	}
+	if (c.has_attribute("type")) {
+		const std::string &val = c.get_attribute("type");
+		if (!val.empty()) {
+			os() << " type=\"" << val << "\"";
+		}
 	}
 	os() << ">\n";
 }

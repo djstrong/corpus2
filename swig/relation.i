@@ -44,7 +44,7 @@ namespace whole {
     void set_to(const DirectionPoint& dp);
     void set_name(const std::string& s);
 
-    boost::shared_ptr<Relation> rel_pt();
+    boost::shared_ptr<Relation> clone_shared();
     /* It must be renamed because "from" is python keyword */
     %rename(rel_from) from() const;
     const boost::shared_ptr<const DirectionPoint>& from() const;
