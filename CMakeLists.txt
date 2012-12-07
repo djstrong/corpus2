@@ -53,7 +53,7 @@ set(LIBS "")
 include_directories(${Corpus2Library_SOURCE_DIR})
 
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options system filesystem regex)
-
+MARK_AS_ADVANCED(Boost_DIR)
 if(MSVC OR BORLAND)
 # Use the auto-linking feature, don't try to add libraries yourself:
 	set(Boost_LIBRARIES "")
