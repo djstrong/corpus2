@@ -48,7 +48,7 @@ boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence(
 	boost::shared_ptr<AnnotatedSentence> a;
 	a = boost::dynamic_pointer_cast<AnnotatedSentence>(s);
 	if (!a) {
-		a = boost::make_shared<AnnotatedSentence>();
+		a = boost::make_shared<AnnotatedSentence>(s->id());
 		BOOST_FOREACH(Token* t, s->tokens()) {
 			a->append(t);
 		}
@@ -63,7 +63,7 @@ boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence_clone(
 	boost::shared_ptr<AnnotatedSentence> a;
 	a = boost::dynamic_pointer_cast<AnnotatedSentence>(s);
 	if (!a) {
-		a = boost::make_shared<AnnotatedSentence>();
+		a = boost::make_shared<AnnotatedSentence>(s->id());
 		BOOST_FOREACH(Token* t, s->tokens()) {
 			a->append(t->clone());
 		}
