@@ -125,6 +125,14 @@ public:
 		return true;
 	}
 
+    /**
+     * Remove channel having a given name. Returns whether removed
+     * (will return false if no channel of the given name exists).
+     */
+    bool remove_channel(const std::string& name) {
+        return (channels_.erase(name) > 0);
+    }
+
 	const chan_map_t& all_channels() const {
 		return channels_;
 	}
