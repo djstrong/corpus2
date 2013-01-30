@@ -59,6 +59,12 @@ int mask_card(const Tag& mask)
 			+ PwrNlp::count_bits_set(mask.get_values());
 }
 
+Tag with_values_masked(Tag input, Tag attr_value, Tag attr_mask) {
+	Tag output(input);
+	output.add_values_masked(attr_value.get_values(), attr_mask.get_values());
+	return output;
+}
+
 bool select_preferred_disamb(const Tagset& tagset, Token* token)
 {
 	size_t lex_idx = token->get_preferred_lexeme_index(tagset);
