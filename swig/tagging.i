@@ -21,6 +21,8 @@ Tag mask_token(const Token& token, const Tag& mask, bool disamb_only);
 
 int mask_card(const Tag& mask);
 
+Tag with_values_masked(Tag input, Tag attr_value, Tag attr_mask);
+
 bool select_preferred_disamb(const Tagset& tagset, Token* token);
 
 void select_preferred_lexeme(const Tagset& tagset, Token* token);

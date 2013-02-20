@@ -72,11 +72,7 @@ namespace whole {
 
 	void CclRelReader::set_option(const std::string& option)
 	{
-		if (option == "autogen_sent_id") {
-			ccl_reader_->set_option("autogen_sent_id");
-		} else if (option == "autogen_chunk_id") {
-			ccl_reader_->set_option("autogen_chunk_id");
-		}
+		ccl_reader_->set_option(option);
 	}
 
 	std::string CclRelReader::get_option(const std::string& option) const {

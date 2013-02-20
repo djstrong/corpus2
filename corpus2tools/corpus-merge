@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import sys
+import sys, os
 from optparse import OptionParser
 from collections import defaultdict as dd
 from itertools import repeat, izip
@@ -45,6 +45,9 @@ def go():
 	parser.add_option('-C', '--chunks', action='store_true',
 		dest='chunks', default=False,
 		help='Process chunks (select chunks/sentences, not tokens)')
+	parser.add_option('--prefix-chunks', action='store_true',
+		dest='prefix_chunks', default=False,
+		help='Prefix chunk ids with filename (file:NAME:ORIGID)')
 	parser.add_option('-v', '--verbose', action='store_true',
 		dest='verbose', default=False,
 		help='verbose mode')
@@ -68,11 +71,23 @@ def go():
 	for arg in args:
 		reader = corpus2.TokenReader.create_path_reader(options.input_format, tagset, arg)
 		if options.chunks:
+			fname, _ = os.path.splitext(os.path.basename(arg))
+			chunk_no = 1
 			for chunk in chunks(reader):
+				if options.prefix_chunks:
+					if chunk.has_attribute('id'):
+						their_id = chunk.get_attribute('id')
+					else:
+						# autogen
+						their_id = ('auto%03d' % chunk_no)
+					full_id = 'file:%s:%s' % (fname, their_id)
+					chunk.set_attribute('id', full_id)
 				writer.write_chunk(chunk)
+				chunk_no += 1
 		else:
 			for sent in sentences(reader):
 				writer.write_sentence(sent)
+		del reader
 
 if __name__ == '__main__':
 	go()
