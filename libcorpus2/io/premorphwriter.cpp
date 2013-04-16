@@ -17,6 +17,9 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/io/premorphwriter.h>
 #include <boost/foreach.hpp>
 
+// for entity encoding
+#include <libcorpus2/io/xcescommon.h>
+
 namespace Corpus2 {
 
 bool PremorphWriter::registered = TokenWriter::register_writer<PremorphWriter>(
@@ -42,14 +45,15 @@ PremorphWriter::~PremorphWriter()
 
 void PremorphWriter::write_token(const Token &t)
 {
-	os() << PwrNlp::Whitespace::to_whitespace(t.wa()) << t.orth_utf8();
+	os() << PwrNlp::Whitespace::to_whitespace(t.wa());
+	encode_xml_entities_into(os(), t.orth_utf8());
 }
 
 void PremorphWriter::write_sentence(const Sentence &s)
 {
 	os() << "<chunk type=\"s\">";
 	if (!s.tokens().empty()) {
-		os() << s[0]->orth_utf8();
+		encode_xml_entities_into(os(), s[0]->orth_utf8());
 	}
 	for (size_t i = 1; i < s.tokens().size(); ++i) {
 		write_token(*s[i]);
