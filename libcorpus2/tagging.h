@@ -45,6 +45,13 @@ Tag mask_token(const Token& token, const Tag& mask, bool disamb_only);
 /** Returns the number of set elements belonging to the mask given. */
 int mask_card(const Tag& mask);
 
+/**
+  * Returns a copy of the given input tag with the attribute referred
+  * to by attr_mask value set to attr_value (possibly empty).
+  * NOTE: only attribute part of the masks are considered.
+  */
+Tag with_values_masked(Tag input, Tag attr_value, Tag attr_mask);
+
 /** Forces one disamb lexeme per token. The selection is based on tagset
   * definition order. Returns if any disamb found.
   */
@@ -99,6 +106,7 @@ bool disambiguate_subset(Token* token, const Tag& mask_where,
 
 /** Sets lexemes' disamb markers iff lexeme.tag is wanted_tag. */
 void set_disambs(Token *token, const Tag& wanted_tag);
+
 } /* end ns Corpus2 */
 
 #endif // LIBCORPUS2_TAGGING_H

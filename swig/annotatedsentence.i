@@ -50,6 +50,12 @@ namespace Corpus2 {
     AnnotationChannel& get_channel(const std::string& name);
     const AnnotationChannel& get_channel(const std::string& name) const;
     bool add_channel(const std::string& name, const AnnotationChannel& chan);
+
+    /* Use with care. Note that get_channel returns a reference to the original
+       channel, hence it is strongly recommended to del the channel ref object
+       before attempting to call remove_channel. */
+    bool remove_channel(const std::string& name);
+
     const chan_map_t& all_channels() const;
 
     /* --------------------------------------------------------------------- */

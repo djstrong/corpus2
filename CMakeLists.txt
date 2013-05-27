@@ -1,7 +1,7 @@
 PROJECT(Corpus2Library)
 
 set(corpus2_ver_major "1")
-set(corpus2_ver_minor "2")
+set(corpus2_ver_minor "3")
 set(corpus2_ver_patch "3")
 
 cmake_minimum_required(VERSION 2.8.0)
@@ -53,7 +53,7 @@ set(LIBS "")
 include_directories(${Corpus2Library_SOURCE_DIR})
 
 find_package(Boost 1.41 REQUIRED COMPONENTS program_options system filesystem regex)
-
+MARK_AS_ADVANCED(Boost_DIR)
 if(MSVC OR BORLAND)
 # Use the auto-linking feature, don't try to add libraries yourself:
 	set(Boost_LIBRARIES "")

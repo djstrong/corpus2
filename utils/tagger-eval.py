@@ -148,6 +148,7 @@ class Metric:
 	POS_WC = ([Feat.WEAK_POS_HIT], None)
 	POS_SC = ([Feat.STRONG_POS_HIT], None)
 	POS_WC_LOWER = ([Feat.WEAK_POS_HIT, Feat.SEG_NOCHANGE], None) # lower bound for POS WC
+	POS_SC_LOWER = ([Feat.STRONG_POS_HIT, Feat.SEG_NOCHANGE], None) # lower bound for POS SC
 	# separate stats for known and unknown forms
 	KN_WC = ([Feat.WEAK_TAG_HIT, Feat.KNOWN], [Feat.KNOWN])
 	UNK_WC = ([Feat.WEAK_TAG_HIT, Feat.UNKNOWN], [Feat.UNKNOWN])
@@ -160,6 +161,9 @@ class Metric:
 	UNK_WC_LOWER = ([Feat.WEAK_TAG_HIT, Feat.SEG_NOCHANGE, Feat.UNKNOWN], [Feat.UNKNOWN])
 	KN_SEG_CHANGE = ([Feat.SEG_CHANGE, Feat.KNOWN], [Feat.KNOWN])
 	UNK_SEG_CHANGE = ([Feat.SEG_CHANGE, Feat.UNKNOWN], [Feat.UNKNOWN])
+
+	KN_POS_SC_LOWER = ([Feat.STRONG_POS_HIT, Feat.SEG_NOCHANGE, Feat.KNOWN], [Feat.KNOWN])
+	UNK_POS_SC_LOWER = ([Feat.STRONG_POS_HIT, Feat.SEG_NOCHANGE, Feat.UNKNOWN], [Feat.UNKNOWN])
 	
 	# heur recover
 	PUNCHIT_PUNCONLY = ([Feat.ALLPUNC_HIT], None)

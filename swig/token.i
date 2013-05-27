@@ -31,7 +31,7 @@ namespace Corpus2 {
     Token(const UnicodeString& orth, PwrNlp::Whitespace::Enum wa);
     Token* clone() const;
 
-    Token* create_utf8(const std::string& orth_utf8, PwrNlp::Whitespace::Enum wa = PwrNlp::Whitespace::Space);
+    static Token* create_utf8(const std::string& orth_utf8, PwrNlp::Whitespace::Enum wa = PwrNlp::Whitespace::Space);
     
     const UnicodeString& orth() const;
     std::string orth_utf8() const;
@@ -67,6 +67,8 @@ namespace Corpus2 {
     boost::shared_ptr<TokenMetaData> get_metadata() const;
     void set_metadata(TokenMetaData& md);
     void set_metadata_ptr(boost::shared_ptr<TokenMetaData> md);
+
+    void create_metadata();
   };
 
   %extend Token {

@@ -19,6 +19,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libxml++/libxml++.h>
 #include <libxml2/libxml/parser.h>
 #include <boost/make_shared.hpp>
+#include <boost/algorithm/string.hpp>
+
 #include <fstream>
 
 namespace Corpus2 {
@@ -228,15 +230,21 @@ void XmlReader::on_end_element(const Glib::ustring &name)
 {
 	//std::cerr << "/" << name << state_ << "\n";
 	if (state_ == STATE_ORTH && name == "orth") {
-		tok_->set_orth(UnicodeString::fromUTF8(get_buf()));
+		std::string tmp_buf = get_buf();
+		boost::trim(tmp_buf);
+		tok_->set_orth(UnicodeString::fromUTF8(tmp_buf));
 		grab_characters_ = false;
 		state_ = STATE_TOK;
 	} else if (state_ == STATE_LEMMA && name == "base") {
-		tok_->lexemes().back().set_lemma(UnicodeString::fromUTF8(get_buf()));
+		std::string tmp_buf = get_buf();
+		boost::trim(tmp_buf);
+		tok_->lexemes().back().set_lemma(UnicodeString::fromUTF8(tmp_buf));
 		grab_characters_ = false;
 		state_ = STATE_LEX;
 	} else if (state_ == STATE_TAG && name == "ctag") {
-		Tag tag = base_reader_.parse_tag(get_buf());
+		std::string tmp_buf = get_buf();
+		boost::trim(tmp_buf);
+		Tag tag = base_reader_.parse_tag(tmp_buf);
 		tok_->lexemes().back().set_tag(tag);
 		grab_characters_ = false;
 		state_ = STATE_LEX;
