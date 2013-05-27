@@ -22,6 +22,7 @@ namespace whole {
     DocumentReader(const Tagset& tagset, const std::string& corpus_type,const std::string& corpus_file_path, const std::string& corpus_reader);
     DocumentReader(const Tagset& tagset, const std::string& corpus_type,const std::string& corpus_file_path);
     boost::shared_ptr<Document> read();
+    boost::shared_ptr<Document> read_with_auto_id();
   };
 } // whole ns
 } // Corpus2 ns

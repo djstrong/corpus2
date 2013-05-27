@@ -73,8 +73,29 @@ boost::shared_ptr<Document> DocumentReader::read()
 	throw Corpus2Error(corpus_type_ + " is an unknown reader type!");
 }
 
+boost::shared_ptr<Document> DocumentReader::read_with_auto_id()
+{
+	std::string line;
+#ifdef WITH_POLIQARP
+	if (corpus_type_ == "poliqarp") {
+		return this->reader->read();
+	}
+#endif
+	if (corpus_type_ == "document") {
+		if (std::getline(corpus_file, line)) {
+			boost::shared_ptr<CclRelReader> cclrel_reader = get_cclrel_reader(line);
+			cclrel_reader->get_option("autogen_sent_id");
+			cclrel_reader->set_option("autogen_chunk_id");
+			return cclrel_reader->read();
+		} else {
+			return boost::make_shared<Document>("End");
+		}
+	}
+	throw Corpus2Error(corpus_type_ + " is an unknown reader type!");
+}
 
-boost::shared_ptr<DocumentReaderI> DocumentReader::get_cclrel_reader(std::string& line)
+
+boost::shared_ptr<CclRelReader> DocumentReader::get_cclrel_reader(std::string& line)
 {
 	std::string ann_path, rel_path;
 

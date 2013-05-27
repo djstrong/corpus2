@@ -20,6 +20,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <string>
 #include <libcorpus2_whole/corpus.h>
 #include <libcorpus2_whole/io/reader_i.h>
+#include <libcorpus2_whole/io/cclrelreader.h>
 
 namespace Corpus2 {
 namespace whole {
@@ -30,10 +31,11 @@ public:
 	DocumentReader(const Tagset& tagset, const std::string& corpus_type, const std::string& corpus_file_path, const std::string& corpus_reader);
 	DocumentReader(const Tagset& tagset, const std::string& corpus_type, const std::string& corpus_file_path);
 	boost::shared_ptr<Document> read();
+	boost::shared_ptr<Document> read_with_auto_id();
 
 private:
 
-	boost::shared_ptr<DocumentReaderI> get_cclrel_reader(std::string& line);
+	boost::shared_ptr<CclRelReader> get_cclrel_reader(std::string& line);
 	boost::shared_ptr<DocumentReaderI> reader;
         std::ifstream corpus_file;
 private:
