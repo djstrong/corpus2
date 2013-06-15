@@ -58,6 +58,7 @@ SET(libcorpus2_STAT_SRC
 	io/helpers.cpp
 	io/fastxces.cpp
 	io/iob-chan.cpp
+	io/linewriter.cpp
 	io/nonewriter.cpp
 	io/orthwriter.cpp
 	io/pathwriter.cpp
