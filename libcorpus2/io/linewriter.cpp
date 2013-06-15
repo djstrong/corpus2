@@ -75,19 +75,17 @@ void LineWriter::write_sentence(const Sentence& s)
 			// use IOB2 representation internally
 			AnnotationChannel &chan = hax->get_channel(vt.first);
 			chan.make_iob_from_segments();
-			IOB::Enum last_tag = IOB::O;
 			// write line representation
 			for (int idx = 0; idx < chan.size(); idx++) {
 				IOB::Enum this_tag = chan.get_iob_at(idx);
-				if (last_tag == IOB::O || this_tag == IOB::O) {
-					os() << " ";
-				}
-				else {
+				if (this_tag == IOB::I) {
 					os() << chunk_char;
 				}
-				last_tag = chan.get_iob_at(idx);
-				std::string now(" ");
-				if (last_tag != IOB::O) {
+				else {
+					os() << empty_char;
+				}
+				std::string now(empty_char);
+				if (this_tag != IOB::O) {
 					if (chan.is_head_at(idx)) {
 						now = head_char;
 					}
@@ -98,7 +96,6 @@ void LineWriter::write_sentence(const Sentence& s)
 				for (int line_pos = orth_lens[idx]; line_pos > 0; line_pos--) {
 					os() << now;
 				}
-				last_tag = this_tag;
 			}
 			os() << "\n";
 		}
