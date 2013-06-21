@@ -40,24 +40,6 @@ public:
 
 	~CclReaderImpl();
 
-	void set_autogen_sent_id(bool) {
-		// won't work
-		// now this is always true for each reader
-	}
-
-	bool get_autogen_sent_id() const {
-		return true; // always true by design
-	}
-
-	void set_autogen_chunk_id(bool) {
-		// won't work
-		// left for backwards compatibility
-	}
-
-	bool get_autogen_chunk_id() const {
-		return true; // always true by design
-	}
-
 protected:
 	bool process_start_element(const Glib::ustring & name,
 		const AttributeList& attributes);
@@ -92,8 +74,7 @@ protected:
 };
 
 CclReader::CclReader(const Tagset& tagset, std::istream& is,
-		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
-		bool autogen_chunk_id)
+		bool disamb_only, bool disamb_sh)
 	: BufferedChunkReader(tagset),
 	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
 {
@@ -101,8 +82,7 @@ CclReader::CclReader(const Tagset& tagset, std::istream& is,
 }
 
 CclReader::CclReader(const Tagset& tagset, const std::string& filename,
-		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
-		bool autogen_chunk_id)
+		bool disamb_only, bool disamb_sh)
 	: BufferedChunkReader(tagset),
 	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
 {
