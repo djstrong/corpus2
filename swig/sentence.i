@@ -48,6 +48,8 @@ namespace Corpus2 {
 
     const std::string id() const;
 
+    void set_id(const std::string &id);
+
     %extend {
       static boost::shared_ptr<Corpus2::Sentence> create_sent(const std::string &id) {
         return boost::shared_ptr<Corpus2::Sentence>(new Corpus2::Sentence(id));

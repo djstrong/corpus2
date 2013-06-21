@@ -118,12 +118,17 @@ public:
 		return id_;
 	}
 
+	/// Identifier setter
+	void set_id(const std::string &id) {
+		id_ = id;
+	}
+
 protected:
 	/// The tokens this sentence contains and owns
 	std::vector<Token*> tokens_;
 
 	/// The sentence identifer - default is empty
-	const std::string id_;
+	std::string id_;
 };
 
 } /* end ns Corpus2 */
