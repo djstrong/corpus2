@@ -49,11 +49,16 @@ TokenReader::TokenReader(const Tagset& tagset)
 	: tagset_(tagset), tag_parse_mode_(Tagset::ParseDefault),
 	use_annotated_sentences_(false)
 {
+	sent_number_ = 0;
+	chunk_number_ = 0;
 }
 
 TokenReader::~TokenReader()
 {
 }
+
+const std::string TokenReader::SENT_ID_PREFFIX = "s";
+const std::string TokenReader::CHUNK_ID_PREFFIX = "ch";
 
 void TokenReader::set_option(const std::string &option)
 {
@@ -96,6 +101,38 @@ boost::shared_ptr<Sentence> TokenReader::make_sentence() const
 		return boost::make_shared<AnnotatedSentence>();
 	} else {
 		return boost::make_shared<Sentence>();
+	}
+}
+
+
+bool TokenReader::name_sent(boost::shared_ptr<Sentence> sent)
+{
+	if (!sent) {
+		return false;
+	}
+	if (sent->id().empty()) {
+		std::stringstream id_string;
+		id_string << SENT_ID_PREFFIX << (++sent_number_);
+		sent->set_id(id_string.str());
+		return true;
+	}
+	return false;
+}
+
+bool TokenReader::name_chunk(boost::shared_ptr<Chunk> chunk)
+{
+	if (!chunk) {
+		return false;
+	}
+	if (chunk->has_attribute("id") && !chunk->get_attribute("id").empty()) {
+		// already a non-empty id
+		return false;
+	}
+	else {
+		std::stringstream id_string;
+		id_string << CHUNK_ID_PREFFIX << (++chunk_number_);
+		chunk->set_attribute("id", id_string.str());
+		return true;
 	}
 }
 
@@ -260,6 +297,7 @@ Sentence::Ptr BufferedChunkReader::get_next_sentence()
 	} else {
 		Sentence::Ptr s = sentence_buf_.front();
 		sentence_buf_.pop_front();
+		name_sent(s);
 		return s;
 	}
 }
@@ -272,6 +310,12 @@ boost::shared_ptr<Chunk> BufferedChunkReader::get_next_chunk()
 	} else {
 		boost::shared_ptr<Chunk> t = chunk_buf_.front();
 		chunk_buf_.pop_front();
+		if (t) {
+			name_chunk(t);
+			BOOST_FOREACH(Sentence::Ptr s, t->sentences()) {
+				name_sent(s);
+			}
+		}
 		return t;
 	}
 }
@@ -309,9 +353,12 @@ Sentence::Ptr BufferedSentenceReader::get_next_sentence()
 	if (sentence_buf_ != NULL) {
 		Sentence::Ptr s = sentence_buf_;
 		sentence_buf_.reset();
+		name_sent(s);
 		return s;
 	} else {
-		return actual_next_sentence();
+		Sentence::Ptr s = actual_next_sentence();
+		name_sent(s);
+		return s;
 	}
 }
 
@@ -332,6 +379,7 @@ boost::shared_ptr<Chunk> BufferedSentenceReader::get_next_chunk()
 		if (s) {
 			sentence_buf_ = s;
 		}
+		name_chunk(c);
 		return c;
 	}
 }

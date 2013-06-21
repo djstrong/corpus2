@@ -162,6 +162,24 @@ public:
 
 	boost::shared_ptr<Sentence> make_sentence() const;
 
+protected:
+	unsigned int sent_number_; /// Sentence number, automatically generated
+	unsigned int chunk_number_; /// Chunk numer, automatically generated
+	static const std::string SENT_ID_PREFFIX; /// Sent id prefix
+	static const std::string CHUNK_ID_PREFFIX; /// Chunk id prefix
+
+	/**
+	 * If sentence has no name/id, will auto-generate one.
+	 * Returns whether no name was set.
+	 */
+	bool name_sent(boost::shared_ptr<Sentence> sent);
+
+	/**
+	 * If chunk has no name/id, will auto-generate one.
+	 * Returns whether no name was set.
+	 */
+	bool name_chunk(boost::shared_ptr<Chunk> chunk);
+
 private:
 	/// Tagset used by the Reader
 	const Tagset& tagset_;
@@ -281,7 +299,7 @@ bool TokenReader::register_path_reader(const std::string& class_id,
  * Convenience class for readers that keep a buffer of chunks. Sentence
  * and token accessors are based upon the chunk buffer.
  *
- * A dervied class only neds to override ensure_more with a function that
+ * A dervied class only needs to override ensure_more with a function that
  * fills the chunk buffer.
  */
 class BufferedChunkReader : public TokenReader
@@ -322,6 +340,11 @@ protected:
  *
  * Note that the chunk accessor might well read the entire input and return
  * one huge chunk with all the sentences.
+ *
+ * By default the reader will split sequences of sentences into chunks
+ * (i.e. paragraphs) before each token that has the preceding whitespace
+ * amount set to PwrNlp::Whitespace::ManyNewlines. This behaviour is
+ * controlled by the chunkify_ flag.
  */
 class BufferedSentenceReader : public TokenReader
 {

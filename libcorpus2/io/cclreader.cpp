@@ -36,25 +36,26 @@ class CclReaderImpl : public XmlReader
 public:
 	CclReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
-		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
-		bool autogen_chunk_id);
+		bool disamb_only, bool disamb_sh);
 
 	~CclReaderImpl();
 
-	void set_autogen_sent_id(bool autogen_sent_id) {
-		autogen_sent_id_ = autogen_sent_id;
+	void set_autogen_sent_id(bool) {
+		// won't work
+		// now this is always true for each reader
 	}
 
 	bool get_autogen_sent_id() const {
-		return autogen_sent_id_;
+		return true; // always true by design
 	}
 
-	void set_autogen_chunk_id(bool autogen_chunk_id) {
-		autogen_chunk_id_ = autogen_chunk_id;
+	void set_autogen_chunk_id(bool) {
+		// won't work
+		// left for backwards compatibility
 	}
 
 	bool get_autogen_chunk_id() const {
-		return autogen_chunk_id_;
+		return true; // always true by design
 	}
 
 protected:
@@ -88,27 +89,13 @@ protected:
 	token_ann_t token_anns_;
 
 	std::set<std::string> token_ann_heads_;
-
-private:
-	/// marker for autogenerating sentence identifiers (default is false --
-	/// sentences identifiers will not be generated)
-	bool autogen_sent_id_;
-	unsigned int sent_number_; /// Sentence number, automatically generated
-	static const std::string SENT_ID_PREFFIX;
-	// and same for chunk...
-	bool autogen_chunk_id_;
-	unsigned int chunk_number_;
-	static const std::string CHUNK_ID_PREFFIX;
 };
-const std::string CclReaderImpl::SENT_ID_PREFFIX = "s";
-const std::string CclReaderImpl::CHUNK_ID_PREFFIX = "ch";
 
 CclReader::CclReader(const Tagset& tagset, std::istream& is,
 		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
 		bool autogen_chunk_id)
 	: BufferedChunkReader(tagset),
-	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh,
-		autogen_sent_id, autogen_chunk_id))
+	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
 {
 	this->is_ = &is;
 }
@@ -117,8 +104,7 @@ CclReader::CclReader(const Tagset& tagset, const std::string& filename,
 		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
 		bool autogen_chunk_id)
 	: BufferedChunkReader(tagset),
-	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh,
-		autogen_sent_id, autogen_chunk_id))
+	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
 {
 	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
 
@@ -149,17 +135,12 @@ void CclReader::ensure_more()
 
 CclReaderImpl::CclReaderImpl(const TokenReader& base_reader,
 		std::deque< boost::shared_ptr<Chunk> >& obuf,
-		bool disamb_only, bool disamb_sh, bool autogen_sent_id,
-		bool autogen_chunk_id)
+		bool disamb_only, bool disamb_sh)
 	: XmlReader(base_reader, obuf)
 {
 	XmlReader::set_disamb_only(disamb_only);
 	XmlReader::set_disamb_sh(disamb_sh);
 	sentence_tag_name_ = "sentence";
-	sent_number_ = 0;
-	chunk_number_ = 0;
-	autogen_sent_id_ = autogen_sent_id;
-	autogen_chunk_id_ = autogen_chunk_id;
 }
 
 CclReaderImpl::~CclReaderImpl()
@@ -169,11 +150,6 @@ CclReaderImpl::~CclReaderImpl()
 void CclReaderImpl::start_chunk(const AttributeList& attributes)
 {
 	std::string id = get_id_from_attributes(attributes);
-	if (id.empty() && autogen_chunk_id_) {
-		std::ostringstream ss;
-		ss << ++chunk_number_;
-		id = CclReaderImpl::CHUNK_ID_PREFFIX + ss.str();
-	}
 
 	chunk_ = boost::make_shared<Chunk>();
 	chunk_->set_attribute("id", id);
@@ -199,11 +175,6 @@ void CclReaderImpl::start_sentence(const AttributeList &attributes)
 			id = a.value;
 			break;
 		}
-	}
-	if (id.empty() && autogen_sent_id_) {
-		std::ostringstream ss;
-		ss << ++sent_number_;
-		id = CclReaderImpl::SENT_ID_PREFFIX + ss.str();
 	}
 
 	ann_sent_ = boost::make_shared<AnnotatedSentence>(id);
@@ -306,9 +277,9 @@ void CclReader::set_option(const std::string& option)
 	} else if (option == "disamb_only") {
 		impl_->set_disamb_only(true);
 	} else if (option == "autogen_sent_id") {
-		impl_->set_autogen_sent_id(true);
+		// no action, left for backwards compatibility
 	} else if (option == "autogen_chunk_id") {
-		impl_->set_autogen_chunk_id(true);
+		// no action, left for backwards compatibility
 	} else if (option == "no_warn_unexpected_xml") {
 		impl_->set_warn_on_unexpected(false);
 	}
@@ -324,9 +295,9 @@ std::string CclReader::get_option(const std::string& option) const
 	} else if (option == "no_warn_inconsistent") {
 		return impl_->get_warn_on_inconsistent() ? "" : option;
 	} else if (option == "autogen_sent_id") {
-		return impl_->get_autogen_sent_id() ? option : "";
+		return option; // left for backward compatibility
 	} else if (option == "autogen_chunk_id") {
-		return impl_->get_autogen_chunk_id() ? option : "";
+		return option; // left for backward compatibility
 	} else if (option == "no_warn_unexpected_xml") {
 		return impl_->get_warn_on_unexpected() ? "" : option;
 	}
