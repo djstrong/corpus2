@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import sys, os
+from xml.sax.saxutils import escape
 from optparse import OptionParser
 from collections import defaultdict as dd
 from itertools import repeat, izip
@@ -48,6 +49,12 @@ def go():
 	parser.add_option('--prefix-chunks', action='store_true',
 		dest='prefix_chunks', default=False,
 		help='Prefix chunk ids with filename (file:NAME:ORIGID)')
+	parser.add_option('--prefix-sentences', action='store_true',
+		dest='prefix_sentences', default=False,
+		help='Prefix sentneces ids with filename (file:NAME:ORIGID)')
+	parser.add_option('--documents-as-chunks', action='store_true',
+		dest='documents_as_chunks', default=False,
+		help='Writes every document into single chunk node')
 	parser.add_option('-v', '--verbose', action='store_true',
 		dest='verbose', default=False,
 		help='verbose mode')
@@ -70,8 +77,9 @@ def go():
 	writer = corpus2.TokenWriter.create_stdout_writer(options.output_format, tagset)
 	for arg in args:
 		reader = corpus2.TokenReader.create_path_reader(options.input_format, tagset, arg)
+		fname, _ = os.path.splitext(os.path.basename(arg))
+        fname = escape(fname)
 		if options.chunks:
-			fname, _ = os.path.splitext(os.path.basename(arg))
 			chunk_no = 1
 			for chunk in chunks(reader):
 				if options.prefix_chunks:
@@ -85,8 +93,27 @@ def go():
 				writer.write_chunk(chunk)
 				chunk_no += 1
 		else:
+			big_chunk = None
+			if options.documents_as_chunks:
+				big_chunk = corpus2.Chunk()
+				big_chunk.set_attribute('id', 'file:%s:%s' % (fname, 'ch1'))
+			sent_no = 1
 			for sent in sentences(reader):
-				writer.write_sentence(sent)
+				if options.prefix_sentences:
+					if not sent.id():
+						their_id = sent.id()
+					else:
+						#autogen
+						their_id = ('s%d' % sent_no)
+					full_id = 'file:%s:%s' % (fname, their_id)
+					sent.set_id(full_id)
+				if big_chunk:
+					big_chunk.append(sent)
+				else:
+					writer.write_sentence(sent)
+				sent_no += 1
+			if big_chunk:
+				writer.write_chunk(big_chunk)
 		del reader
 
 if __name__ == '__main__':

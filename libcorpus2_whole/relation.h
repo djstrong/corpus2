@@ -33,7 +33,7 @@ public:
 	/**
 	 * @param sentence_id Sentence identifier
 	 * @param channel_name Channel name
-	 * @param annotation_number Annotation number
+	 * @param annotation_number Annotation number aka annotation segment
 	 */
 	DirectionPoint(const std::string sentence_id,
 			  const std::string channel_name,
