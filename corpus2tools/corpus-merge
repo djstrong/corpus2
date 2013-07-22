@@ -78,7 +78,7 @@ def go():
 	for arg in args:
 		reader = corpus2.TokenReader.create_path_reader(options.input_format, tagset, arg)
 		fname, _ = os.path.splitext(os.path.basename(arg))
-        fname = escape(fname)
+		fname = escape(fname)
 		if options.chunks:
 			chunk_no = 1
 			for chunk in chunks(reader):
