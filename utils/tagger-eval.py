@@ -37,6 +37,7 @@ changelog = """
 * extract measures to functions for averaging
 * averaging over folds
 * separate stats for unknown forms
+* evaluate lemmatisation lower bound (weak and strong)
 """
 
 def text(tok_seq, respect_spaces, mark_boundaries = False):
@@ -126,6 +127,8 @@ def tok_seqs(rdr_here, rdr_there, respect_spaces, verbose_mode, debug_mode):
 		yield (buff_here, buff_there)
 
 class Feat:
+	WEAK_LEM_HIT = 'weak lem hit' # also includes strong hits
+	STRONG_LEM_HIT = 'strong lem hit'
 	WEAK_TAG_HIT = 'weak tag hit' # also includes strong hits
 	STRONG_TAG_HIT = 'strong tag hit'
 	WEAK_POS_HIT = 'weak pos hit' # also includes strong hits
@@ -138,6 +141,9 @@ class Feat:
 	UNKNOWN = 'unknown'
 
 class Metric:
+	# lower bounds for lemmatisation
+	WL_LOWER = ([Feat.WEAK_LEM_HIT, Feat.SEG_NOCHANGE], None) # lower bound for weak lemmatisation
+	SL_LOWER = ([Feat.STRONG_LEM_HIT, Feat.SEG_NOCHANGE], None) # lower bound for strong lemmatisation
 	# lower bounds for correctness, treating all segchanges as failures
 	WC_LOWER = ([Feat.WEAK_TAG_HIT, Feat.SEG_NOCHANGE], None) # lower bound for weak correctness
 	SC_LOWER = ([Feat.STRONG_TAG_HIT, Feat.SEG_NOCHANGE], None) # lower bound for strong correctness
@@ -241,19 +247,38 @@ class TokComp:
 				print ' + '.join(self.tagset.tag_to_string(tag) for tag in tags)
 		return set(self.tagset.tag_to_string(tag) for tag in tags)
 	
+	def lemstrings_of_token(self, tok):
+		"""Returns a set of unicode strings, corresponding to disamb lemmas
+		found in the token."""
+		lemmas = set(
+			unicode(lex.lemma())
+			for lex in tok.lexemes()
+			if lex.is_disamb())
+		return lemmas
+	
 	def cmp_toks(self, tok1, tok2):
 		"""Returns a set of features concerning strong and weak hits on tag and
 		POS level."""
 		hit_feats = set()
+		tok1_lems = self.lemstrings_of_token(tok1)
+		tok2_lems = self.lemstrings_of_token(tok2)
 		tok1_tags = self.tagstrings_of_token(tok1)
 		tok2_tags = self.tagstrings_of_token(tok2)
 		tok1_pos = set(t.split(':', 1)[0] for t in tok1_tags)
 		tok2_pos = set(t.split(':', 1)[0] for t in tok2_tags)
+		# check lemmas
+		if tok1_lems == tok2_lems:
+			hit_feats.add(Feat.STRONG_LEM_HIT)
+			hit_feats.add(Feat.WEAK_LEM_HIT)
+		elif tok1_lems.intersection(tok2_lems):
+			hit_feats.add(Feat.WEAK_LEM_HIT)
+		# check POSes
 		if tok1_pos == tok2_pos:
 			hit_feats.add(Feat.STRONG_POS_HIT)
 			hit_feats.add(Feat.WEAK_POS_HIT)
 		elif tok1_pos.intersection(tok2_pos):
 			hit_feats.add(Feat.WEAK_POS_HIT)
+		# check full tags
 		if tok1_tags == tok2_tags:
 			hit_feats.add(Feat.STRONG_TAG_HIT)
 			hit_feats.add(Feat.WEAK_TAG_HIT)
@@ -389,6 +414,9 @@ def go():
 	
 	num_folds = len(args) / 2
 	
+	weak_lem_lower_bound = 0.0
+	strong_lem_lower_bound = 0.0
+	
 	weak_lower_bound = 0.0
 	weak_upper_bound = 0.0
 	weak = 0.0
@@ -418,6 +446,10 @@ def go():
 			res.update(tag_seq, ref_seq)
 		if options.verbose:
 			res.dump()
+		
+		weak_lem_lower_bound += res.value_of(Metric.WL_LOWER)
+		strong_lem_lower_bound += res.value_of(Metric.SL_LOWER)
+				
 		weak_lower_bound += res.value_of(Metric.WC_LOWER)
 		weak_upper_bound += res.value_of(Metric.WC_LOWER) + res.value_of(Metric.SEG_CHANGE)
 		unk_weak_lower += res.value_of(Metric.UNK_WC_LOWER)
@@ -430,6 +462,11 @@ def go():
 		unk_strong_pos += res.value_of(Metric.UNK_POS_SC)
 		perc_unk += res.value_of(Metric.UNK)
 		perc_segchange += res.value_of(Metric.SEG_CHANGE)
+	
+	# weak lemma -- when sets of possible lemmas output and in ref corp intersect
+	print 'AVG weak lemma lower bound\t%.4f%%' % (weak_lem_lower_bound / num_folds)
+	# strong lemma -- when sets of possible lemmas output and in ref corp are equal
+	print 'AVG strong lemma lower bound\t%.4f%%' % (strong_lem_lower_bound / num_folds)
 	
 	print 'AVG weak corr lower bound\t%.4f%%' % (weak_lower_bound / num_folds)
 	print 'AVG weak corr upper bound\t%.4f%%' % (weak_upper_bound / num_folds)
