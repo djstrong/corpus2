@@ -420,7 +420,7 @@ def go():
 	weak_lower_bound = 0.0
 	weak_upper_bound = 0.0
 	weak = 0.0
-	strong_pos = 0.0
+	strong_pos_lower = 0.0
 
 	unk_weak = 0.0
 	unk_strong_pos = 0.0
@@ -449,7 +449,7 @@ def go():
 		
 		weak_lem_lower_bound += res.value_of(Metric.WL_LOWER)
 		strong_lem_lower_bound += res.value_of(Metric.SL_LOWER)
-				
+		
 		weak_lower_bound += res.value_of(Metric.WC_LOWER)
 		weak_upper_bound += res.value_of(Metric.WC_LOWER) + res.value_of(Metric.SEG_CHANGE)
 		unk_weak_lower += res.value_of(Metric.UNK_WC_LOWER)
@@ -457,7 +457,7 @@ def go():
 		kn_weak_lower += res.value_of(Metric.KN_WC_LOWER)
 		kn_weak_upper += res.value_of(Metric.KN_WC_LOWER) + res.value_of(Metric.KN_SEG_CHANGE)
 		weak += res.value_of(Metric.WC)
-		strong_pos += res.value_of(Metric.POS_SC)
+		strong_pos_lower += res.value_of(Metric.POS_SC_LOWER)
 		unk_weak += res.value_of(Metric.UNK_WC)
 		unk_strong_pos += res.value_of(Metric.UNK_POS_SC)
 		perc_unk += res.value_of(Metric.UNK)
@@ -475,7 +475,7 @@ def go():
 	print 'AVG UNK weak corr upper bound\t%.4f%%' % (unk_weak_upper / num_folds)
 	print 'AVG KN  weak corr lower bound\t%.4f%%' % (kn_weak_lower / num_folds)
 	print 'AVG KN  weak corr upper bound\t%.4f%%' % (kn_weak_upper / num_folds)
-	print 'AVG POS strong corr\t%.4f%%' % (strong_pos / num_folds)
+	print 'AVG POS strong corr lower bound\t%.4f%%' % (strong_pos_lower / num_folds)
 	print 'AVG UNK weak corr (heur)\t%.4f%%' % (unk_weak / num_folds)
 	print 'AVG UNK POS strong corr\t%.4f%%' % (unk_strong_pos / num_folds)
 	print 'AVG percentage UNK\t%.4f%%' % (perc_unk / num_folds)
