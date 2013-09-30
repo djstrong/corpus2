@@ -39,6 +39,8 @@ bool disambiguate_equal(Token* token, const Tag& mask_where, const Tag& mask_wan
 
 bool disambiguate_subset(Token* token, const Tag& mask_where, const Tag& mask_wanted);
 
+bool disambiguate_lemma(Token* token, const std::string& lemma_utf8);
+
 void set_disambs(Token *token, const Tag& wanted_tag);
 }
 

@@ -174,6 +174,22 @@ bool disambiguate_subset(Token* token, const Tag& mask_where,
 	return true;
 }
 
+bool disambiguate_lemma(Token* token, const std::string& lemma_utf8)
+{
+	std::vector<Lexeme> wanted;
+	UnicodeString u_lemma(UnicodeString::fromUTF8(lemma_utf8));
+	BOOST_FOREACH(const Lexeme& lex, token->lexemes()) {
+		if (lex.lemma() == u_lemma) {
+			wanted.push_back(lex);
+		}
+	}
+	if (wanted.empty()) {
+		return false;
+	}
+	token->replace_lexemes(wanted);
+	return true;
+}
+
 void set_disambs(Token *token, const Tag& wanted_tag)
 {
 	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {

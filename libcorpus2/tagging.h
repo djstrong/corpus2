@@ -104,6 +104,12 @@ bool disambiguate_equal(Token* token, const Tag& mask_where,
 bool disambiguate_subset(Token* token, const Tag& mask_where,
 						const Tag& mask_wanted);
 
+/** Tries to select only those lexemes whose lemmas are equal to the given
+  * string. If no lexeme satisfies the constraint, will leave the token intact.
+  * @return if succeeded
+  */
+bool disambiguate_lemma(Token* token, const std::string& lemma_utf8);
+
 /** Sets lexemes' disamb markers iff lexeme.tag is wanted_tag. */
 void set_disambs(Token *token, const Tag& wanted_tag);
 
