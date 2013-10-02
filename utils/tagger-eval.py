@@ -38,6 +38,7 @@ changelog = """
 * averaging over folds
 * separate stats for unknown forms
 * evaluate lemmatisation lower bound (weak and strong)
+* get rid of heuristic punctuation tweaks and WC measure (without bounds)
 """
 
 def text(tok_seq, respect_spaces, mark_boundaries = False):
@@ -133,8 +134,6 @@ class Feat:
 	STRONG_TAG_HIT = 'strong tag hit'
 	WEAK_POS_HIT = 'weak pos hit' # also includes strong hits
 	STRONG_POS_HIT = 'strong pos hit'
-	ALLPUNC_HIT = 'weak tag allpunc hit' # heur1 only
-	PUNCAROUND_HIT = 'weak tag puncaround hit' # heur2 only
 	SEG_NOCHANGE = 'segmentation unchanged'
 	SEG_CHANGE = 'segmentation change'
 	KNOWN = 'known'
@@ -144,25 +143,14 @@ class Metric:
 	# lower bounds for lemmatisation
 	WL_LOWER = ([Feat.WEAK_LEM_HIT, Feat.SEG_NOCHANGE], None) # lower bound for weak lemmatisation
 	SL_LOWER = ([Feat.STRONG_LEM_HIT, Feat.SEG_NOCHANGE], None) # lower bound for strong lemmatisation
+	# SL_HUPPER = ([Feat.STRONG_LEM_HIT], None) TODO: -> lemma
 	# lower bounds for correctness, treating all segchanges as failures
 	WC_LOWER = ([Feat.WEAK_TAG_HIT, Feat.SEG_NOCHANGE], None) # lower bound for weak correctness
 	SC_LOWER = ([Feat.STRONG_TAG_HIT, Feat.SEG_NOCHANGE], None) # lower bound for strong correctness
-	# weak and strong corr, disregarding punct-only seg changes
-	WC = ([Feat.WEAK_TAG_HIT], None)
-	SC = ([Feat.STRONG_TAG_HIT], None)
 	# as above but metric for POS hits
-	POS_WC = ([Feat.WEAK_POS_HIT], None)
-	POS_SC = ([Feat.STRONG_POS_HIT], None)
 	POS_WC_LOWER = ([Feat.WEAK_POS_HIT, Feat.SEG_NOCHANGE], None) # lower bound for POS WC
 	POS_SC_LOWER = ([Feat.STRONG_POS_HIT, Feat.SEG_NOCHANGE], None) # lower bound for POS SC
 	# separate stats for known and unknown forms
-	KN_WC = ([Feat.WEAK_TAG_HIT, Feat.KNOWN], [Feat.KNOWN])
-	UNK_WC = ([Feat.WEAK_TAG_HIT, Feat.UNKNOWN], [Feat.UNKNOWN])
-	KN_SC = ([Feat.STRONG_TAG_HIT, Feat.KNOWN], [Feat.KNOWN])
-	UNK_SC = ([Feat.STRONG_TAG_HIT, Feat.UNKNOWN], [Feat.UNKNOWN])
-	KN_POS_SC = ([Feat.STRONG_POS_HIT, Feat.KNOWN], [Feat.KNOWN])
-	UNK_POS_SC = ([Feat.STRONG_POS_HIT, Feat.UNKNOWN], [Feat.UNKNOWN])
-
 	KN_WC_LOWER = ([Feat.WEAK_TAG_HIT, Feat.SEG_NOCHANGE, Feat.KNOWN], [Feat.KNOWN])
 	UNK_WC_LOWER = ([Feat.WEAK_TAG_HIT, Feat.SEG_NOCHANGE, Feat.UNKNOWN], [Feat.UNKNOWN])
 	KN_SEG_CHANGE = ([Feat.SEG_CHANGE, Feat.KNOWN], [Feat.KNOWN])
@@ -170,10 +158,6 @@ class Metric:
 
 	KN_POS_SC_LOWER = ([Feat.STRONG_POS_HIT, Feat.SEG_NOCHANGE, Feat.KNOWN], [Feat.KNOWN])
 	UNK_POS_SC_LOWER = ([Feat.STRONG_POS_HIT, Feat.SEG_NOCHANGE, Feat.UNKNOWN], [Feat.UNKNOWN])
-	
-	# heur recover
-	PUNCHIT_PUNCONLY = ([Feat.ALLPUNC_HIT], None)
-	PUNCHIT_AROUND = ([Feat.PUNCAROUND_HIT], None)
 	# percentage of known and unknown tokens
 	KN = ([Feat.KNOWN], None)
 	UNK = ([Feat.UNKNOWN], None)
@@ -190,22 +174,14 @@ class TokComp:
 	
 	Differences in segmentation are treated by aligning tokens textually,
 	i.e. shortest matching sequences are extracted and then compared.
-	A heuristic approach is used: differences in tokenisation are not penalised
-	when those differences concern either punctuation-only sequences, or both
-	sequences contain exactly one non-punctuation token. In the first case,
-	each of the reference token belonging to such a sequence is treated as full
-	hit. In the latter case, the whole reference sequence is judged by the one
-	non-punct token.
 	
-	punc_tag is a string representation of tag used for punctuation.
 	unk_tag is a string representation of tag used for unknown words.
 	Set expand_optional to True if ommission of optional attribute
 	values should be treated as multiple tags, each with a different
 	variant of the value."""
-	def __init__(self, tagset, punc_tag, unk_tag,
+	def __init__(self, tagset, unk_tag,
 		expand_optional, debug = False):
 		self.tagset = tagset
-		self.punc_tag = punc_tag
 		self.unk_tag = unk_tag
 		self.expand_optional = expand_optional
 		self.debug = debug
@@ -218,11 +194,6 @@ class TokComp:
 		features. Will also increment the ref_toks counter."""
 		self.ref_toks += num_toks
 		self.tag_feat[frozenset(feat_set)] += num_toks
-	
-	def is_punc(self, tok):
-		"""The only DISAMB tags are punctuation."""
-		tok_tags = set([self.tagset.tag_to_string(lex.tag()) for lex in tok.lexemes() if lex.is_disamb()])
-		return tok_tags == set([self.punc_tag])
 	
 	def is_unk(self, tok):
 		"""There is an 'unknown word' interpretation."""
@@ -257,8 +228,11 @@ class TokComp:
 		return lemmas
 	
 	def cmp_toks(self, tok1, tok2):
-		"""Returns a set of features concerning strong and weak hits on tag and
-		POS level."""
+		"""Returns a set of features concerning comparison of two tokens:
+		tok1 from tagger output and tok2 from ref. Actually, both should be
+		interchangable, hence are labelled tok1 and tok2.
+		This function is called only when token-to-token alignment is possible.
+		"""
 		hit_feats = set()
 		tok1_lems = self.lemstrings_of_token(tok1)
 		tok2_lems = self.lemstrings_of_token(tok2)
@@ -306,33 +280,38 @@ class TokComp:
 			pre_feat_sets[0].update(self.cmp_toks(tag_seq[0], ref_seq[0]))
 		else:
 			if self.debug:
-				print 'SEGCHANGE\t%s\t%s' % (text(tag_seq, True, True), text(ref_seq, True, True))
+				print 'SEGCHANGE\t%s\t%s' % (
+					text(tag_seq, True, True), text(ref_seq, True, True))
+			
 			# mark all as subjected to segmentation changes
-			for feats in pre_feat_sets: feats.add(Feat.SEG_CHANGE)
+			for feats in pre_feat_sets:
+				feats.add(Feat.SEG_CHANGE)
+			
 			# check if all ref and tagged toks are punctuation
-			all_punc_ref = all(self.is_punc(tok) for tok in ref_seq)
-			all_punc_tag = all(self.is_punc(tok) for tok in tag_seq)
-			if all_punc_ref and all_punc_tag:
-				for feats in pre_feat_sets:
-					feats.update([Feat.ALLPUNC_HIT,
-						Feat.WEAK_POS_HIT, Feat.STRONG_POS_HIT,
-						Feat.WEAK_TAG_HIT, Feat.STRONG_TAG_HIT])
-				# second variant: PUNC v. PUNC gives hit
-				if self.debug: print '\t\tpunc hit, ref len', len(ref_seq)
-			else:
-				nonpunc_ref = [tok for tok in ref_seq if not self.is_punc(tok)]
-				nonpunc_tag = [tok for tok in tag_seq if not self.is_punc(tok)]
-				if len(nonpunc_ref) == len(nonpunc_tag) == 1:
-					# perhaps third variant: both seqs have one non-punc token
-					# if the non-punc tokens match, will take the hit features
-					# for the whole ref
-					hit_feats = self.cmp_toks(nonpunc_tag[0], nonpunc_ref[0])
-					for feats in pre_feat_sets:
-						feats.update(hit_feats)
-					if Feat.WEAK_TAG_HIT in hit_feats:
-						for feats in pre_feat_sets:
-							feats.add(Feat.PUNCAROUND_HIT)
-						if self.debug: print '\t\tpuncPLUS weak hit, ref len', len(ref_seq)
+			#all_punc_ref = all(self.is_punc(tok) for tok in ref_seq)
+			#all_punc_tag = all(self.is_punc(tok) for tok in tag_seq)
+			#if all_punc_ref and all_punc_tag:
+				#for feats in pre_feat_sets:
+					#feats.update([Feat.ALLPUNC_HIT,
+						#Feat.WEAK_POS_HIT, Feat.STRONG_POS_HIT,
+						#Feat.WEAK_TAG_HIT, Feat.STRONG_TAG_HIT])
+				## second variant: PUNC v. PUNC gives hit
+				#if self.debug: print '\t\tpunc hit, ref len', len(ref_seq)
+			#else:
+				#nonpunc_ref = [tok for tok in ref_seq if not self.is_punc(tok)]
+				#nonpunc_tag = [tok for tok in tag_seq if not self.is_punc(tok)]
+				#if len(nonpunc_ref) == len(nonpunc_tag) == 1:
+					## perhaps third variant: both seqs have one non-punc token
+					## if the non-punc tokens match, will take the hit features
+					## for the whole ref
+					#hit_feats = self.cmp_toks(nonpunc_tag[0], nonpunc_ref[0])
+					#for feats in pre_feat_sets:
+						#feats.update(hit_feats)
+					#if Feat.WEAK_TAG_HIT in hit_feats:
+						#for feats in pre_feat_sets:
+							#feats.add(Feat.PUNCAROUND_HIT)
+						#if self.debug: print '\t\tpuncPLUS weak hit, ref len', len(ref_seq)
+		# collect features assigned to each ref token in this aligned fragment
 		for feats in pre_feat_sets:
 			self.eat_ref_toks(feats, 1)
 			if self.debug:
@@ -388,9 +367,6 @@ def go():
 		dest='tagset', default='nkjp',
 		help='set the tagset used in input; default: nkjp')
 	parser.add_option('-q', '--quiet', action='store_false', default=True, dest='verbose')
-	parser.add_option('-p', '--punc-tag', type='string', action='store',
-		dest='punc_tag', default='interp',
-		help='set the tag used for punctuation; default: interp')
 	parser.add_option('-u', '--unk-tag', type='string', action='store',
 		dest='unk_tag', default='ign',
 		help='set the tag used for unknown forms; default: ign')
@@ -419,11 +395,9 @@ def go():
 	
 	weak_lower_bound = 0.0
 	weak_upper_bound = 0.0
-	weak = 0.0
+	
 	strong_pos_lower = 0.0
 
-	unk_weak = 0.0
-	unk_strong_pos = 0.0
 	unk_weak_lower = 0.0
 	unk_weak_upper = 0.0
 	kn_weak_lower = 0.0
@@ -440,7 +414,7 @@ def go():
 		tag_rdr = corpus2.TokenReader.create_path_reader(options.input_format, tagset, tag_fn)
 		ref_rdr = corpus2.TokenReader.create_path_reader(options.input_format, tagset, ref_fn)
 		
-		res = TokComp(tagset, options.punc_tag, options.unk_tag,
+		res = TokComp(tagset, options.unk_tag,
 			options.expand_optional, options.debug_mode)
 		for tag_seq, ref_seq in tok_seqs(tag_rdr, ref_rdr, options.respect_spaces, options.verbose, options.debug_mode):
 			res.update(tag_seq, ref_seq)
@@ -456,10 +430,7 @@ def go():
 		unk_weak_upper += res.value_of(Metric.UNK_WC_LOWER) + res.value_of(Metric.UNK_SEG_CHANGE)
 		kn_weak_lower += res.value_of(Metric.KN_WC_LOWER)
 		kn_weak_upper += res.value_of(Metric.KN_WC_LOWER) + res.value_of(Metric.KN_SEG_CHANGE)
-		weak += res.value_of(Metric.WC)
 		strong_pos_lower += res.value_of(Metric.POS_SC_LOWER)
-		unk_weak += res.value_of(Metric.UNK_WC)
-		unk_strong_pos += res.value_of(Metric.UNK_POS_SC)
 		perc_unk += res.value_of(Metric.UNK)
 		perc_segchange += res.value_of(Metric.SEG_CHANGE)
 	
@@ -470,14 +441,13 @@ def go():
 	
 	print 'AVG weak corr lower bound\t%.4f%%' % (weak_lower_bound / num_folds)
 	print 'AVG weak corr upper bound\t%.4f%%' % (weak_upper_bound / num_folds)
-	print 'AVG weak corr (heur)\t%.4f%%' % (weak / num_folds)
+	
 	print 'AVG UNK weak corr lower bound\t%.4f%%' % (unk_weak_lower / num_folds)
 	print 'AVG UNK weak corr upper bound\t%.4f%%' % (unk_weak_upper / num_folds)
 	print 'AVG KN  weak corr lower bound\t%.4f%%' % (kn_weak_lower / num_folds)
 	print 'AVG KN  weak corr upper bound\t%.4f%%' % (kn_weak_upper / num_folds)
 	print 'AVG POS strong corr lower bound\t%.4f%%' % (strong_pos_lower / num_folds)
-	print 'AVG UNK weak corr (heur)\t%.4f%%' % (unk_weak / num_folds)
-	print 'AVG UNK POS strong corr\t%.4f%%' % (unk_strong_pos / num_folds)
+	
 	print 'AVG percentage UNK\t%.4f%%' % (perc_unk / num_folds)
 	print 'AVG percentage seg change\t%.4f%%' % (perc_segchange / num_folds)
 	
