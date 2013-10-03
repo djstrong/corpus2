@@ -39,6 +39,9 @@ changelog = """
 * separate stats for unknown forms
 * evaluate lemmatisation lower bound (weak and strong)
 * get rid of heuristic punctuation tweaks and WC measure (without bounds)
+* case-insensitive lemma comparison (strong lemma nocase lower bound)
+* case-sensitive and case-insensitive concatenative heuristic for upper bound
+  (if concatenation of all segments in a fragment gives the same text)
 """
 
 def text(tok_seq, respect_spaces, mark_boundaries = False):
@@ -130,6 +133,7 @@ def tok_seqs(rdr_here, rdr_there, respect_spaces, verbose_mode, debug_mode):
 class Feat:
 	WEAK_LEM_HIT = 'weak lem hit' # also includes strong hits
 	STRONG_LEM_HIT = 'strong lem hit'
+	STRONG_LEM_NOCASE_HIT = 'strong lem nocase hit' # case-insens as above
 	WEAK_TAG_HIT = 'weak tag hit' # also includes strong hits
 	STRONG_TAG_HIT = 'strong tag hit'
 	WEAK_POS_HIT = 'weak pos hit' # also includes strong hits
@@ -143,6 +147,10 @@ class Metric:
 	# lower bounds for lemmatisation
 	WL_LOWER = ([Feat.WEAK_LEM_HIT, Feat.SEG_NOCHANGE], None) # lower bound for weak lemmatisation
 	SL_LOWER = ([Feat.STRONG_LEM_HIT, Feat.SEG_NOCHANGE], None) # lower bound for strong lemmatisation
+	SL_NOCASE_LOWER = ([Feat.STRONG_LEM_NOCASE_HIT, Feat.SEG_NOCHANGE], None) # as above but case-insensitive
+	SL_NOCASE_CAT_HEUR = ([Feat.STRONG_LEM_NOCASE_HIT], None) # as above but concatenate fragments and judge if they are equal
+	SL_CASE_CAT_HEUR = ([Feat.STRONG_LEM_HIT], None) # as above but case-sensitive
+	
 	# SL_HUPPER = ([Feat.STRONG_LEM_HIT], None) TODO: -> lemma
 	# lower bounds for correctness, treating all segchanges as failures
 	WC_LOWER = ([Feat.WEAK_TAG_HIT, Feat.SEG_NOCHANGE], None) # lower bound for weak correctness
@@ -227,6 +235,27 @@ class TokComp:
 			if lex.is_disamb())
 		return lemmas
 	
+	def lem_concat(self, tok_seq, case_sens):
+		"""Returns a concatenation of possibly lowercased disamb lemmas of
+		tokens belonging to the given sequence. If any token has multiple
+		different (lowercased) disamb lemmas, will surround them with
+		parentheses and separate with |."""
+		buff = StringIO()
+		for tok in tok_seq:
+			their_lemmas = self.lemstrings_of_token(tok)
+			if case_sens:
+				their_lc_lemmas = sorted(their_lemmas)
+			else:
+				their_lc_lemmas = sorted(
+					set(lem.lower() for lem in their_lemmas))
+			if len(their_lc_lemmas) > 1:
+				# get u'(first|second|…)
+				text = u'(%s)' % u'|'.join(their_lc_lemmas)
+			else:
+				text = their_lc_lemmas[0]
+			buff.write(text)
+		return buff.getvalue()
+	
 	def cmp_toks(self, tok1, tok2):
 		"""Returns a set of features concerning comparison of two tokens:
 		tok1 from tagger output and tok2 from ref. Actually, both should be
@@ -236,11 +265,16 @@ class TokComp:
 		hit_feats = set()
 		tok1_lems = self.lemstrings_of_token(tok1)
 		tok2_lems = self.lemstrings_of_token(tok2)
+		tok1_lems_nocase = set(lem.lower() for lem in tok1_lems)
+		tok2_lems_nocase = set(lem.lower() for lem in tok2_lems)
 		tok1_tags = self.tagstrings_of_token(tok1)
 		tok2_tags = self.tagstrings_of_token(tok2)
 		tok1_pos = set(t.split(':', 1)[0] for t in tok1_tags)
 		tok2_pos = set(t.split(':', 1)[0] for t in tok2_tags)
-		# check lemmas
+		# check lemmas in case-insensitive manner
+		if tok1_lems_nocase == tok2_lems_nocase:
+			hit_feats.add(Feat.STRONG_LEM_NOCASE_HIT)
+		# check lemmas in case-sensitive manner
 		if tok1_lems == tok2_lems:
 			hit_feats.add(Feat.STRONG_LEM_HIT)
 			hit_feats.add(Feat.WEAK_LEM_HIT)
@@ -286,6 +320,27 @@ class TokComp:
 			# mark all as subjected to segmentation changes
 			for feats in pre_feat_sets:
 				feats.add(Feat.SEG_CHANGE)
+			
+			# now check lower-cased concatenation of ref and tag lemmas
+			# if they both make up the same text (case-insensitively)
+			# then we will count is is STRONG_LEM_NOCASE_HIT
+			# this will be used only by the heuristic measure
+			# that counts SEG_CHANGE tokens
+			# NOTE: in case of lemma ambiguity there is not a simple way
+			# to compare whole sequence; any lemma ambiguity will cause
+			# the sequence to be unmatched
+			if self.lem_concat(tag_seq, False) == self.lem_concat(ref_seq, False):
+				for feats in pre_feat_sets:
+					feats.add(Feat.STRONG_LEM_NOCASE_HIT)
+			
+			# the same with case-sensitive concatenation
+			if self.lem_concat(tag_seq, True) == self.lem_concat(ref_seq, True):
+				for feats in pre_feat_sets:
+					feats.add(Feat.STRONG_LEM_HIT)
+			#else:
+				#print 'UUUU lem concat failed'
+				#print 'TAG', self.lem_concat(tag_seq, True)
+				#print 'REF', self.lem_concat(ref_seq, True)
 			
 			# check if all ref and tagged toks are punctuation
 			#all_punc_ref = all(self.is_punc(tok) for tok in ref_seq)
@@ -392,6 +447,9 @@ def go():
 	
 	weak_lem_lower_bound = 0.0
 	strong_lem_lower_bound = 0.0
+	strong_lem_nocase_lower_bound = 0.0
+	strong_lem_case_cat_heur = 0.0
+	strong_lem_nocase_cat_heur = 0.0
 	
 	weak_lower_bound = 0.0
 	weak_upper_bound = 0.0
@@ -424,6 +482,11 @@ def go():
 		weak_lem_lower_bound += res.value_of(Metric.WL_LOWER)
 		strong_lem_lower_bound += res.value_of(Metric.SL_LOWER)
 		
+		strong_lem_nocase_lower_bound += res.value_of(Metric.SL_NOCASE_LOWER)
+		
+		strong_lem_case_cat_heur += res.value_of(Metric.SL_CASE_CAT_HEUR)
+		strong_lem_nocase_cat_heur += res.value_of(Metric.SL_NOCASE_CAT_HEUR)
+		
 		weak_lower_bound += res.value_of(Metric.WC_LOWER)
 		weak_upper_bound += res.value_of(Metric.WC_LOWER) + res.value_of(Metric.SEG_CHANGE)
 		unk_weak_lower += res.value_of(Metric.UNK_WC_LOWER)
@@ -438,6 +501,10 @@ def go():
 	print 'AVG weak lemma lower bound\t%.4f%%' % (weak_lem_lower_bound / num_folds)
 	# strong lemma -- when sets of possible lemmas output and in ref corp are equal
 	print 'AVG strong lemma lower bound\t%.4f%%' % (strong_lem_lower_bound / num_folds)
+	print 'AVG strong lemma nocase lower bound\t%.4f%%' % (strong_lem_nocase_lower_bound / num_folds)
+	
+	print 'AVG strong lemma case concat heur\t%.4f%%' % (strong_lem_case_cat_heur / num_folds)
+	print 'AVG strong lemma nocase concat heur\t%.4f%%' % (strong_lem_nocase_cat_heur / num_folds)
 	
 	print 'AVG weak corr lower bound\t%.4f%%' % (weak_lower_bound / num_folds)
 	print 'AVG weak corr upper bound\t%.4f%%' % (weak_upper_bound / num_folds)
