@@ -42,6 +42,7 @@ changelog = """
 * case-insensitive lemma comparison (strong lemma nocase lower bound)
 * case-sensitive and case-insensitive concatenative heuristic for upper bound
   (if concatenation of all segments in a fragment gives the same text)
+* option to process only first lexeme of each token (by default off)
 """
 
 def text(tok_seq, respect_spaces, mark_boundaries = False):
@@ -188,10 +189,11 @@ class TokComp:
 	values should be treated as multiple tags, each with a different
 	variant of the value."""
 	def __init__(self, tagset, unk_tag,
-		expand_optional, debug = False):
+		expand_optional, first_lex_only, debug = False):
 		self.tagset = tagset
 		self.unk_tag = unk_tag
 		self.expand_optional = expand_optional
+		self.first_lex_only = first_lex_only
 		self.debug = debug
 		self.ref_toks = 0 # all tokens in ref corpus
 		self.tag_toks = 0 # all tokens in tagger output
@@ -214,6 +216,10 @@ class TokComp:
 		produced from single-disamb tokens when some optional attributes
 		are unspecified."""
 		tags = [lex.tag() for lex in tok.lexemes() if lex.is_disamb()]
+		assert tags
+		if self.first_lex_only:
+			# forcing first disamb lexeme only
+			tags = tags[:1]
 		if self.expand_optional:
 			# create multivalue tag wherever a value of optional attr is unspec
 			tags = [self.tagset.expand_optional_attrs(tag) for tag in tags]
@@ -229,6 +235,13 @@ class TokComp:
 	def lemstrings_of_token(self, tok):
 		"""Returns a set of unicode strings, corresponding to disamb lemmas
 		found in the token."""
+		if self.first_lex_only:
+			# forcing first disamb lexeme only
+			for lex in tok.lexemes():
+				if lex.is_disamb():
+					return set([unicode(lex.lemma())])
+			assert False, 'no disamb lemma here'
+		
 		lemmas = set(
 			unicode(lex.lemma())
 			for lex in tok.lexemes()
@@ -431,6 +444,9 @@ def go():
 	parser.add_option('-s', '--ignore-spaces', action='store_false',
 		default=True, dest='respect_spaces',
 		help='ignore spaces between tokens when comparing')
+	parser.add_option('-f', '--first-lexeme-only', action='store_true',
+		default=False, dest='first_lex_only',
+		help='read only each token\'s first disamb lexeme (tag+lemma)')
 	parser.add_option('-d', '--debug', action='store_true', dest='debug_mode')
 	(options, args) = parser.parse_args()
 	
@@ -472,8 +488,9 @@ def go():
 		tag_rdr = corpus2.TokenReader.create_path_reader(options.input_format, tagset, tag_fn)
 		ref_rdr = corpus2.TokenReader.create_path_reader(options.input_format, tagset, ref_fn)
 		
-		res = TokComp(tagset, options.unk_tag,
-			options.expand_optional, options.debug_mode)
+		res = TokComp(
+			tagset, options.unk_tag, options.expand_optional,
+			options.first_lex_only, options.debug_mode)
 		for tag_seq, ref_seq in tok_seqs(tag_rdr, ref_rdr, options.respect_spaces, options.verbose, options.debug_mode):
 			res.update(tag_seq, ref_seq)
 		if options.verbose:
