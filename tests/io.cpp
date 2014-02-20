@@ -60,7 +60,7 @@ static char swiatopoglad_noid[] =
 "<!DOCTYPE cesAna SYSTEM \"xcesAnaIPI.dtd\">\n"
 "<cesAna xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.0\" type=\"lex disamb\">\n"
 "<chunkList>\n"
-"<chunk>\n"
+"<chunk id=\"ch1\">\n"
 "<chunk type=\"s\">\n"
 "<tok>\n"
 "<orth>Uważam</orth>\n"
