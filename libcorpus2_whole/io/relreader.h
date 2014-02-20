@@ -35,6 +35,7 @@ namespace whole {
 	const static std::string RELATION_DIRECT_TO = "to";
 
 	const static std::string RELATION_NAME = "name";
+	const static std::string RELATION_SET = "set";
 	const static std::string RELATION_SENTENCE_ID = "sent";
 	const static std::string RELATION_CHANNEL_NAME = "chan";
 
@@ -79,6 +80,7 @@ private:
 
 	//
 	void parse_relation_name(const AttributeList& attributes);
+	void parse_relation_set(const AttributeList& attributes);
 	void parse_direction_from(const AttributeList& attributes);
 	void parse_direction_to(const AttributeList& attributes);
 	void parse_direction(const AttributeList& attributes,
@@ -116,6 +118,7 @@ private:
 	// -------------------------------------------------------------------------
 	// Temporary information of actual parsing relation
 	std::string rel_name_;
+	std::string rel_set_;
 	std::string ann_number_;
 	boost::shared_ptr<DirectionPoint> rel_from_;
 	boost::shared_ptr<DirectionPoint> rel_to_;

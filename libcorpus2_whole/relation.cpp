@@ -22,6 +22,14 @@ namespace Corpus2 {
 namespace whole {
 
 Relation::Relation(const std::string& name,
+				   const std::string& set,
+				   const boost::shared_ptr<const DirectionPoint> from,
+				   const boost::shared_ptr<const DirectionPoint> to)
+	: name_(name), set_(set), from_(from), to_(to)
+{
+}
+
+Relation::Relation(const std::string& name,
 				   const boost::shared_ptr<const DirectionPoint> from,
 				   const boost::shared_ptr<const DirectionPoint> to)
 	: name_(name), from_(from), to_(to)
@@ -29,7 +37,7 @@ Relation::Relation(const std::string& name,
 }
 
 boost::shared_ptr<Relation> Relation::clone_shared(){
-	relation_=boost::shared_ptr<Relation>(new Relation(name_,from_,to_));
+	relation_=boost::shared_ptr<Relation>(new Relation(name_, set_, from_,to_));
 	return relation_;
 }
 
@@ -49,6 +57,21 @@ void Relation::set_name(const std::string& s){
 	name_=s;
 }
 
+void Relation::set_set(const std::string& s){
+	set_=s;
+}
+
+Relation::Relation(const std::string& name,
+				   const std::string& set,
+				   const DirectionPoint& from,
+				   const DirectionPoint& to)
+	: name_(name),
+	set_(set),
+	from_(boost::make_shared<const DirectionPoint>(from)),
+	to_(boost::make_shared<const DirectionPoint>(to))
+{
+}
+
 Relation::Relation(const std::string& name,
 				   const DirectionPoint& from,
 				   const DirectionPoint& to)
@@ -56,6 +79,7 @@ Relation::Relation(const std::string& name,
 	from_(boost::make_shared<const DirectionPoint>(from)),
 	to_(boost::make_shared<const DirectionPoint>(to))
 {
+	set_ = "";
 }
 
 Relation::~Relation()

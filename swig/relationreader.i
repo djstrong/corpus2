@@ -12,6 +12,7 @@
 %constant std::string RELATION_DIRECT_TO = Corpus2::whole::RELATION_DIRECT_TO;
 
 %constant std::string RELATION_NAME = Corpus2::whole::RELATION_NAME;
+%constant std::string RELATION_SET = Corpus2::whole::RELATION_SET;
 %constant std::string RELATION_SENTENCE_ID = Corpus2::whole::RELATION_SENTENCE_ID;
 %constant std::string RELATION_CHANNEL_NAME = Corpus2::whole::RELATION_CHANNEL_NAME;
 

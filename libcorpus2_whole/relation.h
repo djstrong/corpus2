@@ -75,9 +75,15 @@ public:
 	/**
 	 * Makes directed relation
 	 * @param name Name of the relation
+	 * @param set Name of the relation set
 	 * @param from Source of relation direction
 	 * @param to Target of relation direction
 	 */
+	Relation(const std::string& name,
+			 const std::string& set,
+			 const boost::shared_ptr<const DirectionPoint> from,
+			 const boost::shared_ptr<const DirectionPoint> to);
+
 	Relation(const std::string& name,
 			 const boost::shared_ptr<const DirectionPoint> from,
 			 const boost::shared_ptr<const DirectionPoint> to);
@@ -85,9 +91,15 @@ public:
 	/**
 	 * Makes directed relation
 	 * @param name Name of the relation
+	 * @param set Name of the relation set
 	 * @param from Source of relation direction
 	 * @param to Target of relation direction
 	 */
+	Relation(const std::string& name,
+			 const std::string& set,
+			 const DirectionPoint& from,
+			 const DirectionPoint& to);
+
 	Relation(const std::string& name,
 			 const DirectionPoint& from,
 			 const DirectionPoint& to);
@@ -100,8 +112,11 @@ public:
 	//Setter of "to" direction point
 	void set_to(const DirectionPoint& dp);
 
-	//Setterf of name
-	void set_name(const std::string& s); 
+	//Setter of name
+	void set_name(const std::string& s);
+
+	//Setter of set
+	void set_set(const std::string& s);
 
 	/// Accessor to "from" direction point
 	const boost::shared_ptr<const DirectionPoint>& from() const {
@@ -118,13 +133,21 @@ public:
 		return name_;
 	}
 
+	/// Accessor to name of the relation set
+	const std::string set() const {
+		return set_;
+	}
+
 	///Shared pointer to copy of the relation
 	boost::shared_ptr<Relation> clone_shared();
 
 private:
 	/// Direction name
 	std::string name_;
-	
+
+	/// Relation set name
+	std::string set_;
+
 	///Pointer to relation
 	boost::shared_ptr<Relation> relation_;
 	/// Direction points: from and to

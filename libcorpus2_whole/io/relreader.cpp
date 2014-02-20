@@ -75,6 +75,7 @@ void RelationReader::on_start_element(const Glib::ustring& name,
 	else if (in_relations_ && name == RELATION_TAG) {
 		in_relation_ = true;
 		parse_relation_name(attributes);
+		parse_relation_set(attributes);
 	}
 	else if (in_relation_ && name == RELATION_DIRECT_FROM) {
 		in_from_direct_ = true;
@@ -155,7 +156,7 @@ void RelationReader::validate()
 void RelationReader::add_current_relation()
 {
 	boost::shared_ptr<Relation> relation;
-	relation = boost::make_shared<Relation>(rel_name_, rel_from_, rel_to_);
+	relation = boost::make_shared<Relation>(rel_name_, rel_set_, rel_from_, rel_to_);
 	relations_.push_back(relation);
 }
 
@@ -165,6 +166,11 @@ void RelationReader::parse_relation_name(const AttributeList& attributes)
 	ann_number_ = "";
 	rel_from_.reset();
 	rel_to_.reset();
+}
+
+void RelationReader::parse_relation_set(const AttributeList& attributes)
+{
+	rel_set_ = get_attribute_value(attributes, RELATION_SET);
 }
 
 void RelationReader::parse_direction_from(const AttributeList& attributes)

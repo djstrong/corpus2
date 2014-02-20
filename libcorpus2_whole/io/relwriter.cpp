@@ -44,20 +44,22 @@ void RelationWriter::write(const std::vector< boost::shared_ptr<Relation> >& rel
 	//relations
 	BOOST_FOREACH(const boost::shared_ptr<Relation>& r, relations){
 		ofs<<"   <rel name=\"";
-		ofs<<r->name().c_str()<<"\">"<<endl;
+		ofs<<r -> name();
+		ofs<<"\" set=\"";
+		ofs<<r -> set()<<"\">"<<endl;
 		ofs<<"      <from sent=\"";
-		ofs<<r->from()->sentence_id();
+		ofs<<r -> from() -> sentence_id();
 		ofs<<"\" chan=\"";
-		ofs<<r->from()->channel_name();
+		ofs<<r -> from() -> channel_name();
 		ofs<<"\">";
-		ofs<<r->from()->annotation_number();
+		ofs<<r -> from() -> annotation_number();
 		ofs<<"</from>"<<endl;
 		ofs<<"      <to sent=\"";
-		ofs<<r->to()->sentence_id();
+		ofs<<r -> to() -> sentence_id();
 		ofs<<"\" chan=\"";
-		ofs<<r->to()->channel_name();
+		ofs<<r -> to() -> channel_name();
 		ofs<<"\">";
-		ofs<<r->to()->annotation_number();
+		ofs<<r -> to() -> annotation_number();
 		ofs<<"</to>"<<endl;
 		ofs<<"   </rel>"<<endl;
 	}

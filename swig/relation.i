@@ -32,6 +32,17 @@ namespace whole {
   public:
     /*
     Relation(const std::string& name,
+       const std::string& set,
+       const boost::shared_ptr<const DirectionPoint> from,
+       const boost::shared_ptr<const DirectionPoint> to);
+    */
+    Relation(const std::string& name,
+       const std::string& set,
+       const DirectionPoint& from,
+       const DirectionPoint& to);
+
+    /*
+    Relation(const std::string& name,
        const boost::shared_ptr<const DirectionPoint> from,
        const boost::shared_ptr<const DirectionPoint> to);
     */
@@ -43,6 +54,7 @@ namespace whole {
     void set_from(const DirectionPoint& dp);
     void set_to(const DirectionPoint& dp);
     void set_name(const std::string& s);
+    void set_set(const std::string& s);
 
     boost::shared_ptr<Relation> clone_shared();
     /* It must be renamed because "from" is python keyword */
@@ -54,6 +66,9 @@ namespace whole {
     /* ...and "name" to rel_name */
     %rename(rel_name) name() const;
     const std::string name() const;
+    /* ...and "set" to rel_set */
+    %rename(rel_set) set() const;
+    const std::string set() const;
   };
 } // whole ns
 } // Corpus2 ns
