@@ -190,6 +190,14 @@ bool disambiguate_lemma(Token* token, const std::string& lemma_utf8)
 	return true;
 }
 
+void overwrite_lemmas(Token* token, const std::string& lemma_utf8)
+{
+	UnicodeString u_lemma(UnicodeString::fromUTF8(lemma_utf8));
+	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {
+		lex.set_lemma(u_lemma);
+	}
+}
+
 void set_disambs(Token *token, const Tag& wanted_tag)
 {
 	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {

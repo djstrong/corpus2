@@ -41,6 +41,8 @@ bool disambiguate_subset(Token* token, const Tag& mask_where, const Tag& mask_wa
 
 bool disambiguate_lemma(Token* token, const std::string& lemma_utf8);
 
+void overwrite_lemmas(Token* token, const std::string& lemma_utf8);
+
 void set_disambs(Token *token, const Tag& wanted_tag);
 }
 
