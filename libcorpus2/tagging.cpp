@@ -198,6 +198,13 @@ void overwrite_lemmas(Token* token, const std::string& lemma_utf8)
 	}
 }
 
+void lowercase_lemmas(Token* token)
+{
+	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {
+		lex.lowercase_lemma();
+	}
+}
+
 void set_disambs(Token *token, const Tag& wanted_tag)
 {
 	BOOST_FOREACH(Lexeme& lex, token->lexemes()) {

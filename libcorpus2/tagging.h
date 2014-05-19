@@ -115,6 +115,12 @@ bool disambiguate_lemma(Token* token, const std::string& lemma_utf8);
   */
 void overwrite_lemmas(Token* token, const std::string& lemma_utf8);
 
+/** Overwrites each lexeme's lemma with the lower-case version
+  * of the original lemma.
+  * NOTE that it may result in generation of duplicate lexemes.
+  */
+void lowercase_lemmas(Token* token);
+
 /** Sets lexemes' disamb markers iff lexeme.tag is wanted_tag. */
 void set_disambs(Token *token, const Tag& wanted_tag);
 

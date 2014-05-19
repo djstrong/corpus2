@@ -99,6 +99,11 @@ public:
 	bool is_disamb() const {
 		return disamb_;
 	}
+	
+	/// Convert lexeme's lemma to be entirely lower-case
+	void lowercase_lemma() {
+		lemma_.toLower();
+	}
 
 	/**
 	 * Lexeme comparison. Lexemes are ordered by lemma and then by tag, see

@@ -43,6 +43,8 @@ bool disambiguate_lemma(Token* token, const std::string& lemma_utf8);
 
 void overwrite_lemmas(Token* token, const std::string& lemma_utf8);
 
+void lowercase_lemmas(Token* token);
+
 void set_disambs(Token *token, const Tag& wanted_tag);
 }
 

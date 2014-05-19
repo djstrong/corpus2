@@ -38,6 +38,7 @@ namespace Corpus2 {
     bool is_null() const;
     void set_disamb(bool value);
     bool is_disamb() const;
+    void lowercase_lemma();
 
     bool operator<(const Lexeme& other) const;
     bool operator==(const Lexeme& other) const;
