@@ -111,4 +111,3 @@ else(NOT CORPUS2_BUILD_POLIQARP)
 	message(STATUS "Use cmake wizard mode: -i; to exclude it from the build.")
 	message(STATUS "*****************************************************")
 endif(NOT CORPUS2_BUILD_POLIQARP)
-
