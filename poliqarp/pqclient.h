@@ -16,6 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef CORPUS2_POLIQARP_PQCLIENT_H
 #define CORPUS2_POLIQARP_PQCLIENT_H
 
+#include <map>
 #include <boost/utility.hpp>
 
 extern "C" {
@@ -47,7 +48,14 @@ public:
 
 	Token* get_next_focus_token();
         Sentence::Ptr get_next_match_sequence(bool getWholeSentence);
-	boost::shared_ptr<Chunk> get_next_document();
+    /**
+     * @arg get_metadata if set to @c true will retrieve available document
+     * metadata from corpus and set them as attributes to the returned chunk.
+     * Otherwise it will just set @c id attribute. Default: @c false
+     * @note Retrieved metadata will be written when writing chunk in XML or
+     * XCES format (but not CCL format).
+     */
+	boost::shared_ptr<Chunk> get_next_document(bool get_metadata = false);
 
 	Token* get_token(size_t pos);
 	Sentence::Ptr get_token_range(size_t from, size_t to);
@@ -58,6 +66,8 @@ public:
 	size_t get_corpus_pos() const;
 
 private:
+	std::map<std::string, std::string> get_document_metadata(size_t document_id);
+
 	const Tagset& tagset_;
 	boost::shared_ptr<Sentence> match_;
 	boost::shared_ptr<Chunk> document_;

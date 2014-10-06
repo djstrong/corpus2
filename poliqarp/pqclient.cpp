@@ -170,14 +170,22 @@ Token* PoliqarpClient::get_token(size_t pos)
 	return res.release();
 }
 
-boost::shared_ptr<Chunk> PoliqarpClient::get_next_document()
+boost::shared_ptr<Chunk> PoliqarpClient::get_next_document(bool get_metadata)
 {
 	poliqarp_match match;
 	boost::shared_ptr<Chunk> chunk;
 	if (next_match(match)) {
 		chunk = boost::make_shared<Chunk>();
 		size_t document_id = match.document;
+
 		chunk->set_attribute("id", "ch" + boost::lexical_cast<std::string>(document_id));
+		if(get_metadata) {
+			std::map<std::string, std::string> meta = get_document_metadata(document_id);
+			std::map<std::string, std::string>::iterator iter;
+			for(iter = meta.begin();iter != meta.end();++iter)
+				chunk->set_attribute(iter->first, iter->second);
+		}
+
 		chunk->append(get_token_range(match.start, match.end));
 		while (next_match(match)) {
 			if (match.document == document_id) {
@@ -189,6 +197,24 @@ boost::shared_ptr<Chunk> PoliqarpClient::get_next_document()
 		}
 	}
 	return chunk;
+}
+
+std::map<std::string, std::string> PoliqarpClient::get_document_metadata(size_t document_id)
+{
+	std::map<std::string, std::string> ret;
+
+	poliqarp_metadata_set document_metadata_set;
+	poliqarp_get_metadata_set(&corpus_, document_id, &document_metadata_set);
+	int metadata_set_size = poliqarp_metadata_count(&document_metadata_set);
+
+	for(int i = 0;i < metadata_set_size;++i) {
+		poliqarp_metadata meta; poliqarp_metadata_info meta_info;
+		poliqarp_get_metadata(&document_metadata_set, i, &meta);
+		poliqarp_get_metadata_info(&meta, &meta_info);
+
+		ret[meta_info.key] = meta_info.value.text;
+	}
+	return ret;
 }
 
 Sentence::Ptr PoliqarpClient::get_token_range(size_t from, size_t to)
