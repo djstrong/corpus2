@@ -25,13 +25,11 @@ namespace Corpus2 {
 Token::Token()
 	: orth_(), wa_(), lexemes_(), metadata_()
 {
-	create_metadata();
 }
 
 Token::Token(const UnicodeString &orth, PwrNlp::Whitespace::Enum wa)
 	: orth_(orth), wa_(wa), lexemes_()
 {
-	create_metadata();
 }
 
 Token* Token::create_utf8(const std::string& orth_utf8,

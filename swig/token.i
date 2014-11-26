@@ -67,6 +67,7 @@ namespace Corpus2 {
     boost::shared_ptr<TokenMetaData> get_metadata() const;
     void set_metadata(TokenMetaData& md);
     void set_metadata_ptr(boost::shared_ptr<TokenMetaData> md);
+    bool has_metadata();
 
     void create_metadata();
   };

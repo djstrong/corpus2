@@ -206,8 +206,13 @@ public:
 
 	/// Metadata getter
 	boost::shared_ptr<TokenMetaData> get_metadata() const {
-		return metadata_;
+        return metadata_;
 	}
+
+    /// Metadata check
+    bool has_metadata() {
+        return get_metadata() != 0;
+    }
 
 	/// Creates an empty metdata object for this Token
 	void create_metadata();
