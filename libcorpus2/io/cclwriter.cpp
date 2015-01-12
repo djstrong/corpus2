@@ -78,7 +78,8 @@ void CclWriter::write_sentence_int(const Sentence &s)
 			if (md) {
 				BOOST_FOREACH(const TokenMetaData::attr_map_t::value_type& v, md->attributes()) {
 					osi() << "<prop key=\"" << v.first << "\"" << ">";
-					os() << v.second << "</prop>\n";
+					encode_xml_entities_into(os(), v.second);
+					os() << "</prop>\n";
 				}
 			}
 			if (use_indent_) indent_less();
