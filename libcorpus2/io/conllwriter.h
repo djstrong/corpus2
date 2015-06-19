@@ -34,25 +34,23 @@ class ConllWriter : public TokenWriter
 public:
 	ConllWriter(std::ostream& os, const Tagset& tagset,
 				const string_range_vector& params);
-
 	~ConllWriter();
 
 	void write_token(const Token &t);
-
 	void write_sentence(const Sentence &s);
-
 	void write_chunk(const Chunk &c);
 
-	const static std::string SUPERPOS_ATTR;
 	static bool registered;
 
 protected:
 	void do_header();
-
 	void do_footer();
+
+	std::vector<std::string> get_columns_from_tag(const Tag& t);
+	bool tag_has_superpos(const Tag& tag);
+
 private:
 	Tagset myTagset;
-
 };
 
 } /* end ns Corpus2 */
