@@ -83,6 +83,7 @@ add_subdirectory(libpwrutils)
 add_subdirectory(libcorpus2)
 add_subdirectory(libcorpus2_whole)
 add_subdirectory(corpus2tools)
+add_subdirectory(learn_to_guess)
 
 if(UNIX)
 	add_subdirectory(tests)

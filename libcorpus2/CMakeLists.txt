@@ -81,9 +81,10 @@ SET(libcorpus2_STAT_SRC
 	util/settings.cpp
 	util/symboldictionary.cpp
 	util/tokentimer.cpp
+	guesser/guesser.cpp
 )
 
-file(GLOB_RECURSE INCS "*.h")
+file(GLOB_RECURSE INCS "*.h" "*.tpp")
 
 if(WIN32)
 # For DLLs on Windows (aka SHARED libraries) you have to explicitly
@@ -129,3 +130,5 @@ set_target_properties(corpus2 PROPERTIES
 		PATTERN "local/*" EXCLUDE
 	)
 
+add_executable(test_guesser guesser/test.cpp)
+target_link_libraries(test_guesser pwrutils ${LIBS} corpus2)
