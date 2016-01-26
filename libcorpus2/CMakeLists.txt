@@ -133,3 +133,6 @@ set_target_properties(corpus2 PROPERTIES
 
 add_executable(test_guesser guesser/test.cpp)
 target_link_libraries(test_guesser pwrutils ${LIBS} corpus2)
+
+add_executable(auto_test_guesser guesser/auto_test.cpp)
+target_link_libraries(auto_test_guesser pwrutils ${LIBS} corpus2)

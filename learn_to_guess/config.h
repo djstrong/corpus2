@@ -61,6 +61,20 @@ public:
 		return verbose;
 	}
 	
+	bool isForbidden(const UnicodeString & word) const
+	{
+		return word.length() < 3 || ignored_words.find(word) != ignored_words.end();
+	}
+	bool isForbidden(const Corpus2::Tag & tag) const
+	{
+		return ignored_poses.find(tag.get_pos_index()) != ignored_poses.end();
+	}
+	bool isForbidden(const Corpus2::Lexeme & lexeme) const
+	{
+		return isForbidden(lexeme.tag());
+	}
+	bool isForbidden(const Corpus2::Token & token) const;
+	
 	
 	
 private:
@@ -69,6 +83,8 @@ private:
 	
 	boost::filesystem::path morphfile;
 	std::vector<boost::filesystem::path> corpora;
+	std::set<UnicodeString> ignored_words;
+	std::set<int> ignored_poses;
 	boost::filesystem::path outfile;
 	const Corpus2::Tagset * tagset;
 	std::string reader_name;

@@ -8,6 +8,8 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
+#include <libcorpus2/guesser/guesser.h>
+
 using namespace std;
 using namespace boost;
 using namespace boost::filesystem;
@@ -35,21 +37,14 @@ set<UnicodeString> prepare_morphfile(const path & morphfile)
 }
 
 void add_corpus(const path & path, const set<UnicodeString> & real_words, Tree & tree)
-{	
-	const Tagset & tagset = Cfg.getTagset();
+{
 	TokenReader::TokenReaderPtr reader = Cfg.getReader(path);
+	
 	Sentence::Ptr sentence;
 	while((sentence = reader->get_next_sentence()))
-	{
 		foreach (const Token * token, sentence->tokens())
-		{
-			if (real_words.find(token->orth()) != real_words.end())
-			{
-				const Lexeme & lexeme = token->get_preferred_lexeme(tagset);
-				tree.insert(token->orth(), lexeme.lemma(), lexeme.tag());
-			}
-		}
-	}
+			if (!Cfg.isForbidden(*token) && (real_words.empty() || real_words.find(token->orth()) != real_words.end()))
+				tree.insert(*token);
 }
 
 
@@ -58,20 +53,14 @@ int main(int argc, const char ** argv)
 	try {
 		config::create(argc, argv);
 		
-		
 		Tree tree;
 		
-		
-		/*
-		tree.insert("hamak", "aaa", Cfg.getTagset().make_ign_tag());
-		tree.insert("hamak", "aaa", Cfg.getTagset().make_ign_tag());
-		tree.insert("aaaaa", "aaa", Cfg.getTagset().make_ign_tag());
-		tree.insert("aaaa", "aaa", Cfg.getTagset().make_ign_tag());
-		tree.insert("kalafior", "aaa", Cfg.getTagset().make_ign_tag());
-		tree.insert("kaladior", "aaa", Cfg.getTagset().make_ign_tag());
-		/*/
-		if (Cfg.isVerbose()) cout << "Preparing morphfile " << Cfg.getMorphfile() << endl;
-		set<UnicodeString> real_words = prepare_morphfile(Cfg.getMorphfile());
+		set<UnicodeString> real_words;
+		if (!Cfg.getMorphfile().empty())
+		{
+			if (Cfg.isVerbose()) cout << "Preparing morphfile " << Cfg.getMorphfile() << endl;
+			real_words = prepare_morphfile(Cfg.getMorphfile());
+		}
 		
 		if (Cfg.isVerbose()) cout << "Reading corpora" << endl;
 		foreach (path corpus, Cfg.getCorpora())
@@ -79,25 +68,14 @@ int main(int argc, const char ** argv)
 			if (Cfg.isVerbose()) cout << "\treading through " << corpus << endl;
 			add_corpus(corpus, real_words, tree);
 		}
-		//*/
 		
-		tree.compress();
+		tree.compressLemmawise();
+		tree.gatherTags();
 		tree.prune();
 		
 		tree.write(Cfg.getOutfile());
+		tree.print();
 		
-		/*
-		if (Cfg.isVerbose()) cout << "Compressing and pruning" << endl;
-		tree.compress();
-		tree.prune();
-		
-		if (Cfg.isVerbose()) cout << "Dumping" << endl;
-		
-		ofstream file(Cfg.getOutfile().c_str(), ofstream::trunc | ofstream::binary);
-		//tree.dump(file);
-		
-		if (Cfg.isVerbose()) cout << "Done." << endl;
-		*/
 	}
 	catch (const config::Skip & e)
 	{

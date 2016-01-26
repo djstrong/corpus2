@@ -12,6 +12,8 @@ namespace detail
 	typedef std::pair<UnicodeString, int> recipe;
 	struct tags_info : public std::map <Corpus2::Tag, recipe>
 	{
+		void print(std::ostream& stream) const;
+		void dedump(std::istream& stream);
 	};
 }
 
@@ -25,9 +27,9 @@ class Guesser
 	} tree;
 	
 	
-	/// Marks tag using prefix of word, e.g. creates superlativus if word start with "naj"
-	/// or negated form if it starts with "nie".
-	Tag mark(Tag tag, const UnicodeString & word) const;
+	/// Marks tag using prefix of halflemma, e.g. creates superlativus if it starts with "naj"
+	/// or negated form if it starts with "nie". Removes prefix from halflemma.
+	Corpus2::Lexeme mark(UnicodeString halflemma, Tag tag) const;
 	
 public:
 	/// Reads learned data from given file.

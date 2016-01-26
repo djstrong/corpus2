@@ -91,7 +91,9 @@ void BackwardTrie<PropType>::Node::print(int d) const
 	for (int i = 0; i < d; i++)
 		std::cout << "  ";
 	
-	std::cout << UnicodeString(character) << " (" << properties << ")" << std::endl;
+	std::cout << UnicodeString(character) << " (";
+	properties.print(std::cout);
+	std::cout << ")" << std::endl;
 	
 	for (Node * it = first_child; it != NULL; it = it->next_sibling)
 		it->print(d+1);
@@ -110,8 +112,8 @@ template <typename PropType>
 void BackwardTrie<PropType>::Node::write(std::ostream & stream) const
 {
 	stream << character << "\t";
-	stream << properties << "\t";
-	stream << childrenCount() << "\n";
+	properties.dump(stream);
+	stream << '\t' << childrenCount() << "\n";
 	for (typename Corpus2::BackwardTrie<PropType>::Node * it = first_child; it != NULL; it = it->next_sibling)
 		it->write(stream);
 }
@@ -128,7 +130,7 @@ template <typename PropType>
 void BackwardTrie<PropType>::Node::read(std::istream & stream)
 {
 	stream >> character;
-	stream >> properties;
+	properties.dedump(stream);
 	
 	int chc;
 	stream >> chc;
