@@ -104,38 +104,67 @@ void BackwardTrie<PropType>::Node::print(int d) const
 template <typename PropType>
 void BackwardTrie<PropType>::write(const boost::filesystem::path & path) const
 {
-	std::ofstream file(path.c_str());
+	std::ofstream file(path.c_str(), std::ios::binary);
 	root.write(file);
+}
+
+template <typename T>
+static void bin_dump(std::ostream &stream, const T & dumpendum)
+{
+	stream.write((char*)&dumpendum, sizeof(T));
 }
 
 template <typename PropType>
 void BackwardTrie<PropType>::Node::write(std::ostream & stream) const
 {
+	bin_dump(stream, character);
+	
+	int cc = childrenCount();
+	bin_dump(stream, cc);
+	
+	properties.dump(stream);
+	
+	for (typename Corpus2::BackwardTrie<PropType>::Node * it = first_child; it != NULL; it = it->next_sibling)
+		it->write(stream);
+	
+	/*
 	stream << character << "\t";
 	properties.dump(stream);
 	stream << '\t' << childrenCount() << "\n";
 	for (typename Corpus2::BackwardTrie<PropType>::Node * it = first_child; it != NULL; it = it->next_sibling)
 		it->write(stream);
+	*/
 }
 
+
+namespace detail
+{
+	template <typename T>
+	void bin_dedump(std::istream &stream, T & dedumpendum)
+	{
+		stream.read((char*)&dedumpendum, sizeof(T));
+	}
+};
 
 template <typename PropType>
 void BackwardTrie<PropType>::read(const boost::filesystem::path & path)
 {
-	std::ifstream file(path.c_str());
+	std::ifstream file(path.c_str(), std::ios::binary);
 	root.read(file);
 }
 
 template <typename PropType>
 void BackwardTrie<PropType>::Node::read(std::istream & stream)
 {
-	stream >> character;
+	detail::bin_dedump(stream, character);
+	
+	int cc;
+	detail::bin_dedump(stream, cc);
+	
 	properties.dedump(stream);
 	
-	int chc;
-	stream >> chc;
 	Node ** it = &first_child;
-	for (int i = 0; i < chc; i++)
+	for (int i = 0; i < cc; i++)
 	{
 		*it = new Node();
 		(*it)->read(stream);

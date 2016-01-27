@@ -62,12 +62,24 @@ int main(int argc, const char ** argv)
 			real_words = prepare_morphfile(Cfg.getMorphfile());
 		}
 		
+		/*
+		Token token;
+		
+		#define it(ORTH, TAG)\
+			token.set_orth(ORTH);\
+			token.add_lexeme(Lexeme(ORTH, Cfg.getTagset().parse_simple_tag(TAG)));\
+			tree.insert(token);
+		
+		it("hamak", "subst:nom:sg:m1");
+		it("bamak", "subst:nom:sg:m1");
+		/*/
 		if (Cfg.isVerbose()) cout << "Reading corpora" << endl;
 		foreach (path corpus, Cfg.getCorpora())
 		{
 			if (Cfg.isVerbose()) cout << "\treading through " << corpus << endl;
 			add_corpus(corpus, real_words, tree);
 		}
+		//*/
 		
 		tree.compressLemmawise();
 		tree.gatherTags();

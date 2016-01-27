@@ -27,10 +27,6 @@ class Guesser
 	} tree;
 	
 	
-	/// Marks tag using prefix of halflemma, e.g. creates superlativus if it starts with "naj"
-	/// or negated form if it starts with "nie". Removes prefix from halflemma.
-	Corpus2::Lexeme mark(UnicodeString halflemma, Tag tag) const;
-	
 public:
 	/// Reads learned data from given file.
 	Guesser(const boost::filesystem::path & path, const Tagset &tagset);

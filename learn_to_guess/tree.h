@@ -70,6 +70,8 @@ public:
 	
 	
 private:
+	void insert_aux(const Corpus2::Token & token);
+	
 	static bool compressLemmawise(Node & node);
 	
 	/// Remove all branches without any tags.
@@ -82,14 +84,6 @@ private:
 	void prune(Node & node) const;
 	bool isBad(const Node &node) const;
 	static void collect(Node & node);
-	
-	
-	static bool isSup(const Corpus2::Token & token);
-	static bool isNeg(const Corpus2::Token & token);
-	
-	/// Unmarks lexeme (removes 'naj' and 'nie' from lemma, changes tag) and cuts lemma
-	/// so that it no longer contain colons and thingies after them.
-	static Corpus2::Lexeme normalize(const Corpus2::Lexeme & lexeme);
 };
 
 

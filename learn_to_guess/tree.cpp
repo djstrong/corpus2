@@ -37,10 +37,16 @@ void Properties::feedOn(Properties &another)
 }
 
 
+template <typename T>
+static void bin_dump(std::ostream &stream, const T & dumpendum)
+{
+	stream.write((char*)&dumpendum, sizeof(T));
+}
 
 void Properties::dump(std::ostream &stream) const
 {
-	stream << tags.size();
+	bin_dump(stream, tags.size());
+	
 	foreach (Properties::tag_map::value_type kv, tags)
 	{
 		typedef std::map<Properties::recipe, int> rec_info;
@@ -49,9 +55,14 @@ void Properties::dump(std::ostream &stream) const
 			if (it->second > best->second)
 				best = it;
 		
+		bin_dump(stream, kv.first.get_pos().to_ulong());
+		bin_dump(stream, kv.first.get_values().to_ulong());
+		bin_dump(stream, best->first.second);
+		
 		std::string str;
 		best->first.first.toUTF8String(str);
-		stream << '\t' << kv.first.get_pos().to_ulong() << '\t' << kv.first.get_values().to_ulong() << '\t' << boost::io::quoted(str) << '\t' << best->first.second;
+		stream.write(str.c_str(), str.size());
+		stream.put('\n');
 	}
 }
 
@@ -74,22 +85,83 @@ void Properties::print(std::ostream &stream) const
 
 
 
+
+typedef boost::shared_ptr<Corpus2::Token> TokenPtr;
+
+/// Extracts all negated content into separate token, forced into affirmative
+TokenPtr extract_negation(TokenPtr token)
+{
+	TokenPtr neg_token(new Corpus2::Token);
+	neg_token->set_orth(UnicodeString(token->orth()).remove(0, 3));
+	
+	
+	const static Corpus2::mask_t neg_mask = Cfg.getTagset().get_value_mask(std::string("neg"));
+	const static Corpus2::mask_t aff_mask = Cfg.getTagset().get_value_mask(std::string("aff"));
+	
+	std::vector<Corpus2::Lexeme> lexemes = token->lexemes();
+	token->remove_all_lexemes();
+	
+	foreach (Corpus2::Lexeme & lx, lexemes)
+	{
+		if (lx.tag().get_values_for(neg_mask).any())
+		{
+			Corpus2::Tag tag = lx.tag();
+			tag.set_values(((lx.tag().get_values()) & ~neg_mask) | aff_mask);
+			lx.set_tag(tag);
+			neg_token->add_lexeme(lx);
+		}
+		else
+		{
+			token->add_lexeme(lx);
+		}
+	}
+	
+	return neg_token;
+}
+
+/// Extracts all superlative content into separate token, forced into compartive
+TokenPtr extract_superlativum(TokenPtr token)
+{
+	TokenPtr sup_token(new Corpus2::Token);
+	token->set_orth(token->orth());
+	sup_token->set_orth(UnicodeString(token->orth()).remove(0, 3));
+	
+	
+	const static Corpus2::mask_t sup_mask = Cfg.getTagset().get_value_mask(std::string("sup"));
+	const static Corpus2::mask_t com_mask = Cfg.getTagset().get_value_mask(std::string("com"));
+	
+	std::vector<Corpus2::Lexeme> lexemes = token->lexemes();
+	token->remove_all_lexemes();
+	
+	foreach (Corpus2::Lexeme & lx, lexemes)
+	{
+		if (lx.tag().get_values_for(sup_mask).any())
+		{
+			Corpus2::Tag tag = lx.tag();
+			tag.set_values(((lx.tag().get_values()) & ~sup_mask) | com_mask);
+			lx.set_tag(tag);
+			sup_token->add_lexeme(lx);
+		}
+		else
+		{
+			token->add_lexeme(lx);
+		}
+	}
+	
+	return sup_token;
+}
+
 void increase_count(Properties & prop)
 {
 	prop.counter++;
 }
 
-void Tree::insert(const Corpus2::Token &token)
+void Tree::insert_aux(const Corpus2::Token &token)
 {
 	// insert
 	
 	UnicodeString orth = token.orth();
 	orth.toLower();
-	
-	if (isNeg(token) && orth.startsWith("nie"))
-		orth.remove(0, 3);
-	if (isSup(token) && orth.startsWith("naj"))
-		orth.remove(0, 3);
 	
 	Node & n = find(orth, &increase_count);
 	
@@ -107,12 +179,11 @@ void Tree::insert(const Corpus2::Token &token)
 	
 	// set tags and recipes 
 	
-	foreach (const Corpus2::Lexeme & lx, token.lexemes())
+	foreach (const Corpus2::Lexeme & lexeme, token.lexemes())
 	{
-		if (Cfg.isForbidden(lx))
+		if (Cfg.isForbidden(lexeme))
 			continue;
 		
-		Corpus2::Lexeme lexeme = normalize(lx);
 		Properties::tag_info & ti = last_node->properties.tags[lexeme.tag()];
 		UnicodeString basel = lexeme.lemma();
 		basel.toLower();
@@ -130,62 +201,23 @@ void Tree::insert(const Corpus2::Token &token)
 	}
 }
 
-bool Tree::isSup(const Corpus2::Token &token)
+void Tree::insert(const Corpus2::Token &token)
 {
-	const static Corpus2::Tagset & ts = Cfg.getTagset();
-	const static Corpus2::mask_t sup_mask = ts.get_value_mask(std::string("sup"));
-	
-	foreach (const Corpus2::Lexeme & lx, token.lexemes())
-		if (lx.tag().get_values_for(sup_mask).any())
-			return true;
-	return false;
-}
-
-bool Tree::isNeg(const Corpus2::Token &token)
-{
-	const static Corpus2::Tagset & ts = Cfg.getTagset();
-	const static Corpus2::mask_t neg_mask = ts.get_value_mask(std::string("neg"));
-	
-	foreach (const Corpus2::Lexeme & lx, token.lexemes())
-		if (lx.tag().get_values_for(neg_mask).any())
-			return true;
-	return false;
-}
-
-Corpus2::Lexeme Tree::normalize(const Corpus2::Lexeme &lexeme)
-{
-	Corpus2::Tag tag = lexeme.tag();
-	UnicodeString lemma = lexeme.lemma();
-	
-	const static Corpus2::Tagset & ts = Cfg.getTagset();
-	const static Corpus2::mask_t sup_mask = ts.get_value_mask(std::string("sup"));
-	const static Corpus2::mask_t com_mask = ts.get_value_mask(std::string("com"));
-	const static Corpus2::mask_t aff_mask = ts.get_value_mask(std::string("aff"));
-	const static Corpus2::mask_t neg_mask = ts.get_value_mask(std::string("neg"));
-	
-	if (tag.get_values_for(neg_mask).any())
+	// Manage prefixes
+	if (token.orth().startsWith("nie"))
 	{
-		Corpus2::mask_t v = ((tag.get_values()) & ~neg_mask) | aff_mask;
-		tag.set_values(v);
-		
-		if (lemma.startsWith("nie"))
-			lemma.remove(0, 3);
+		boost::shared_ptr<Corpus2::Token> tokenptr(token.clone());
+		insert_aux(*extract_negation(tokenptr));
+		insert_aux(*tokenptr);
 	}
-	
-	if (tag.get_values_for(sup_mask).any())
+	else if (token.orth().startsWith("naj"))
 	{
-		Corpus2::mask_t v = ((tag.get_values()) & ~sup_mask) | com_mask;
-		tag.set_values(v);
-		
-		if (lemma.startsWith("naj"))
-			lemma.remove(0, 3);
+		boost::shared_ptr<Corpus2::Token> tokenptr(token.clone());
+		insert_aux(*extract_superlativum(tokenptr));
+		insert_aux(*tokenptr);
 	}
-	
-	int pos = lemma.indexOf(':');
-	if (pos > 0)
-		lemma.remove(pos);
-	
-	return Corpus2::Lexeme(lemma, tag);
+	else
+		insert_aux(token);
 }
 
 
@@ -276,27 +308,37 @@ void Tree::gatherTags(Node &node)
 	for (Node * it = node.first_child; it != NULL; it = it->next_sibling)
 		gatherTags(*it);
 	
-	
+	if (! node.properties.tags.empty())
+		return;
 	
 	typedef std::map <Corpus2::Tag, int> tag_strengths;
+	
+	std::set <Corpus2::Tag> interesting;
 	
 	tag_strengths intersection;
 	int whole_strength = 0;
 	
 	foreach (Properties::tag_map::value_type kv, node.first_child->properties.tags)
+	{
+		interesting.insert(kv.first);
 		intersection[kv.first] = 0;
+	}
 	
 	for (Node * it = node.first_child; it != NULL; it = it->next_sibling)
 	{
-		foreach (Properties::tag_map::value_type kv, it->properties.tags)
+		foreach (Corpus2::Tag tag, interesting)
 		{
-			if (intersection.find(kv.first) != intersection.end())
-				intersection[kv.first] += kv.second.strength;
-			else
-				intersection.erase(kv.first);
-			
-			whole_strength += kv.second.strength;
+			if (intersection.find(tag) != intersection.end())
+			{
+				if(it->properties.tags.find(tag) != it->properties.tags.end())
+					intersection[tag] += it->properties.tags[tag].strength;
+				else
+					intersection.erase(tag);
+			}
 		}
+		
+		foreach (Properties::tag_map::value_type kv, it->properties.tags)
+			whole_strength += kv.second.strength;
 	}
 	
 	int common_sum = 0;
@@ -386,7 +428,6 @@ void Tree::collect(Node &node)
 	delete node.first_child;
 	node.first_child = NULL;
 }
-
 
 
 
