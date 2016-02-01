@@ -37,6 +37,7 @@ bool isForbidden(const Corpus2::Token & token)
 
 int main(int argc, const char ** argv)
 {
+	// config
 	path corpus, data;
 	std::string tagset_name, reader_name;
 	std::vector<std::string> ignored_pos_names;
@@ -44,7 +45,7 @@ int main(int argc, const char ** argv)
 	options_description desc("Allowed options");
 	desc.add_options()
 			("help", "produce help message")
-			("corpus,c", value<path>(&corpus)->required(), "corpus whence tests will be taken")
+			("corpus,c", value<path>(&corpus)->required(), "corpus whence tests will be taken. Each token is a test: orth is what we ask Guesser, each lexeme is what the guesser should return.")
 	        ("data,d", value<path>(&data)->required(), "data of guesser")
 	        ("tagset,t", value<std::string>(&tagset_name)->default_value("nkjp"), "tagset corporis")
 	        ("reader,r", value<std::string>(&reader_name)->default_value("xces"), "reader for corpus")
@@ -69,6 +70,7 @@ int main(int argc, const char ** argv)
 		ignored_poses.insert(tagset.get_pos_index(pos));
 	
 	
+	// preparations
 	
 	Guesser g(data, tagset);
 	TokenReader::TokenReaderPtr reader = Corpus2::TokenReader::create_path_reader(reader_name, tagset, corpus.string());
@@ -77,11 +79,13 @@ int main(int argc, const char ** argv)
 	long good_c=0, all_c=0, zero_c=0, forbidden_c=0;
 	double coverage=0, quality=0;
 	
+	
+	// for each test
 	Sentence::Ptr sentence;
 	while((sentence = reader->get_next_sentence()))
 		foreach (const Token * test, sentence->tokens())
 		{
-			if (isForbidden(*test))
+			if (isForbidden(*test)) // if it is not forbidden one
 			{
 				forbidden_c++;
 				continue;
