@@ -15,14 +15,17 @@ class config
 {
 public:
 	
-	class Skip {};  /// Exception teling to skip the rest of the prograp because there is nothing to do, eg. parameter --help were given.
+	/// Exception teling to skip the rest of the prograp because there is nothing to do, eg. parameter --help were given.
+	class Skip {};
 	
 	
+	/// get this singleton
 	static config & get()
 	{
 		return *instance;
 	}
 	
+	/// create this singleton
 	static config & create(int argc, const char ** argv)
 	{
 		delete instance;
@@ -61,18 +64,26 @@ public:
 		return verbose;
 	}
 	
+	
+	/// check if the given word is in any way forbidden
 	bool isForbidden(const UnicodeString & word) const
 	{
 		return word.length() < 3 || ignored_words.find(word) != ignored_words.end();
 	}
+	
+	/// check if the given tag is in any way forbidden
 	bool isForbidden(const Corpus2::Tag & tag) const
 	{
 		return ignored_poses.find(tag.get_pos_index()) != ignored_poses.end();
 	}
+	
+	/// check if the given lexeme is in any way forbidden
 	bool isForbidden(const Corpus2::Lexeme & lexeme) const
 	{
 		return isForbidden(lexeme.tag());
 	}
+	
+	/// check if the given token is in any way forbidden
 	bool isForbidden(const Corpus2::Token & token) const;
 	
 	

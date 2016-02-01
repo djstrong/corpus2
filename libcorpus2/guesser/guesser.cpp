@@ -59,6 +59,7 @@ void get_aux(const detail::tags_info ** last_good, const detail::tags_info & pro
 
 const detail::tags_info &Guesser::Tree::get(const UnicodeString &word) const
 {
+	// get the downmost node that have any tag
 	const detail::tags_info * last_good = &root.properties;
 	find(word, bind(&get_aux, &last_good, _1));
 	return *last_good;
@@ -74,9 +75,9 @@ std::vector<Lexeme> Guesser::guess(const UnicodeString &word) const
 	
 	std::vector<Lexeme> res;
 	
-	if (word.startsWith("nie"))
+	if (word.startsWith("nie"))   // If begins with 'nie'
 	{
-		UnicodeString orth = word.tempSubString(3);
+		UnicodeString orth = word.tempSubString(3);   // at first assume its prefix
 		const detail::tags_info & inf = tree.get(orth);
 		foreach (detail::tags_info::value_type kv, inf)
 		{
@@ -89,7 +90,7 @@ std::vector<Lexeme> Guesser::guess(const UnicodeString &word) const
 			}
 		}
 		
-		const detail::tags_info & inf2 = tree.get(word);
+		const detail::tags_info & inf2 = tree.get(word);  // then assume it's part of the word
 		foreach (detail::tags_info::value_type kv, inf2)
 		{
 			if (&inf2 != &inf || !kv.first.get_values_for(aff_mask).any())
@@ -99,9 +100,9 @@ std::vector<Lexeme> Guesser::guess(const UnicodeString &word) const
 			}
 		}
 	}
-	else if (word.startsWith("naj"))
+	else if (word.startsWith("naj"))   // If begins with 'naj'
 	{
-		UnicodeString orth = word.tempSubString(3);
+		UnicodeString orth = word.tempSubString(3);   // at first assume its prefix
 		const detail::tags_info & inf = tree.get(orth);
 		
 		foreach (detail::tags_info::value_type kv, inf)
@@ -115,7 +116,7 @@ std::vector<Lexeme> Guesser::guess(const UnicodeString &word) const
 			}
 		}
 		
-		const detail::tags_info & inf2 = tree.get(word);
+		const detail::tags_info & inf2 = tree.get(word);  // then assume it's part of the word
 		foreach (detail::tags_info::value_type kv, inf2)
 		{
 			if (&inf2 != &inf || !kv.first.get_values_for(com_mask).any())
@@ -125,12 +126,15 @@ std::vector<Lexeme> Guesser::guess(const UnicodeString &word) const
 			}
 		}
 	}
-	else
+	else   // If does not begin with 'nie' nor 'naj'
 	{
-		const detail::tags_info & inf = tree.get(word);
-		foreach (detail::tags_info::value_type kv, inf)
+		const detail::tags_info & inf = tree.get(word);  // find it
+		foreach (detail::tags_info::value_type kv, inf)  // for each possible tag
 		{
+			// prepare lemma following its recipe
 			UnicodeString lemma = word.tempSubString(0, word.length() - kv.second.second) + kv.second.first;
+			
+			// add to results
 			res.push_back(Lexeme(lemma, kv.first));
 		}
 	}

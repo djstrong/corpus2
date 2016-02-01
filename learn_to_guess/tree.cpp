@@ -188,6 +188,7 @@ void Tree::insert_aux(const Corpus2::Token &token)
 		UnicodeString basel = lexeme.lemma();
 		basel.toLower();
 		
+		// longest common prefix
 		int i = 0;
 		for (; i < std::min(orth.length(), basel.length()); i++)
 			if (orth[i] != basel[i])
@@ -302,15 +303,20 @@ void Tree::gatherTags()
 
 void Tree::gatherTags(Node &node)
 {
+	// recurence
+	
 	if (!node.first_child)
 		return;
 	
 	for (Node * it = node.first_child; it != NULL; it = it->next_sibling)
 		gatherTags(*it);
 	
+	
+	// if we have our own tags, we won't take alien ones. It makes better results.
 	if (! node.properties.tags.empty())
 		return;
 	
+	// compute common part of all children, acknowledging strengths of their tags
 	typedef std::map <Corpus2::Tag, int> tag_strengths;
 	
 	std::set <Corpus2::Tag> interesting;
@@ -345,26 +351,12 @@ void Tree::gatherTags(Node &node)
 	foreach (tag_strengths::value_type kv, intersection)
 		common_sum += kv.second;
 	
+	
+	// decision
+	
 	if (common_sum >= 1 * whole_strength)
 		for (Node * it = node.first_child; it != NULL; it = it->next_sibling)
 			node.properties.feedOn(it->properties);
-}
-
-
-
-
-
-void Tree::guessEmpty()
-{
-	guessEmpty(root);
-}
-
-void Tree::guessEmpty(Node &node)
-{
-	for (Node * it = node.first_child; it != NULL; it = it->next_sibling)
-		guessEmpty(*it);
-	
-	
 }
 
 
@@ -412,12 +404,14 @@ void Tree::prune(Node &node) const
 		}
 }
 
+/// is this node worthy of death?
 bool Tree::isBad(const Node &node) const
 {
 	//return node.properties.counter < root.properties.counter / 3000.0;
 	return false;
 }
 
+/// collect all tags from the whole subtree in this single node
 void Tree::collect(Node &node)
 {
 	for (Node * it = node.first_child; it != NULL; it = it->next_sibling)

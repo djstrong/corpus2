@@ -29,6 +29,8 @@ struct Properties
 	tag_map tags;
 	
 	Properties();
+	
+	/// Steals all tags from another property, leaving it tagless.
 	void feedOn(Properties &another);
 	
 	
@@ -59,12 +61,7 @@ public:
 	void gatherTags();
 	
 	/**
-	  Guess tags for all empty nodes using its descendants
-	  */
-	void guessEmpty();
-	
-	/**
-	  Remove all nodes that are not intersting.
+	  Remove all nodes that are not intersting. At the moment does nothing.
 	  */
 	void prune();
 	
@@ -78,8 +75,6 @@ private:
 	static bool compressTagwise(Node & node);
 	
 	static void gatherTags(Node & node);
-	
-	static void guessEmpty(Node & node);
 	
 	void prune(Node & node) const;
 	bool isBad(const Node &node) const;

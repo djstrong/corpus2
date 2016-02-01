@@ -15,7 +15,12 @@ namespace Corpus2 {
 
 
 /**
-  Trie that stores all strings backward
+  Trie that stores all strings backward.
+  
+  @tparam PropType - type stored inside. It could have following methods:
+	void dump(std::ostream& stream) const  - dump into binary stream, if you will store the tree
+	void dedump(std::istream& stream) const  - read from binary stream, if you will read the tree
+	void print(std::ostream& stream) const  - pretty text for humans, if you'd like to debug
   */
 template <typename PropType>
 class BackwardTrie
@@ -59,15 +64,13 @@ protected:
 public:
 	BackwardTrie();
 	
-	/// Writes the tree into a file. Requires that the PropType be compatible
-	/// with output streams, i.e. have operator<<(ostream, PropType).
+	/// Writes the tree into a file. Requires that the PropType have void dump(ostream).
 	void write(const boost::filesystem::path & path) const;
 	
-	/// Reads the tree from given file. Requires that the PropType be compatible
-	/// with input streams, i.e. have operator>>(ostream, PropType).
+	/// Reads the tree from given file. Requires that the PropType have void dedump(istream).
 	void read(const boost::filesystem::path & path);
 	
-	/// Debug print. Do not use.
+	/// Debug print. Do not use. Requires that the PropType have void print(ostream).
 	void print() const;
 	
 private:
