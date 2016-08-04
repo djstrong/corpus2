@@ -30,7 +30,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
 
-find_package(PythonLibs 2.7)
+find_package(PythonLibs 2)
 find_package(PythonInterp)
 # idea taken from pyplot build system 
 execute_process(
