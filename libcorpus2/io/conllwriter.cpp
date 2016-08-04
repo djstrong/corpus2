@@ -69,7 +69,7 @@ std::vector<std::string> ConllWriter::get_columns_from_tag(const Tag& tag)
 
 bool ConllWriter::tag_has_superpos(const Tag& tag)
 {
-	idx_t superpos_attr_idx = myTagset.get_attribute_index("superpos");
+	idx_t superpos_attr_idx = myTagset.get_attribute_index(std::string("superpos"));
 	if(superpos_attr_idx == -1)
 		return false;
 	idx_t pos_idx = myTagset.get_pos_index(tag.get_pos());

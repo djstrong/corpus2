@@ -30,7 +30,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
 
-find_package(PythonLibs)
+find_package(PythonLibs 2.7)
 find_package(PythonInterp)
 # idea taken from pyplot build system 
 execute_process(
@@ -73,6 +73,10 @@ set_target_properties(
 	PROPERTIES
 	INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
 )
+# Newer libxml++ requires compilation with c++11
+if(NOT ${LibXML++_PKGCONF_VERSION} VERSION_LESS 2.40)
+	set_target_properties(_corpus2 PROPERTIES CXX_STANDARD 11)
+endif(NOT ${LibXML++_PKGCONF_VERSION} VERSION_LESS 2.40)
 
 set(PERM_SCRIPTS
 	OWNER_READ

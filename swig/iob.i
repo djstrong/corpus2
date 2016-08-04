@@ -5,8 +5,7 @@
 %{
   #include <libcorpus2/ann/iob.h>
 %}
-
-%template(IOBVector) std::vector<Corpus2::IOB::Enum>;
+%include "std_vector.i"
 
 namespace Corpus2 {
   namespace IOB {
@@ -21,6 +20,8 @@ namespace Corpus2 {
     Enum from_string(const std::string& s);
   }
 }
+
+%template(IOBVector) std::vector<Corpus2::IOB::Enum>;
 
 using namespace std;
 using namespace Corpus2::IOB;

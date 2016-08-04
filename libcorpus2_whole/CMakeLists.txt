@@ -38,6 +38,10 @@ else(WIN32)
 	add_library(corpus2_whole SHARED ${libcorpus2_whole_SRC} ${INCS})
 endif(WIN32)
 target_link_libraries(corpus2_whole corpus2 ${LIBS})
+# Newer libxml++ requires compilation with c++11
+if(NOT ${LibXML++_PKGCONF_VERSION} VERSION_LESS 2.40)
+	set_target_properties(corpus2_whole PROPERTIES CXX_STANDARD 11)
+endif(NOT ${LibXML++_PKGCONF_VERSION} VERSION_LESS 2.40)
 
 if(UNIX)
 	install(TARGETS corpus2_whole

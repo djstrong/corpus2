@@ -25,7 +25,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libpwrutils/util.h>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include <boost/pending/lowest_bit.hpp>
@@ -263,7 +263,7 @@ std::vector<Tag> Tagset::parse_tag(const string_range_vector &fields,
 {
 	std::vector<Tag> tags;
 	parse_tag(fields,
-		boost::bind(&std::vector<Tag>::push_back, boost::ref(tags),_1),
+		boost::bind(static_cast<void (std::vector<Tag>::*)(const Tag&)>(&std::vector<Tag>::push_back), boost::ref(tags),_1),
 		mode);
 	return tags;
 }

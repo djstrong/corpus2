@@ -100,6 +100,10 @@ target_link_libraries(corpus2 pwrutils ${LIBS})
 set_target_properties(corpus2 PROPERTIES
 	VERSION "${corpus2_ver_major}.${corpus2_ver_minor}"
 	SOVERSION ${corpus2_ver_major})
+# Newer libxml++ requires compilation with c++11
+if(NOT ${LibXML++_PKGCONF_VERSION} VERSION_LESS 2.40)
+	set_target_properties(corpus2 PROPERTIES CXX_STANDARD 11)
+endif(NOT ${LibXML++_PKGCONF_VERSION} VERSION_LESS 2.40)
 
 	install(TARGETS corpus2
 		RUNTIME DESTINATION bin

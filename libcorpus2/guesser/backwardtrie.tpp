@@ -1,5 +1,6 @@
 #include <unicode/ustream.h>
 #include <fstream>
+#include <iostream>
 
 
 namespace Corpus2 {

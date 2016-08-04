@@ -21,7 +21,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <vector>
 #include <cassert>
 #include <boost/cstdint.hpp>
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 #include <boost/operators.hpp>
 #include <libpwrutils/bitset.h>
 
