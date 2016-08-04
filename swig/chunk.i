@@ -44,6 +44,12 @@ namespace Corpus2 {
 
     typedef std::map<std::string, std::string> attr_map_t;
     const attr_map_t& attributes() const;
+
+    %extend {
+      static boost::shared_ptr<Corpus2::Chunk> create_chunk() {
+        return boost::shared_ptr<Corpus2::Chunk>(new Corpus2::Chunk());
+      }
+    }
   };
 }
 
