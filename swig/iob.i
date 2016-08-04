@@ -7,6 +7,14 @@
 %}
 %include "std_vector.i"
 
+// Force the enum to be "namespaced"
+%rename(IOB_O) Corpus2::IOB::O;
+%rename(IOB_B) Corpus2::IOB::B;
+%rename(IOB_I) Corpus2::IOB::I;
+%rename(IOB_PostLast) Corpus2::IOB::PostLast;
+%rename(IOB_to_string) Corpus2::IOB::to_string;
+%rename(IOB_from_string) Corpus2::IOB::from_string;
+
 namespace Corpus2 {
   namespace IOB {
     enum Enum {
