@@ -20,6 +20,8 @@ SET(libcorpus2_whole_SRC
 	io/documentcorpusreader.cpp
 	io/corpusreader.cpp
 	io/documentreader.cpp
+	io/basereader.cpp
+	io/baserelreader.cpp
 
 )
 

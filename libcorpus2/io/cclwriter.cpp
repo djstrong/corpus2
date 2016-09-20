@@ -48,7 +48,8 @@ void CclWriter::write_sentence(const Sentence& s)
 
 void CclWriter::write_sentence_int(const Sentence &s)
 {
-	const AnnotatedSentence* ann = dynamic_cast<const AnnotatedSentence*>(&s);
+	const boost::shared_ptr<Sentence> sentence = s.clone_shared();
+	const boost::shared_ptr<AnnotatedSentence> ann = AnnotatedSentence::wrap_sentence(sentence);
 
 	std::string id = s.id();
 	if (id == "") {

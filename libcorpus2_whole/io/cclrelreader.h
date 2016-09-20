@@ -18,10 +18,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #define LIBCORPUS2_WHOLE_DOCREADER_H
 
 #include <libcorpus2/io/cclreader.h>
-#include <libcorpus2_whole/relation.h>
 #include <libcorpus2_whole/document.h>
-#include <libcorpus2_whole/io/relreader.h>
-#include <libcorpus2_whole/io/reader_i.h>
+#include <libcorpus2_whole/io/baserelreader.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -32,7 +30,7 @@ namespace whole {
  * A reader for whole documents. Note that a whole document is read into memory
  * before any processing may take place.
  */
-class CclRelReader : public DocumentReaderI {
+class CclRelReader : public BaseRelReader {
 public:
 	/**
 	 * Reads a whole document, using the two given path: the morphosyntax and
@@ -59,7 +57,6 @@ public:
 	 * Available options:
 	 *  - autogen_sent_id -- for automatically generation identifiers of sentences
 	 */
-	void set_option(const std::string& option);
 
 	/**
 	 * @return option
@@ -84,16 +81,6 @@ private:
 	 */
 	void make_id_doc(const std::string &annot_path,
 					 const std::string &rela_path);
-
-	// -------------------------------------------------------------------------
-	/// Pointer to CclReader
-	boost::shared_ptr<CclReader> ccl_reader_;
-
-	/// Pointer to RelationReader
-	boost::shared_ptr<RelationReader> rel_reader_;
-
-	/// Future document identifier
-	std::string id_;
 };
 
 } // whole ns
