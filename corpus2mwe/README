@@ -55,7 +55,32 @@ będącą odpowiednikiem CclRelReadera z Corpus2.
     document = reader.read()
 
 Tak załadowany dokument powinien zawierać rozpoznane wielowyrazowce (MWE),
-ściągnięte do pojedynczych tokenów. Klasa posiada następujący interfejs:
+ściągnięte do pojedynczych tokenów. Użycie czytnika nie powoduje zachowania
+istniejących kanałów anotacji - załadowany dokument należałoby ponownie 
+zaanotować korzystając z dostępnych narzędzi. 
+
+Utworzenie obiektu czytnika powoduje załadowanie słownika, co wydłuża czas 
+działania narzędzi korzystających z tego czytnika. Dlatego nie jest zalecane
+wielokrotne tworzenie obiektu CclMWEReadera do ładowania wielu dokumentów 
+(np. w trybie batch). Wystarczy utworzyć jeden obiekt i wymieniać czytane
+pliki za pomocą metody `set_files`:
+
+    import corpus2mwe
+    import corpus2
+
+    tagset = corpus2.get_named_tagset('nkjp')
+    reader = corpus2mwe.CclMWEReader('ccl1.xml', tagset)
+
+    ccls = ['ccl2.xml', 'ccl3.xml', ccl4.xml, ...]
+    for ccl in ccls:
+    	reader.set_files(ccl)
+	doc = reader.read()
+	...
+
+Metoda `set_files` pozwala na podmianę pliku ccl oraz związanego z nim
+pliku rel_ccl (drugi, opcjonalny parametr metody). 
+
+Klasa posiada następujący interfejs:
 
 1) CclMWEReader(ścieżka_do_ccl, tagset)
     - tworzy czytnik i ładuje domyślnie zainstalowany słownik z operatorami MWE
