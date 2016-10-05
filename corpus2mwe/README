@@ -7,7 +7,19 @@ ZALEŻNOŚCI
     wszystkich zależności
 
 INSTALACJA
-1) Instalacja WCCLa z gałęzi mwe_fix
+1) Instalacja Corpus2 z gałęzi corpus2_mwe
+    git clone git@nlp.pwr.edu.pl:corpus2
+    cd corpus2
+    git checkout corpus2_mwe
+    mkdir build
+    cd build
+    cmake ..
+    make -j
+    sudo make install
+    sudo ldconfig
+    cd ../
+    
+2) Instalacja WCCLa z gałęzi mwe_fix
     sudo apt-get install -y libantlr-dev
     git clone git@nlp.pwr.edu.pl:wccl
     cd wccl
@@ -20,18 +32,7 @@ INSTALACJA
     sudo ldconfig
     cd ../..
 
-2) Instalacja Corpus2 z gałęzi corpus2_mwe
-    git clone git@nlp.pwr.edu.pl:corpus2
-    cd corpus2
-    git checkout corpus2_mwe
-    mkdir build
-    cd build
-    cmake ..
-    make -j
-    sudo make install
-    sudo ldconfig
-    cd ../
-    
+
 3) Instalacja modułu corpus2mwe w Corpus2 (gałąź corpus2_mwe)
     cd corpus2mwe
     mkdir build

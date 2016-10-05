@@ -25,7 +25,7 @@ find_package(LibXML++)
 find_package(Glib)
 find_package(ICU REQUIRED)
 
-find_path(corpus2mwe_src_data_dir mwe.dict ${CMAKE_SOURCE_DIR}/data)
+find_path(corpus2mwe_src_data_dir mwe.xml ${CMAKE_SOURCE_DIR}/data)
 mark_as_advanced(corpus2mwe_src_data_dir)
 set(corpus2mwe_install_data_dir share/corpus2mwe)
 set(CORPUS2MWE_DATA_DIR 
@@ -80,5 +80,5 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 
 install(DIRECTORY ${corpus2mwe_src_data_dir}/
 	DESTINATION ${corpus2mwe_install_data_dir}
-	FILES_MATCHING PATTERN "*.dict"
+	FILES_MATCHING PATTERN "*.xml"
 	PATTERN "local/*" EXCLUDE)
