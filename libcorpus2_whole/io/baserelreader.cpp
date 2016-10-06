@@ -30,5 +30,11 @@ boost::shared_ptr<Document> BaseRelReader::read()
 	return document;
 }
 
+void BaseRelReader::make_id_doc(const std::string &annot_path,
+		const std::string &rela_path)
+{
+	id_ = (annot_path + ";" + rela_path);
+}
+
 } /* end of ns whole */
 } /* end of ns Corpus2 */

@@ -14,6 +14,7 @@ CclMWEReader::CclMWEReader(const std::string &doc_path, const Tagset &tagset,
 		std::string mwe_file) : BaseRelReader("document") 
 {
 	make_readers(tagset, doc_path);
+	BaseRelReader::make_id_doc(doc_path, doc_path);
 	if (mwe_file == "")
 		mwe_file = get_mwe_dict("mwe");
 	init_mwes(mwe_file);
@@ -24,6 +25,7 @@ CclMWEReader::CclMWEReader(const std::string &doc_path, const std::string &rel_p
 		: BaseRelReader("document") 
 {
 	make_readers(tagset, doc_path, rel_path);
+	BaseRelReader::make_id_doc(doc_path, rel_path);
 	if (mwe_file == "")
 		mwe_file = get_mwe_dict("mwe");
 	init_mwes(mwe_file);

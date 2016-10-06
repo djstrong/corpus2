@@ -33,10 +33,19 @@ public:
 	virtual boost::shared_ptr<Document> read();
 
 protected:
+	
+
 	/** RelationReader Pointer */
 	boost::shared_ptr<RelationReader> rel_reader_;
 
 	void set_rel_reader(RelationReaderPtr reader);
+
+	/**
+	 * Based on given paths (annotations and relations) makes an indetifier
+	 * of document.
+	 */
+	void make_id_doc(const std::string &annot_path, 
+			const std::string &rela_path);
 
 };
 

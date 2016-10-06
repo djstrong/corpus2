@@ -74,13 +74,6 @@ private:
 			const Tagset& tagset,
 			const std::string &annot_path,
 			const std::string &rela_path);
-
-	/**
-	 * Based on given paths (annotations and relations) makes document identifier
-	 * Document identifier is set to id_ class-state
-	 */
-	void make_id_doc(const std::string &annot_path,
-					 const std::string &rela_path);
 };
 
 } // whole ns

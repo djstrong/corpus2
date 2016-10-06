@@ -24,7 +24,7 @@ namespace whole {
 			: BaseRelReader("document")
 	{
 		make_readers(tagset, annot_path, rela_path);
-		make_id_doc(annot_path, rela_path);
+		BaseRelReader::make_id_doc(annot_path, rela_path);
 	}
 
 	void CclRelReader::make_readers(const Tagset& tagset,
@@ -36,12 +36,6 @@ namespace whole {
 		// (in case annot_path and rela_path poin to the same file)
 		reader_->set_option("no_warn_unexpected_xml");
 		rel_reader_ = boost::make_shared<RelationReader>(rela_path);
-	}
-
-	void CclRelReader::make_id_doc(const std::string &annot_path,
-		const std::string &rela_path)
-	{
-		id_ = (annot_path + ";" + rela_path);
 	}
 
 	boost::shared_ptr<Document> CclRelReader::read()
