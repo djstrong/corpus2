@@ -42,6 +42,7 @@ void CclMWEReader::make_readers(const Tagset &tagset, const std::string &doc_pat
 void CclMWEReader::set_files(const std::string &doc_path) 
 {
 	reader_->setFile(doc_path);
+	BaseRelReader::make_id_doc(doc_path, doc_path);
 }
 
 void CclMWEReader::set_files(const std::string &doc_path,
@@ -49,6 +50,7 @@ void CclMWEReader::set_files(const std::string &doc_path,
 {
 	reader_->setFile(doc_path);
 	rel_reader_ = boost::make_shared<RelationReader>(rel_path);
+	BaseRelReader::make_id_doc(doc_path, rel_path);
 }
 
 void CclMWEReader::init_mwes(const std::string &mwe_file) {
