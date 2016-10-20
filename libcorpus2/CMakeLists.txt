@@ -28,6 +28,9 @@ set(LIBS ${LIBS} icuuc icuio)
 find_package(Loki REQUIRED QUIET)
 set(LIBS ${LIBS} loki)
 
+find_package(ZlibComplete REQUIRED QUIET)
+set(LIBS ${LIBS} zlibcomplete)
+
 find_package(LibXML++ REQUIRED QUIET)
 include_directories(${LibXML++_INCLUDE_DIRS})
 link_directories(${LibXML++_LIBRARY_DIRS})
@@ -52,6 +55,11 @@ SET(libcorpus2_STAT_SRC
 	tagsetparser.cpp
 	token.cpp
 	tokenmetadata.cpp
+        io/compressor.cpp
+        io/zlccompressor.cpp
+        io/boostcompressor.cpp
+        io/cclgzreader.cpp
+        io/cclgzwriter.cpp
 	io/cclreader.cpp
 	io/cclwriter.cpp
 	io/conllwriter.cpp

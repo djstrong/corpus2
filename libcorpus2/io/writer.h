@@ -21,7 +21,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 
 #include <loki/Factory.h>
 #include <loki/Singleton.h>
-
+#include "compressor.h"
 namespace Corpus2 {
 
 /**
@@ -49,6 +49,12 @@ public:
 	virtual void write_sentence(const Sentence& s) = 0;
 
 	virtual void write_chunk(const Chunk& p) = 0;
+
+    //ktagowski added for compression
+    std::stringstream & sstream(){
+        return sstream_;
+    }
+    std::stringstream & ssi();
 
 	std::ostream& os() {
 		return os_;
@@ -140,6 +146,9 @@ public:
 			const std::string& help = "");
 
 
+    std::ostream& osi();
+
+
 protected:
 	virtual void do_footer() {}
 
@@ -155,10 +164,13 @@ protected:
 	 * Write indentation spaces to the output stream and return the stream
 	 * for writing. Convenience function useful when starting new lines
 	 * in the output. */
-	std::ostream& osi();
+    //KTagowski: Added for Compression
+    Compressor * pc_compressor;
 
 private:
 	std::ostream& os_;
+
+    std::stringstream sstream_;
 
 	const Tagset& tagset_;
 

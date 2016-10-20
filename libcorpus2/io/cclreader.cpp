@@ -25,6 +25,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
+#include "zlccompressor.h"
+
 
 namespace Corpus2 {
 
@@ -78,7 +80,15 @@ CclReader::CclReader(const Tagset& tagset, std::istream& is,
 	: BufferedChunkReader(tagset),
 	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
 {
-	this->is_ = &is;
+
+    //mpol: detecting compression
+    unsigned char uc_start_char = is.peek();
+    //byte[0] == 0x1f //gzip!
+    if (uc_start_char == 0x1f)
+        s_try_decompres(is);
+    else
+        this->is_ = &is;
+
 }
 
 CclReader::CclReader(const Tagset& tagset, const std::string& filename,
@@ -88,16 +98,48 @@ CclReader::CclReader(const Tagset& tagset, const std::string& filename,
 {
 	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
 
-	if (!this->is_owned_->good()) {
-		throw Corpus2Error("File not found!");
-	}
-	else {
-		this->is_ = is_owned_.get();
-	}
+    if (!this->is_owned_->good()) {
+        throw Corpus2Error("File not found!");
+    }
+    else {
+        //ktagowski: detecting compression
+        unsigned char uc_start_char = is_owned_.get()->peek();
+        if (uc_start_char == 0x1f)
+            s_try_decompres(*is_owned_.get());
+        else
+            this->is_ = is_owned_.get();
+    }
+
 }
 
 CclReader::~CclReader()
 {
+}
+
+void CclReader::s_try_decompres(std::istream &is)
+{
+    is.seekg (0, is.end);
+    int input_size = is.tellg();
+    is.seekg(0,is.beg);
+
+    std::string input_string;
+    input_string.reserve(input_size);
+    unsigned char buf[READ_BUFFER_SIZE+1];
+
+    while(is.read(reinterpret_cast<char*>(buf),READ_BUFFER_SIZE)) {
+        input_string.append(reinterpret_cast<char*>(buf),READ_BUFFER_SIZE);
+    }
+    input_string.append(reinterpret_cast<char*>(buf),is.gcount());
+
+    Compressor * com = new ZlcCompressor();
+
+    if(com)
+    {
+        com->decompress(input_string,this->is_);
+        delete com;
+        com = NULL;
+    }//if(com)
+
 }
 
 void CclReader::ensure_more()

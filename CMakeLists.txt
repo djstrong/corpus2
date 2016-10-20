@@ -52,7 +52,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(LIBS "")
 include_directories(${Corpus2Library_SOURCE_DIR})
 
-find_package(Boost 1.41 REQUIRED COMPONENTS program_options system filesystem regex)
+find_package(Boost 1.41 REQUIRED COMPONENTS program_options system filesystem regex iostreams)
 MARK_AS_ADVANCED(Boost_DIR)
 if(MSVC OR BORLAND)
 # Use the auto-linking feature, don't try to add libraries yourself:
@@ -84,6 +84,7 @@ add_subdirectory(libcorpus2)
 add_subdirectory(libcorpus2_whole)
 add_subdirectory(corpus2tools)
 add_subdirectory(learn_to_guess)
+
 
 if(UNIX)
 	add_subdirectory(tests)

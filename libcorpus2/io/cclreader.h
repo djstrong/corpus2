@@ -22,8 +22,10 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/chunk.h>
 #include <deque>
 #include <boost/scoped_ptr.hpp>
-
+#define READ_BUFFER_SIZE 4096
 namespace Corpus2 {
+
+
 
 class CclReaderImpl;
 
@@ -53,9 +55,12 @@ protected:
 
 	// std::istream& is_;
 	std::istream* is_;
-	boost::scoped_ptr<std::istream> is_owned_;
+    boost::scoped_ptr<std::ifstream> is_owned_;
 
 	boost::scoped_ptr<CclReaderImpl> impl_;
+
+    //ktagowski: Added for decompression
+    void s_try_decompres(std::istream &is);
 };
 
 } /* end ns Corpus2 */
