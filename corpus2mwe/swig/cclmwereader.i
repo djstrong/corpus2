@@ -1,6 +1,14 @@
 #ifndef SWIG_CORPUS2MWE_CCLMWEREADER_I
 #define SWIG_CORPUS2MWE_CCLMWEREADER_I
 
+%module unicode_strings
+
+%include <std_string.i>
+
+%begin %{
+    #define SWIG_PYTHON_2_UNICODE
+%}
+
 %module cclmwereader
 %{
     #include <libmwereader/mwereader.h>
