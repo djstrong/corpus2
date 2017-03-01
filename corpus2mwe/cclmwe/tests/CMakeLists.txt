@@ -25,13 +25,13 @@ link_directories(${Glib_LIBRARY})
 
 include_directories(${GlibConfig_INCLUDE_DIR})
 
-#add_executable(cclmwe_tests
-#	#cclmwe_test.cpp
-#)
-#target_link_libraries(cclmwe_tests cclmwe ${LIBS} pwrutils)
-#
-#add_custom_command(
-#        TARGET cclmwe_tests POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        ${CMAKE_SOURCE_DIR}/cclmwe/tests/testdata
-#        $<TARGET_FILE_DIR:cclmwe_tests>/testdata)
+add_executable(cclmwe_tests
+	cclmwe_test.cpp
+)
+target_link_libraries(cclmwe_tests cclmwe ${LIBS} pwrutils)
+
+add_custom_command(
+        TARGET cclmwe_tests POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/cclmwe/tests/testdata
+        $<TARGET_FILE_DIR:cclmwe_tests>/testdata)
