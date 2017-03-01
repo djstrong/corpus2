@@ -37,6 +37,7 @@ namespace Corpus2MWE {
 
             void set_files(const std::string &filename);
             void set_files(const std::string &filename, const std::string &rel_path);
+            void use_annotations(bool val);
 
             TokenReaderPtr reader();
     };

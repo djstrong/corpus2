@@ -27,16 +27,18 @@ namespace Corpus2MWE {
 	/** set new file to read */
 	void set_files(const std::string &doc_path);
 	void set_files(const std::string &doc_path, const std::string &rel_path);
+    void use_annotations(bool annots_used);
 
 	/** get the reader object */
         TokenReaderPtr reader();
         
     private:
-	/**
+	    /**
          * load MWE dictionary
          * @param mwe_file: dictionary with MWE operators
          */
         void init_mwes(const std::string &mwe_file);
+        bool annotate;
 
 	/**
 	 * create instances of readers

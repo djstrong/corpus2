@@ -11,7 +11,7 @@ typedef boost::shared_ptr<MWEReader> MWEReaderPtr;
 
 
 CclMWEReader::CclMWEReader(const std::string &doc_path, const Tagset &tagset,
-		std::string mwe_file) : BaseRelReader("document") 
+		std::string mwe_file) : BaseRelReader("document"), annotate(true) 
 {
 	make_readers(tagset, doc_path);
 	BaseRelReader::make_id_doc(doc_path, doc_path);
@@ -22,13 +22,21 @@ CclMWEReader::CclMWEReader(const std::string &doc_path, const Tagset &tagset,
 
 CclMWEReader::CclMWEReader(const std::string &doc_path, const std::string &rel_path,
 		const Tagset &tagset, std::string mwe_file) 
-		: BaseRelReader("document") 
+		: BaseRelReader("document"), annotate(true)
 {
 	make_readers(tagset, doc_path, rel_path);
 	BaseRelReader::make_id_doc(doc_path, rel_path);
 	if (mwe_file == "")
 		mwe_file = get_mwe_dict("mwe");
 	init_mwes(mwe_file);
+}
+
+void CclMWEReader::use_annotations(bool val) {
+	if (val) {
+		reader_->set_option("annotations:1");
+	} else {
+		reader_->set_option("annotations:0");
+	}
 }
 
 void CclMWEReader::make_readers(const Tagset &tagset, const std::string &doc_path,

@@ -17,6 +17,8 @@
 %template(ConstRelationPtr) boost::shared_ptr<const Corpus2::whole::Relation>;
 %template(RelationPtrVector) std::vector< boost::shared_ptr<Corpus2::whole::Relation> >;
 
+using std::string;
+
 namespace Corpus2 {
 namespace whole {
   class DirectionPoint {
