@@ -56,9 +56,31 @@ będącą odpowiednikiem CclRelReadera z Corpus2.
     document = reader.read()
 
 Tak załadowany dokument powinien zawierać rozpoznane wielowyrazowce (MWE),
-ściągnięte do pojedynczych tokenów. Użycie czytnika nie powoduje zachowania
-istniejących kanałów anotacji - załadowany dokument należałoby ponownie 
-zaanotować korzystając z dostępnych narzędzi. 
+ściągnięte do pojedynczych tokenów lub oznaczone odpowiednim kanałem anotacji.
+Wyboru pomiędzy ściąganiem do pojedynczych tokenów a użyciem anotacji można 
+dokonać wykorzystując metodę `use_annotations`. Domyślnie czytnik oznacza
+jednostki MWE z użyciem anotacji.
+
+    import corpus2mwe
+    import corpus2
+
+    tagset = corpus2.get_named_tagset('nkjp')
+    ccl_f = "ccl.xml"
+    rel_f = "ccl.rel.xml"
+    # domyślnie używa kanałów anotacji
+    reader = corpus2mwe.CclMWEReader(ccl_f, rel_f, tagset)
+    document = reader.read()
+
+    reader.set_files(ccl_f, rel_f)
+    # teraz ściągnie do pojedynczych tokenów
+    reader.use_annotations(False)
+    document = reader.read()
+
+Użycie czytnika nie powoduje zachowania
+istniejących kanałów anotacji, ale dotyczy to tylko opcji ze ściąganiem tokenów
+- załadowany dokument należałoby ponownie zaanotować korzystając z dostępnych 
+narzędzi. W przypadku zastosowania anotacji do oznaczania MWE, istniejące
+anotacje powinny zostać zachowane.
 
 Utworzenie obiektu czytnika powoduje załadowanie słownika, co wydłuża czas 
 działania narzędzi korzystających z tego czytnika. Dlatego nie jest zalecane
@@ -103,6 +125,10 @@ Klasa posiada następujący interfejs:
 
 5) CclMWEReader.read()
     - czyta dokument i zwraca obiekt Corpus2.Document
+
+6) CclMWEReader.use_annotations(bool)
+    - użyj anotacji do oznaczenia MWE lub ściągnij elementy MWE do pojedynczego
+        tokenu
 
 *) MWEReader zawierał kilka błędów wynikających z błędnych założeń:
 - założenie, że głowa wielowyrazowca to zawsze pierwszy wyraz
