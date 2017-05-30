@@ -1,7 +1,7 @@
 project(corpus2mwe)
 cmake_minimum_required(VERSION 2.8)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
 set(corpus2_mwe_ver_major "0")
 set(corpus2_mwe_ver_minor "1")
