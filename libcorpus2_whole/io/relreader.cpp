@@ -37,7 +37,7 @@ RelationReader::RelationReader(const std::string &rela_path)
 
 	if (!file_->good()) {
 		file_.reset();
-		throw Corpus2Error("File not found!");
+		throw FileNotFound(rela_path);
 	}
 }
 
@@ -47,7 +47,7 @@ void RelationReader::read()
 	static const int BUFSIZE = 1024;
 
 	if (!file_) {
-		throw Corpus2Error("File not found!");
+		throw FileNotFound(rela_path_);
 	}
 	else {
 		is = file_.get();

@@ -38,7 +38,7 @@ PlainReader::PlainReader(const Tagset& tagset, const std::string& filename)
 {
 	is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
 	if (!this->is_owned_->good()) {
-		throw Corpus2Error("File not found!");
+		throw FileNotFound(filename);
 	}
 	else {
 		this->is_ = is_owned_.get();

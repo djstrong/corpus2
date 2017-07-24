@@ -44,8 +44,8 @@ public:
 class FileNotFound : public Corpus2Error
 {
 public:
-	FileNotFound(const std::string& filename, const std::string& paths,
-			const std::string& where);
+	FileNotFound(const std::string& filename, const std::string& paths = "",
+			const std::string& where = "");
 
 	~FileNotFound() throw();
 
