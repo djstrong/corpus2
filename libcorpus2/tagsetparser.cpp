@@ -48,7 +48,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 	std::string line;
 	std::string sep(" \t=");
 	std::set<std::string> values;
-	values.insert("@null");
+	values.insert("/null");
 	std::set<std::string> symbols(values);
 	typedef std::map< std::string, std::deque<std::string> > vmap_t;
 	vmap_t vmap;
@@ -84,7 +84,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 			v.pop_front();
 			avalues = v;
 			BOOST_FOREACH(const std::string& s, v) {
-				if (!symbols.insert(s).second) {
+				if (!symbols.insert(s).second && false) {// Allow duplicate values in different attributes
 					throw TagsetParseError("Duplicate symbol", line_no, s);
 				}
 				values.insert(s);
@@ -92,7 +92,7 @@ Tagset TagsetParser::load_ini(std::istream &is)
 		}
 	}
 
-	if (*values.begin() != "@null") {
+	if (*values.begin() != "/null") {
 		throw TagsetParseError("First value not '@null'", line_no,
 			*values.begin());
 	}
