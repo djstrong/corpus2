@@ -23,8 +23,6 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <sstream>
 #include <fstream>
 #include "compressor.h"
-#include "zlccompressor.h"
-#include "boostcompressor.h"
 #include <fstream>
 
 namespace Corpus2 {

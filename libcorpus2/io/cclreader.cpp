@@ -25,7 +25,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
-#include "zlccompressor.h"
+#include "boostcompressor.h"
 
 
 namespace Corpus2 {
@@ -131,7 +131,7 @@ void CclReader::s_try_decompres(std::istream &is)
     }
     input_string.append(reinterpret_cast<char*>(buf),is.gcount());
 
-    Compressor * com = new ZlcCompressor();
+    Compressor * com = new BoostCompressor();
 
     if(com)
     {

@@ -21,7 +21,6 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <libcorpus2/tokenmetadata.h>
 
 #include "boostcompressor.h"
-#include "zlccompressor.h"
 
 namespace Corpus2 {
 
@@ -35,7 +34,7 @@ CclWriter::CclWriter(std::ostream& os, const Tagset& tagset,
     : XmlWriter(os, tagset, params)
 {
     if(enable_compression)
-       pc_compressor = new ZlcCompressor();
+       pc_compressor = new BoostCompressor();
 
     do_header();
 }
