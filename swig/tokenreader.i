@@ -23,6 +23,8 @@
 
 // typedef boost::shared_ptr<Corpus2::Token> TokenPtr;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class TokenReader {
   public:

@@ -10,6 +10,8 @@
 %include "document.i"
 %include "boost_shared_ptr.i"
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
 namespace whole {
   class CclRelReader {

@@ -19,6 +19,8 @@
 %template(TokenWriterPtr) boost::shared_ptr<Corpus2::TokenWriter>;
 %template(ConstTokenWriterPtr) boost::shared_ptr<const Corpus2::TokenWriter>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class TokenWriter {
   public:

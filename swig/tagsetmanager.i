@@ -15,6 +15,8 @@
 
 %feature("notabstract") Corpus2::TagsetManager;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class TagsetNotFound : public Corpus2Error {
   public:

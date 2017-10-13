@@ -16,6 +16,8 @@
 %constant std::string RELATION_SENTENCE_ID = Corpus2::whole::RELATION_SENTENCE_ID;
 %constant std::string RELATION_CHANNEL_NAME = Corpus2::whole::RELATION_CHANNEL_NAME;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
 namespace whole {
   class RelationReader {

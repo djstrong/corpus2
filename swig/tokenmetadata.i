@@ -17,6 +17,8 @@
 %template(TokenMetaDataPtr) boost::shared_ptr<Corpus2::TokenMetaData>;
 %template(ConstTokenMetaDataPtr) boost::shared_ptr<const Corpus2::TokenMetaData>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class TokenMetaData {
   public:

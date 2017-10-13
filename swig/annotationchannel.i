@@ -23,6 +23,8 @@
 %template(AnnotationChannelPtr) boost::shared_ptr<Corpus2::AnnotationChannel>;
 %template(ConstAnnotationChannelPtr) boost::shared_ptr<const Corpus2::AnnotationChannel>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   struct Annotation {
     Annotation() : indices(), head_index(-1), seg_number(0) {}

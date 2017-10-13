@@ -10,6 +10,8 @@
 
 %include "libpwrnlperror.i"
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class Corpus2Error : public PwrNlp::PwrNlpError {
   public:

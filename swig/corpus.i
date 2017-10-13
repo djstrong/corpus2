@@ -12,6 +12,8 @@
 %template(CorpusPtr) boost::shared_ptr<Corpus2::whole::Corpus>;
 %template(ConstCorpusPtr) boost::shared_ptr<const Corpus2::whole::Corpus>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
 namespace whole {
   class Corpus {

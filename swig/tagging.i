@@ -12,6 +12,8 @@
 %include "tagset.i"
 %include "token.i"
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
 
 Tag get_attribute_mask(const Tagset& tagset,

@@ -20,6 +20,8 @@
 %template(AnnotatedSentencePtr) boost::shared_ptr<Corpus2::AnnotatedSentence>;
 %template(ConstAnnotatedSentencePtr) boost::shared_ptr<const Corpus2::AnnotatedSentence>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class MissingAnnotationChannel : public Corpus2Error {
   public:

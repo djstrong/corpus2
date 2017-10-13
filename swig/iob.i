@@ -15,6 +15,8 @@
 %rename(IOB_to_string) Corpus2::IOB::to_string;
 %rename(IOB_from_string) Corpus2::IOB::from_string;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   namespace IOB {
     enum Enum {

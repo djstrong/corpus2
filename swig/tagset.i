@@ -5,7 +5,6 @@
 %{
   #include <libcorpus2/tagset.h>
 %}
-
 %include "tag.i"
 %include "exception.i"
 
@@ -18,6 +17,8 @@
 %template(TagsetPtr) boost::shared_ptr<Corpus2::Tagset>;
 %template(ConstTagsetPtr) boost::shared_ptr<const Corpus2::Tagset>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class Tagset;
   class TagParseError : public Corpus2Error {

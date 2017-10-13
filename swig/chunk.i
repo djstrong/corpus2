@@ -21,6 +21,8 @@
 %template(ConstChunkPtr) boost::shared_ptr<const Corpus2::Chunk>;
 %template(ChunkPtrVector) std::vector< boost::shared_ptr<Corpus2::Chunk> >;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class Chunk {
   public:

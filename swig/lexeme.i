@@ -17,6 +17,8 @@
 
 %template(LexemeVector) std::vector<Corpus2::Lexeme>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class Lexeme {
   public:

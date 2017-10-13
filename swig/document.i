@@ -15,6 +15,8 @@
 
 %template(DocumentPtrVector) std::vector<boost::shared_ptr<Corpus2::whole::Document> >;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
 namespace whole {
   class Document {

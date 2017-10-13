@@ -16,6 +16,8 @@
 %template(SentencePtrVector) std::vector<boost::shared_ptr<Corpus2::Sentence> >;
 %template(ConstSentencePtrVector) std::vector<boost::shared_ptr<const Corpus2::Sentence> >;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class Sentence {
   public:

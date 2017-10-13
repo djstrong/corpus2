@@ -19,6 +19,8 @@
 
 %template(TagVector) std::vector<Corpus2::Tag>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class Tag {
   public:

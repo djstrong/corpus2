@@ -18,6 +18,8 @@
 
 %nodefaultctor Corpus2::TokenWriter;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class AnnotationView : public Corpus2::Sentence {
   public:

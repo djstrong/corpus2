@@ -24,6 +24,8 @@
 %template(TokenPtrVector) std::vector<Corpus2::Token*>;
 %template(ConstTokenPtrVector) std::vector<const Corpus2::Token*>;
 
+
+%feature("autodoc", "1");
 namespace Corpus2 {
   class Token {
   public:
