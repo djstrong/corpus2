@@ -55,7 +55,7 @@ CclReader::CclReader(const Tagset& tagset, const std::string& filename,
 				std::ifstream::in));
 
     if (!this->is_owned_->good()) {
-        throw Corpus2Error("File not found!");
+        throw FileNotFound(filename);
     }
     else {
         //ktagowski: detecting compression
@@ -65,8 +65,6 @@ CclReader::CclReader(const Tagset& tagset, const std::string& filename,
         else
             this->is_ = is_owned_.get();
     }
-
-}
 
 CclReader::~CclReader()
 {
