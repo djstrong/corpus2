@@ -67,14 +67,14 @@ public:
 	 * directly (afterwards the source Sentence has no tokens).
 	 */
 	static boost::shared_ptr<AnnotatedSentence> wrap_sentence(
-		const boost::shared_ptr<Sentence>& s);
+		const boost::shared_ptr<Sentence> s);
 
 	/**
 	 * Create an AnnotatedSentence from a Sentence, cloning all the tokens.
 	 * The source Sentence is not modified.
 	 */
 	static boost::shared_ptr<AnnotatedSentence> wrap_sentence_clone(
-		const boost::shared_ptr<Sentence>& s);
+		const boost::shared_ptr<Sentence> s);
 
 	/**
 	 * Create an annotation channel named name in this annotated sentence.

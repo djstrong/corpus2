@@ -15,13 +15,10 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 #include <libcorpus2/io/cclreader.h>
-#include <libcorpus2/io/xmlreader.h>
 #include <boost/foreach.hpp>
-#include <libxml++/libxml++.h>
 #include <libxml2/libxml/parser.h>
 #include <boost/make_shared.hpp>
 #include <boost/algorithm/string.hpp>
-#include <libcorpus2/ann/annotatedsentence.h>
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
@@ -32,48 +29,6 @@ namespace Corpus2 {
 
 bool CclReader::registered = TokenReader::register_reader<CclReader>("ccl",
 	"ign,loose,strict,disamb_only,no_warn_inconsistent,no_warn_unexpected_xml,autogen_chunk_id,autogen_sent_id");
-
-class CclReaderImpl : public XmlReader
-{
-public:
-	CclReaderImpl(const TokenReader& base_reader,
-		std::deque< boost::shared_ptr<Chunk> >& obuf,
-		bool disamb_only, bool disamb_sh);
-
-	~CclReaderImpl();
-
-protected:
-	bool process_start_element(const Glib::ustring & name,
-		const AttributeList& attributes);
-
-	bool process_end_element(const Glib::ustring& name);
-
-	void start_chunk(const AttributeList &attributes);
-
-	void start_sentence(const AttributeList &attributes);
-
-	void start_token(const AttributeList &attributes);
-
-	void finish_token();
-
-	static const int STATE_ANN = 901;
-	static const int STATE_REL = 902; // currently unused
-	static const int STATE_PROP = 910;
-
-	boost::shared_ptr<AnnotatedSentence> ann_sent_;
-
-	std::string ann_chan_;
-
-	std::string prop_key_;
-
-	bool ann_head_;
-
-	typedef std::map<std::string, int> token_ann_t;
-
-	token_ann_t token_anns_;
-
-	std::set<std::string> token_ann_heads_;
-};
 
 CclReader::CclReader(const Tagset& tagset, std::istream& is,
 		bool disamb_only, bool disamb_sh)
@@ -96,7 +51,8 @@ CclReader::CclReader(const Tagset& tagset, const std::string& filename,
 	: BufferedChunkReader(tagset),
 	impl_(new CclReaderImpl(*this, chunk_buf_, disamb_only, disamb_sh))
 {
-	this->is_owned_.reset(new std::ifstream(filename.c_str(), std::ifstream::in));
+	this->is_owned_.reset(new std::ifstream(filename.c_str(),
+				std::ifstream::in));
 
     if (!this->is_owned_->good()) {
         throw Corpus2Error("File not found!");

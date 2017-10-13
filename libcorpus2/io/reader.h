@@ -108,6 +108,11 @@ public:
 	virtual void validate() {}
 
 	/**
+	 * Set a new file to read (takes a filepath).
+	 */
+	virtual void setFile(const std::string&) {}
+
+	/**
 	 * Tagset accesor
 	 */
 	const Tagset& tagset() const {
