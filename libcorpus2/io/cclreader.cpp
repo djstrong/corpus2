@@ -65,6 +65,7 @@ CclReader::CclReader(const Tagset& tagset, const std::string& filename,
         else
             this->is_ = is_owned_.get();
     }
+}
 
 CclReader::~CclReader()
 {
