@@ -85,6 +85,7 @@ void PremorphWriter::do_header()
 
 void PremorphWriter::do_footer()
 {
+    needs_footer_ = false;
 	if (force_chunk_) {
 		os() << "</chunk>\n";
 	}

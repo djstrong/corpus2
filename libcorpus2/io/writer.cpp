@@ -47,17 +47,10 @@ TokenWriter::~TokenWriter()
 
 void TokenWriter::finish()
 {
-	if (needs_footer_) {
-		do_footer();
-		needs_footer_ = false;
-
-        if(pc_compressor!=NULL){
-            pc_compressor->compress(sstream_,os_);
-    //        pc_compressor->finish_compression(os_);
-        }
-        else
-            os_ << sstream_.str();
-	}
+    if (needs_footer_ == true){
+        do_footer();
+        needs_footer_ = false;
+    }
 }
 stringstream& TokenWriter::ssi(){
    for (int i = 0; i < indent_; ++i) {

@@ -40,6 +40,8 @@ public:
 	static bool registered;
 
 protected:
+    void finish();
+
 	void write_sentence_int(const Sentence &s);
 
 	void do_header();

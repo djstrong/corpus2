@@ -50,6 +50,9 @@ public:
 
 	virtual void write_chunk(const Chunk& p) = 0;
 
+    virtual void finish();
+
+
     //ktagowski added for compression
     std::stringstream & sstream(){
         return sstream_;
@@ -63,8 +66,6 @@ public:
 	const Tagset& tagset() const {
 		return tagset_;
 	}
-
-	void finish();
 
 	/**
 	 * Factory interface for creating writers from string identifiers
@@ -98,7 +99,7 @@ public:
 	 * Mostly a convenience function to avoid having client code refer
 	 * directly to the factory instance.
 	 *
-	 * This is the file path (as opposed to output stream) version.
+     * This is the file path (as opposed to output stream) version.
 	 *
 	 * @param class_id the unique class identifier
 	 * @param path file to write to
@@ -150,7 +151,7 @@ public:
 
 
 protected:
-	virtual void do_footer() {}
+    virtual void do_footer() { }
 
 	void indent_more(int n = 1);
 
@@ -167,6 +168,9 @@ protected:
     //KTagowski: Added for Compression
     Compressor * pc_compressor;
 
+protected:
+    bool needs_footer_;
+
 private:
 	std::ostream& os_;
 
@@ -174,7 +178,6 @@ private:
 
 	const Tagset& tagset_;
 
-	bool needs_footer_;
 
 	int indent_;
 };

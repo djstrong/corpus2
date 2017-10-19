@@ -48,12 +48,29 @@ CclWriter::CclWriter(std::ostream& os, const Tagset& tagset,
 
 CclWriter::~CclWriter()
 {
-
+    finish();
 }
 
+void CclWriter::finish()
+{
+    if (needs_footer_ == true)
+     {
+        do_footer();
+        needs_footer_ = false;
+        if(pc_compressor!=NULL)
+        {
+            pc_compressor->compress(sstream(),os());
+    //        pc_compressor->finish_compression(os_);
+        }
+        else
+        {
+            os() << sstream().str();
+        }
+    }
+}
 void CclWriter::write_sentence(const Sentence& s)
 {
-	paragraph_head();
+    paragraph_head();
 	if (use_indent_) indent_more();
 	write_sentence_int(s);
 	if (use_indent_) indent_less();
@@ -134,6 +151,7 @@ void CclWriter::do_header()
 
 void CclWriter::do_footer()
 {
+    needs_footer_ = false;
 	if (use_indent_) indent_less();
     sstream() << "</chunkList>\n";
 }

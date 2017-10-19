@@ -95,6 +95,7 @@ void XcesWriter::do_header()
 
 void XcesWriter::do_footer()
 {
+    needs_footer_ = false;
 	if (force_chunk_) {
 		if (use_indent_) indent_less();
 		osi() << "</chunk>\n";
