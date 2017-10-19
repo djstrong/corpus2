@@ -113,8 +113,7 @@ void CclWriter::write_sentence_int(const Sentence &s)
 
 void CclWriter::write_chunk(const Chunk &c)
 {
-    if(cid_)
-	paragraph_head(c);
+    paragraph_head(c);
 	if (use_indent_) indent_more();
 	BOOST_FOREACH(const Sentence::ConstPtr& s, c.sentences()) {
 		write_sentence_int(*s);
