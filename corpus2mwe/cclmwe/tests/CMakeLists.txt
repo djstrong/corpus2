@@ -2,6 +2,8 @@ project(cclmwe_test)
 
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
 
+include(FindPythonInterp)
+
 find_package(Boost COMPONENTS unit_test_framework)
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
 
@@ -31,7 +33,18 @@ add_executable(cclmwe_tests
 target_link_libraries(cclmwe_tests cclmwe ${LIBS} pwrutils)
 
 add_custom_command(
-        TARGET cclmwe_tests POST_BUILD
+        TARGET cclmwe_tests
+        COMMENT "Run C++ tests"
+        POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/cclmwe/tests/testdata
-        $<TARGET_FILE_DIR:cclmwe_tests>/testdata)
+        $<TARGET_FILE_DIR:cclmwe_tests>/testdata
+)
+
+add_custom_command(
+        TARGET cclmwe_tests
+        COMMENT "Run Python tests"
+        POST_BUILD 
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/cclmwe/tests/ccl_gz_tests
+        COMMAND ${PYTHON_EXECUTABLE} -m unittest discover
+)
