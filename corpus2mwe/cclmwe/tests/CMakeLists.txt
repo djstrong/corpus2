@@ -34,17 +34,17 @@ target_link_libraries(cclmwe_tests cclmwe ${LIBS} pwrutils)
 
 add_custom_command(
         TARGET cclmwe_tests
-        COMMENT "Run C++ tests"
+        COMMENT "C++ tests"
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/cclmwe/tests/testdata
         $<TARGET_FILE_DIR:cclmwe_tests>/testdata
 )
 
-add_custom_command(
-        TARGET cclmwe_tests
-        COMMENT "Run Python tests"
-        POST_BUILD 
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/cclmwe/tests/ccl_gz_tests
-        COMMAND ${PYTHON_EXECUTABLE} -m unittest discover
-)
+# add_custom_command(
+#         TARGET cclmwe_tests
+#         COMMENT "Run Python tests"
+#         POST_BUILD 
+#         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/cclmwe/tests/ccl_gz_tests
+#         COMMAND ${PYTHON_EXECUTABLE} testMWE.py ${CMAKE_BINARY_DIR}/swig/corpus2mwe
+# )
