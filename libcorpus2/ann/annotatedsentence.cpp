@@ -43,7 +43,7 @@ Sentence::Ptr AnnotatedSentence::clone_shared() const
 }
 
 boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence(
-	const boost::shared_ptr<Sentence>& s)
+	const boost::shared_ptr<Sentence> s)
 {
 	boost::shared_ptr<AnnotatedSentence> a;
 	a = boost::dynamic_pointer_cast<AnnotatedSentence>(s);
@@ -58,7 +58,7 @@ boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence(
 }
 
 boost::shared_ptr<AnnotatedSentence> AnnotatedSentence::wrap_sentence_clone(
-	const boost::shared_ptr<Sentence>& s)
+	const boost::shared_ptr<Sentence> s)
 {
 	boost::shared_ptr<AnnotatedSentence> a;
 	a = boost::dynamic_pointer_cast<AnnotatedSentence>(s);

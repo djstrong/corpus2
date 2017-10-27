@@ -23,7 +23,7 @@ PathWriter::PathWriter(const boost::shared_ptr<TokenWriter>& underlying,
 	: TokenWriter(*os, underlying->tagset(), string_range_vector()),
 	 os_(os), underlying_(underlying)
 {
-	assert(&underlying_->os() == os_.get());
+    assert(&underlying_->os() == os_.get());
 }
 
 PathWriter::~PathWriter()

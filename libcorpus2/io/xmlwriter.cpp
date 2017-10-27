@@ -42,13 +42,12 @@ XmlWriter::XmlWriter(std::ostream& os, const Tagset& tagset,
 
 XmlWriter::~XmlWriter()
 {
-	finish();
 }
 
 void XmlWriter::write_token(const Token &t)
 {
-	token_as_xces_xml(os(), tagset(), t, use_indent_ ? indent_level() : -1,
-			output_disamb_, sort_tags_, whitespace_info_);
+    token_as_xces_xml(sstream(), tagset(), t, use_indent_ ? indent_level() : -1,
+            output_disamb_, sort_tags_, whitespace_info_);
 }
 
 void XmlWriter::write_sentence(const Sentence& s)
@@ -63,7 +62,7 @@ void XmlWriter::write_sentence(const Sentence& s)
 
 void XmlWriter::do_header()
 {
-	os() << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    sstream() << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 }
 
 void XmlWriter::do_footer()
@@ -72,17 +71,17 @@ void XmlWriter::do_footer()
 
 void XmlWriter::paragraph_head()
 {
-	osi() << "<chunk id=\"autoch" << ++cid_ << "\""
-		<< " type=\"p\">\n";
+    ssi() << "<chunk id=\"autoch";
+    sstream() << ++cid_ << "\"" << " type=\"p\">\n";
 }
 
 void XmlWriter::paragraph_head(const Chunk& c)
 {
-	osi() << "<chunk";
+    ssi() << "<chunk";
 	BOOST_FOREACH(const Chunk::attr_map_t::value_type& v, c.attributes()) {
-		os() << " " << v.first << "=\"" << v.second << "\"";
+        sstream() << " " << v.first << "=\"" << v.second << "\"";
 	}
-	os() << ">\n";
+    sstream() << ">\n";
 }
 
 } /* end ns Corpus2 */

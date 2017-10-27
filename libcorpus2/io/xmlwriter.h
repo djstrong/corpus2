@@ -36,9 +36,9 @@ public:
 	void write_sentence(const Sentence &s);
 
 protected:
-	void do_header();
+    void do_header();
 
-	void do_footer();
+    void do_footer();
 
 	virtual void paragraph_head();
 

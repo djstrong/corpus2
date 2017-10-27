@@ -52,6 +52,10 @@ SET(libcorpus2_STAT_SRC
 	tagsetparser.cpp
 	token.cpp
 	tokenmetadata.cpp
+        io/compressor.cpp
+        io/boostcompressor.cpp
+        io/cclgzreader.cpp
+        io/cclgzwriter.cpp
 	io/cclreader.cpp
 	io/cclwriter.cpp
 	io/conllwriter.cpp

@@ -22,34 +22,51 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #include <boost/make_shared.hpp>
 #include <sstream>
 #include <fstream>
+#include "compressor.h"
+#include <fstream>
 
 namespace Corpus2 {
+using namespace std;
 
 TokenWriter::TokenWriter(std::ostream& os, const Tagset& tagset,
 		const string_range_vector& /*params*/)
-	: os_(os), tagset_(tagset), needs_footer_(true), indent_(0)
+    : os_(os), tagset_(tagset), needs_footer_(true), indent_(0)
 {
+    pc_compressor = NULL;
 }
 
 TokenWriter::~TokenWriter()
 {
+    finish();
+    if(pc_compressor!=NULL){
+        delete pc_compressor;
+        pc_compressor = NULL;
+    }
+
 }
 
 void TokenWriter::finish()
 {
-	if (needs_footer_) {
-		do_footer();
-		needs_footer_ = false;
-	}
+    if (needs_footer_ == true){
+        do_footer();
+        needs_footer_ = false;
+    }
+}
+stringstream& TokenWriter::ssi(){
+   for (int i = 0; i < indent_; ++i) {
+        sstream_ << " ";
+    }
+   return sstream_;
 }
 
 std::ostream& TokenWriter::osi()
 {
-	for (int i = 0; i < indent_; ++i) {
-		os_ << " ";
-	}
-	return os_;
+    for (int i = 0; i < indent_; ++i) {
+         os_ << " ";
+     }
+    return os_;
 }
+
 
 void TokenWriter::indent_more(int n)
 {

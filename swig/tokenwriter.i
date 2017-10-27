@@ -38,6 +38,7 @@ namespace Corpus2 {
     /* --------------------------------------------------------------------- */
     // std::ostream& os();
     const Tagset& tagset();
+    %feature("autodoc", "Instead of using this function you must delete TokenWriter object by calling: 'del TokenWriterObject' to finish writing to file.");
     void finish();
 
     /* --------------------------------------------------------------------- */

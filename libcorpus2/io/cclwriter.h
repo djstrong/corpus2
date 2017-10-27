@@ -17,6 +17,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.
 #ifndef LIBSORPUS2_IO_CCLWRITER_H
 #define LIBCORPUS2_IO_CCLWRITER_H
 
+#define CHUNKS_PER_SAVE 3000
+
 #include <libcorpus2/io/xmlwriter.h>
 
 namespace Corpus2 {
@@ -26,6 +28,8 @@ class CclWriter : public XmlWriter
 public:
 	CclWriter(std::ostream& os, const Tagset& tagset,
 			const string_range_vector& params);
+    CclWriter(std::ostream& os, const Tagset& tagset,
+            const string_range_vector& params, bool disable_compression);
 
 	~CclWriter();
 
@@ -36,6 +40,8 @@ public:
 	static bool registered;
 
 protected:
+    void finish();
+
 	void write_sentence_int(const Sentence &s);
 
 	void do_header();
