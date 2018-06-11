@@ -22,7 +22,7 @@ set<UnicodeString> prepare_morphfile(const path & morphfile)
 {
 	set<UnicodeString> result;
 	
-	ifstream file(morphfile.c_str());
+	std::ifstream file(morphfile.c_str());
 	
 	string line;
 	while (getline(file, line))

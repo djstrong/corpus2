@@ -1,5 +1,7 @@
 *.o
 *.a
+*.pyc
+*.json
 Makefile*
 tests/tests
 *.pro.user
@@ -11,6 +13,8 @@ CMakeFiles
 CMakeLists.txt.user*
 cmake_install.cmake
 /bin/
+/build/
+*/build/
 /*-build/
 /doxygen/
 /data/local/
