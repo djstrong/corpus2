@@ -7,6 +7,7 @@
   #include <libcorpus2/io/helpers.h>
 %}
 
+%include <exception.i>
 %include "tag.i"
 %include "token.i"
 %include "chunk.i"
@@ -42,6 +43,10 @@ namespace Corpus2 {
       } catch (PwrNlp::PwrNlpError &e) {
         PyErr_SetString(PyExc_IndexError, e.info().c_str());
         return NULL;
+      } catch (xmlpp::parse_error &e) {
+        std::string s("xmlpp::parse_error: "), s2(e.what());
+        s = s + s2;
+        SWIG_exception(SWIG_RuntimeError, s.c_str());
       }
     }
     %feature("autodoc", "1");
@@ -56,6 +61,10 @@ namespace Corpus2 {
       } catch (PwrNlp::PwrNlpError &e) {
         PyErr_SetString(PyExc_IndexError, e.info().c_str());
         return NULL;
+      } catch (xmlpp::parse_error &e) {
+        std::string s("xmlpp::parse_error: "), s2(e.what());
+        s = s + s2;
+        SWIG_exception(SWIG_RuntimeError, s.c_str());
       }
     }
     %feature("autodoc", "1");
