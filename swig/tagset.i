@@ -6,7 +6,7 @@
   #include <libcorpus2/tagset.h>
 %}
 %include "tag.i"
-%include "exception.i"
+%include "corpus2exception.i"
 
 %include "std_defs.i"
 %include "std_string.i"

@@ -6,7 +6,8 @@
   #include <libcorpus2_whole/io/cclrelreader.h>
 %}
 
-%include "exception.i"
+%include <exception.i>
+%include "corpus2exception.i"
 %include "document.i"
 %include "boost_shared_ptr.i"
 
@@ -32,6 +33,10 @@ namespace whole {
       } catch (PwrNlp::PwrNlpError &e) {
         PyErr_SetString(PyExc_IndexError, e.info().c_str());
         return NULL;
+      } catch (xmlpp::parse_error &e) {
+        std::string s("xmlpp::parse_error: "), s2(e.what());
+        s = s + s2;
+        SWIG_exception(SWIG_RuntimeError, s.c_str());
       }
     }
     boost::shared_ptr<Document> read();

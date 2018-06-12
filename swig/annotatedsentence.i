@@ -8,7 +8,7 @@
 
 %include "token.i"
 %include "sentence.i"
-%include "exception.i"
+%include "corpus2exception.i"
 %include "annotationchannel.i"
 
 %include "boost_shared_ptr.i"

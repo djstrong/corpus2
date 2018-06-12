@@ -7,7 +7,7 @@
 %}
 
 %include "tagset.i"
-%include "exception.i"
+%include "corpus2exception.i"
 
 %include "std_string.i"
 %include "std_vector.i"

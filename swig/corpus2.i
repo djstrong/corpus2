@@ -5,7 +5,7 @@
 
 %include "boost_shared_ptr.i"
 %include "unicodestring.i"
-%include "exception.i"
+%include "corpus2exception.i"
 %include "annotatedsentence.i"
 %include "annotationchannel.i"
 %include "annotationview.i"
