@@ -79,6 +79,10 @@ namespace Corpus2 {
     %pythoncode %{
       def __ne__(self, other):
         return not self.__eq__(other)
+      
+      def is_same(self, other):
+        """Check wheter SWIG proxy object points the same underlaying token"""
+        return self.this == other.this
     %}
   }
 }
