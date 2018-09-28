@@ -16,7 +16,7 @@ sgn     col ncol pt
 
 [POS]
 adja
-adjp
+adjp    cas
 adjc
 conj
 comp
@@ -27,7 +27,7 @@ imps    asp
 inf     asp
 pcon    asp
 pant    asp
-qub     [vcl]
+part     [vcl]
 prep    cas [vcl]
 siebie  cas
 subst   nmb cas gnd [sgn]
@@ -47,7 +47,7 @@ impt    nmb per asp
 aglt    nmb per asp vcl
 ign
 brev dot
-burk
+frag
 interj
 cond	nmb gnd per asp
 dig
