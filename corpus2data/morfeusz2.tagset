@@ -35,7 +35,7 @@ depr    nmb cas gnd
 ger     nmb cas gnd asp ngt
 ppron12 nmb cas gnd per [acn]
 ppron3  nmb cas gnd per [acn] [ppr]
-num     nmb cas gnd [acm]
+num     nmb cas gnd [acm] [sgn]
 adj     nmb cas gnd deg
 pact    nmb cas gnd asp ngt
 ppas    nmb cas gnd asp ngt
